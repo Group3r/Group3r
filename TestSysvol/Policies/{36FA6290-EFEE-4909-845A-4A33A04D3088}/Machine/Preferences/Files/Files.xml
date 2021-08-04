@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Files clsid="{215B2E53-57CE-475c-80FE-9EEC14635851}"><File clsid="{50BE44C8-567A-4ed1-B1D0-9234FE1F38AF}" name="thing2.ps1" status="thing2.ps1" image="2" changed="2018-11-06 05:37:33" uid="{F3BF17FE-63A1-482B-BAD7-7AB576778990}"><Properties action="U" fromPath="C:\share\thing.ps1" targetPath="C:\thing2.ps1" readOnly="0" archive="1" hidden="0" suppress="0"/></File>
+	<File clsid="{50BE44C8-567A-4ed1-B1D0-9234FE1F38AF}" name="thing2.ps1" status="thing2.ps1" image="2" changed="2018-11-13 06:28:32" uid="{FF8A439E-F881-4CF8-A3EE-A2D1D3977275}"><Properties action="U" fromPath="C:\share\thing2.ps1" targetPath="C:\thing2.ps1" readOnly="1" archive="1" hidden="0" suppress="0"/></File>
+</Files>

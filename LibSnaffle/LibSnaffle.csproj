@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6C743A7F-17AC-4B25-80ED-A6E1F5164197}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LibSnaffle</RootNamespace>
+    <AssemblyName>LibSnaffle</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\LibSnaffle.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Nett, Version=0.15.0.0, Culture=neutral, PublicKeyToken=605dcfe7a1d3365b, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nett.0.15.0\lib\net40\Nett.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.7.6\lib\net40-client\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.DirectoryServices.AccountManagement" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\portable-net40+sl4+win8+wp8\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ActiveDirectory\ActiveDirectory.cs" />
+    <Compile Include="ActiveDirectory\GPO\GPO.cs" />
+    <Compile Include="ActiveDirectory\GPO\GpoSetting.cs" />
+    <Compile Include="ActiveDirectory\GPO\GpoSettings\DataSourceSetting.cs" />
+    <Compile Include="ActiveDirectory\GPO\GpoSettings\DeviceSetting.cs" />
+    <Compile Include="ActiveDirectory\GPO\GpoSettings\DriveSetting.cs" />
+    <Compile Include="ActiveDirectory\GPO\GpoSettings\EnvVarSetting.cs" />
+    <Compile Include="ActiveDirectory\GPO\GpoSettings\EventAuditSetting.cs" />
+    <Compile Include="ActiveDirectory\GPO\GpoSettings\FileSetting.cs" />
+    <Compile Include="ActiveDirectory\GPO\GpoSettings\FolderSetting.cs" />
+    <Compile Include="ActiveDirectory\GPO\GpoSettings\GroupSetting.cs" />
+    <Compile Include="ActiveDirectory\GPO\GpoSettings\IniFileSetting.cs" />
+    <Compile Include="ActiveDirectory\GPO\GpoSettings\KerbPolicySetting.cs" />
+    <Compile Include="ActiveDirectory\GPO\GpoSettings\NetOptionSetting.cs" />
+    <Compile Include="ActiveDirectory\GPO\GpoSettings\NetworkShareSetting.cs" />
+    <Compile Include="ActiveDirectory\GPO\GpoSettings\NtServiceSetting.cs" />
+    <Compile Include="ActiveDirectory\GPO\GpoSettings\PackageSetting.cs" />
+    <Compile Include="ActiveDirectory\GPO\GpoSettings\PrinterSetting.cs" />
+    <Compile Include="ActiveDirectory\GPO\GpoSettings\PrivRightSetting.cs" />
+    <Compile Include="ActiveDirectory\GPO\GpoSettings\RegistrySetting.cs" />
+    <Compile Include="ActiveDirectory\GPO\GpoSettings\SchedTaskSetting.cs" />
+    <Compile Include="ActiveDirectory\GPO\GpoSettings\ScriptSetting.cs" />
+    <Compile Include="ActiveDirectory\GPO\GpoSettings\ShortCutSetting.cs" />
+    <Compile Include="ActiveDirectory\GPO\GpoSettings\SystemAccessSetting.cs" />
+    <Compile Include="ActiveDirectory\GPO\GpoSettings\UserSetting.cs" />
+    <Compile Include="ActiveDirectory\Sysvol\GpoFiles\IniGpoFile.cs" />
+    <Compile Include="ActiveDirectory\Sysvol\GpoFiles\Parsers\SchedTaskParser.cs" />
+    <Compile Include="ActiveDirectory\Sysvol\GpoFiles\Parsers\SchedTaskV2Parser.cs" />
+    <Compile Include="ActiveDirectory\Sysvol\GpoFiles\PolGpoFile.cs" />
+    <Compile Include="ActiveDirectory\Sysvol\GpoFiles\XmlGpoFile.cs" />
+    <Compile Include="ActiveDirectory\Sysvol\Sysvol.cs" />
+    <Compile Include="ActiveDirectory\Sysvol\SysvolHelper.cs" />
+    <Compile Include="ActiveDirectory\Users\Trustee.cs" />
+    <Compile Include="Classifiers\ArchiveClassifier.cs" />
+    <Compile Include="Classifiers\ClassifierBase.cs" />
+    <Compile Include="Classifiers\ClassifierOptions.cs" />
+    <Compile Include="Classifiers\Results\Result.cs" />
+    <Compile Include="Classifiers\Results\TextResult.cs" />
+    <Compile Include="Classifiers\Rules\ClassifierRules.cs" />
+    <Compile Include="Classifiers\Rules\ClassifierRule.cs" />
+    <Compile Include="Classifiers\ContentClassifier.cs" />
+    <Compile Include="Classifiers\DirClassifier.cs" />
+    <Compile Include="Classifiers\Results\DirResult.cs" />
+    <Compile Include="Classifiers\FileClassifier.cs" />
+    <Compile Include="Classifiers\Results\FileResult.cs" />
+    <Compile Include="Classifiers\Rules\Constants.cs" />
+    <Compile Include="Classifiers\Rules\FileContentRules.cs" />
+    <Compile Include="Classifiers\Rules\FileDiscardRules.cs" />
+    <Compile Include="Classifiers\Rules\FileNameRules.cs" />
+    <Compile Include="Classifiers\Rules\PathRules.cs" />
+    <Compile Include="Classifiers\Rules\ShareRules.cs" />
+    <Compile Include="Classifiers\ShareClassifier.cs" />
+    <Compile Include="Classifiers\Results\ShareResult.cs" />
+    <Compile Include="Classifiers\TextClassifier.cs" />
+    <Compile Include="Concurrency\BlockingMq.cs" />
+    <Compile Include="Concurrency\BlockingStaticTaskScheduler.cs" />
+    <Compile Include="Concurrency\MessageTypes\DebugMessage.cs" />
+    <Compile Include="Concurrency\MessageTypes\FatalMessage.cs" />
+    <Compile Include="Concurrency\MessageTypes\FinishMessage.cs" />
+    <Compile Include="Concurrency\MessageTypes\ErrorMessage.cs" />
+    <Compile Include="Concurrency\MessageTypes\TraceMessage.cs" />
+    <Compile Include="Concurrency\MessageTypes\InfoMessage.cs" />
+    <Compile Include="Concurrency\MessageTypes\QueueMessage.cs" />
+    <Compile Include="Errors\GpoException.cs" />
+    <Compile Include="Errors\UserException.cs" />
+    <Compile Include="Errors\ActiveDirectoryException.cs" />
+    <Compile Include="Errors\FileFactoryException.cs" />
+    <Compile Include="Errors\SysvolException.cs" />
+    <Compile Include="ActiveDirectory\Sysvol\GpoFiles\InfGpoFile.cs" />
+    <Compile Include="ActiveDirectory\Sysvol\GpoFiles\GpoFileFactory.cs" />
+    <Compile Include="ActiveDirectory\Sysvol\GpoFiles\GpoFile.cs" />
+    <Compile Include="FileDiscovery\CurrentUserSecurity.cs" />
+    <Compile Include="FileDiscovery\QueueAndPath.cs" />
+    <Compile Include="FileDiscovery\FileSystemEnumerator.cs" />
+    <Compile Include="Logging\Logging.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sddl.Parser\Sddl.Parser.csproj">
+      <Project>{28f840b5-4ec3-4737-a097-199e845908cc}</Project>
+      <Name>Sddl.Parser</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

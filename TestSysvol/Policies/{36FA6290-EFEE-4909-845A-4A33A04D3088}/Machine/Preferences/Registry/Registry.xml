@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RegistrySettings clsid="{A3CCFC41-DFDB-43a5-8D26-0FE8B954DA51}"><Registry clsid="{9CD4B2F4-923D-47f5-A062-E897DD1DAD50}" name="mdmrock5.inf" status="mdmrock5.inf" image="17" changed="2018-11-13 06:29:40" uid="{9D60B003-0A51-4F58-9747-897AD6CDEC1D}"><Properties action="U" displayDecimal="0" default="0" hive="HKEY_LOCAL_MACHINE" key="DRIVERS\DriverDatabase\DeviceIds\*AKY1001" name="mdmrock5.inf" type="REG_BINARY" value="01FF0000"/></Registry>
+	<Registry clsid="{9CD4B2F4-923D-47f5-A062-E897DD1DAD50}" name="Wallet" status="(Default)" image="7" changed="2018-11-13 06:30:01" uid="{459698E4-386D-4639-9A14-3E28DCF17055}"><Properties action="U" displayDecimal="1" default="1" hive="HKEY_LOCAL_MACHINE" key="SOFTWARE\Partner\Wallet" name="" type="REG_SZ" value=""/></Registry>
+</RegistrySettings>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EnvironmentVariables clsid="{BF141A63-327B-438a-B9BF-2C188F13B7AD}"><EnvironmentVariable clsid="{78570023-8373-4a19-BA80-2F150738EA19}" name="PATH" status="PATH = FUCK" image="2" bypassErrors="1" changed="2018-11-06 05:37:03" uid="{29C6D5D0-CCB4-483B-B5EB-C1A2F886EBF1}"><Properties action="U" name="PATH" value="FUCK" user="0" partial="1"/></EnvironmentVariable>
+	<EnvironmentVariable clsid="{78570023-8373-4a19-BA80-2F150738EA19}" name="SHIT" status="SHIT = BALLS" image="2" changed="2018-11-13 06:28:08" uid="{40CA2038-477D-4ADD-BEF4-B3B60DAF94A9}"><Properties action="U" name="SHIT" value="BALLS" user="0" partial="0"/></EnvironmentVariable>
+</EnvironmentVariables>

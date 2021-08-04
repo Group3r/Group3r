@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Drives clsid="{8FDDCC1A-0C3C-43cd-A6B4-71A6DF20DA8C}"><Drive clsid="{935D1B74-9CB8-4e3c-9914-7DD559B7A417}" name="H:" status="H:" image="2" bypassErrors="1" changed="2018-11-13 06:47:19" uid="{807B8023-97DE-4214-A65A-9C50A8F11871}"><Properties action="U" thisDrive="NOCHANGE" allDrives="NOCHANGE" userName="" path="\\path\to\thing\" label="fuckery" persistent="0" useLetter="1" letter="H"/></Drive>
+	<Drive clsid="{935D1B74-9CB8-4e3c-9914-7DD559B7A417}" name="K:" status="K:" image="2" changed="2018-11-13 06:47:39" uid="{FBAF4522-0D10-41B5-9B84-862DD56A29B3}"><Properties action="U" thisDrive="NOCHANGE" allDrives="NOCHANGE" userName="" path="\\other\fuckiong\path" label="asdfsdf" persistent="0" useLetter="0" letter="K"/></Drive>
+</Drives>

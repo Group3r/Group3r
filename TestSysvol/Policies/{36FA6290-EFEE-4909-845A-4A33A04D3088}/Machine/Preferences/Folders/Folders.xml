@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Folders clsid="{77CC39E7-3D16-4f8f-AF86-EC0BBEE2C861}"><Folder clsid="{07DA02F5-F9CD-4397-A550-4AE21B6B4BD3}" name="temp" status="temp" image="2" changed="2018-11-06 05:37:50" uid="{961528C8-00D0-4B40-8043-664B855C1C74}"><Properties action="U" path="C:\temp\temp" readOnly="0" archive="1" hidden="0"/></Folder>
+	<Folder clsid="{07DA02F5-F9CD-4397-A550-4AE21B6B4BD3}" name="temp2" status="temp2" image="2" changed="2018-11-13 06:28:43" uid="{483A5F50-4C7D-4A2E-B305-79D9C06CA96B}"><Properties action="U" path="C:\temp\temp2" readOnly="0" archive="1" hidden="0"/></Folder>
+</Folders>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Shortcuts clsid="{872ECB34-B2EC-401b-A585-D32574AA90EE}"><Shortcut clsid="{4F2F7C55-2790-433e-8127-0739D1CFA327}" userContext="1" name="badlnk" status="badlnk" image="2" changed="2018-11-13 06:32:04" uid="{7A5700CB-6AFA-4D04-9CE8-149D23137DF9}"><Properties pidl="" targetType="FILESYSTEM" action="U" comment="" shortcutKey="0" startIn="" arguments="/c lol evil" iconIndex="0" targetPath="C:\windows\system32\cmd.exe" iconPath="" window="" shortcutPath="%DesktopDir%\badlnk"/></Shortcut>
+	<Shortcut clsid="{4F2F7C55-2790-433e-8127-0739D1CFA327}" userContext="1" name="Whooeeee" status="Whooeeee" image="2" changed="2018-11-13 06:32:41" uid="{9C94B26C-F076-4CE9-AB58-2EA9AFAF72EC}"><Properties pidl="" targetType="URL" action="U" comment="" shortcutKey="0" startIn="" arguments="" iconIndex="0" targetPath="http://google.com" iconPath="\\networkshare\evilpath" window="" shortcutPath="%StartUpDir%\Whooeeee"/></Shortcut>
+</Shortcuts>

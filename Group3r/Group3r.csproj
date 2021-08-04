@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Costura.Fody.5.0.2\build\Costura.Fody.props" Condition="Exists('..\packages\Costura.Fody.5.0.2\build\Costura.Fody.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{CE0BB9EA-E70D-40D8-8F9A-C088D32F3378}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Group3r</RootNamespace>
+    <AssemblyName>Group3r</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CommandLineArgumentsParser, Version=3.0.22.0, Culture=neutral, PublicKeyToken=2990a79b704d8378, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommandLineArgumentsParser.3.0.22\lib\net40\CommandLineArgumentsParser.dll</HintPath>
+    </Reference>
+    <Reference Include="Nett, Version=0.15.0.0, Culture=neutral, PublicKeyToken=605dcfe7a1d3365b, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nett.0.15.0\lib\net40\Nett.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.7.6\lib\net40-client\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.IO, Version=2.6.10.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.1.1.10\lib\net40\System.IO.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime, Version=2.6.10.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.1.1.10\lib\net40\System.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks, Version=2.6.10.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.1.1.10\lib\net40\System.Threading.Tasks.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Assessment\AnalyserFactory.cs" />
+    <Compile Include="Assessment\Analysers\DataSource.cs" />
+    <Compile Include="Assessment\Analysers\Device.cs" />
+    <Compile Include="Assessment\Analysers\Drives.cs" />
+    <Compile Include="Assessment\Analysers\EnvVar.cs" />
+    <Compile Include="Assessment\Analysers\EventAudit.cs" />
+    <Compile Include="Assessment\Analysers\File.cs" />
+    <Compile Include="Assessment\Analysers\Folder.cs" />
+    <Compile Include="Assessment\Analysers\Group.cs" />
+    <Compile Include="Assessment\Analysers\IniFile.cs" />
+    <Compile Include="Assessment\Analysers\KerbPolicy.cs" />
+    <Compile Include="Assessment\Analysers\NetOption.cs" />
+    <Compile Include="Assessment\Analysers\NetworkShare.cs" />
+    <Compile Include="Assessment\Analysers\NtService.cs" />
+    <Compile Include="Assessment\Analysers\Package.cs" />
+    <Compile Include="Assessment\Analysers\Printer.cs" />
+    <Compile Include="Assessment\Analysers\PrivRight.cs" />
+    <Compile Include="Assessment\Analysers\Registry.cs" />
+    <Compile Include="Assessment\Analysers\SchedTask.cs" />
+    <Compile Include="Assessment\Analysers\Script.cs" />
+    <Compile Include="Assessment\Analysers\Analyser.cs" />
+    <Compile Include="Assessment\Analysers\Shortcut.cs" />
+    <Compile Include="Assessment\Analysers\SystemAccess.cs" />
+    <Compile Include="Assessment\Analysers\User.cs" />
+    <Compile Include="Assessment\GpoFinding.cs" />
+    <Compile Include="Assessment\GpoResult.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Assessment\PathAnalyser.cs" />
+    <Compile Include="Assessment\SddlAnalyser.cs" />
+    <Compile Include="Concurrency\FileResultMessage.cs" />
+    <Compile Include="Concurrency\GpoResultMessage.cs" />
+    <Compile Include="Concurrency\GrouperMq.cs" />
+    <Compile Include="Group3r.cs" />
+    <Compile Include="Group3rRunner.cs" />
+    <Compile Include="GroupCon.cs" />
+    <Compile Include="Options\AssessmentOptions\AssessmentOptions.cs" />
+    <Compile Include="Options\AssessmentOptions\FileExtensions.cs" />
+    <Compile Include="Options\AssessmentOptions\PrivRights.cs" />
+    <Compile Include="Options\AssessmentOptions\RegKeys.cs" />
+    <Compile Include="Options\AssessmentOptions\Trustees.cs" />
+    <Compile Include="Options\GrouperOptions.cs" />
+    <Compile Include="Options\OptionsParser.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="View\Banner.cs" />
+    <Compile Include="View\MessageProcessor\CliMessageProcessor.cs" />
+    <Compile Include="View\GpoPrinterFactory.cs" />
+    <Compile Include="View\IGpoPrinter.cs" />
+    <Compile Include="View\MessageProcessor\IMessageProcessor.cs" />
+    <Compile Include="View\JsonGpoPrinter.cs" />
+    <Compile Include="View\MinimalGpoPrinter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LibSnaffle\LibSnaffle.csproj">
+      <Project>{6c743a7f-17ac-4b25-80ed-a6e1f5164197}</Project>
+      <Name>LibSnaffle</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sddl.Parser\Sddl.Parser.csproj">
+      <Project>{28f840b5-4ec3-4737-a097-199e845908cc}</Project>
+      <Name>Sddl.Parser</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
+  <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
+    <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
+    <Error Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
+  </Target>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Costura.Fody.5.0.2\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.5.0.2\build\Costura.Fody.props'))" />
+  </Target>
+</Project>

@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Devices clsid="{4DD26924-3F32-47aa-BF33-36D51BD1E54E}"><Device clsid="{2E1C95D0-85FB-403a-A57C-A508854FB7C8}" name="Mice and other pointing devices" image="0" changed="2019-01-15 12:54:04" uid="{6DE1C8B5-2D02-49FC-8263-B455F65AF99E}"><Properties deviceAction="ENABLE" deviceClass="Mice and other pointing devices" deviceType="" deviceClassGUID="{4D36E96F-E325-11CE-BFC1-08002BE10318}" deviceTypeID=""/></Device>
+</Devices>
