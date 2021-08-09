@@ -10,19 +10,18 @@ namespace LibSnaffle.Classifiers.Results
     {
         public FileInfo ResultFileInfo { get; set; }
         public TextResult TextResult { get; set; }
-        public bool CanRead { get; set; }
-        public bool CanWrite { get; set; }
+
         public Triage Triage { get; set; }
 
         public FileResult(FileInfo fileInfo, bool snaffle, long maxSizeToSnaffle, string snafflePath)
         {
             ResultFileInfo = fileInfo;
-            CanRead = CanIRead();
-            CanWrite = CanIWrite();
+
+            this.RwStatus = EffectiveAccess.EffectivePermissions.CanRw(fileInfo);
             
             if (snaffle)
             {
-                if ((maxSizeToSnaffle >= fileInfo.Length) && CanRead)
+                if ((maxSizeToSnaffle >= fileInfo.Length) && RwStatus.CanRead)
                 {
                     CopyFile(fileInfo, snafflePath);
                 }
@@ -42,60 +41,6 @@ namespace LibSnaffle.Classifiers.Results
             File.Copy(sourcePath, (Path.Combine(snafflePath, cleanedPath)), true);
         }
 
-        public bool CanIRead()
-        {
-            // this will return true if file read perm is available.
-            CurrentUserSecurity currentUserSecurity = new CurrentUserSecurity();
 
-            FileSystemRights[] fsRights =
-            {
-                FileSystemRights.Read,
-                FileSystemRights.ReadAndExecute,
-                FileSystemRights.ReadData
-            };
-
-            bool readRight = false;
-            foreach (FileSystemRights fsRight in fsRights)
-                try
-                {
-                    if (currentUserSecurity.HasAccess(ResultFileInfo, fsRight)) readRight = true;
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    return false;
-                }
-
-            return readRight;
-        }
-
-        public bool CanIWrite()
-        {
-            // this will return true if write or modify or take ownership or any of those other good perms are available.
-            CurrentUserSecurity currentUserSecurity = new CurrentUserSecurity();
-
-            FileSystemRights[] fsRights =
-            {
-                FileSystemRights.Write,
-                FileSystemRights.Modify,
-                FileSystemRights.FullControl,
-                FileSystemRights.TakeOwnership,
-                FileSystemRights.ChangePermissions,
-                FileSystemRights.AppendData,
-                FileSystemRights.WriteData
-            };
-
-            bool writeRight = false;
-            foreach (FileSystemRights fsRight in fsRights)
-                try
-                {
-                    if (currentUserSecurity.HasAccess(ResultFileInfo, fsRight)) writeRight = true;
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    return false;
-                }
-
-            return writeRight;
-        }
     }
 }

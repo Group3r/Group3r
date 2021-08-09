@@ -11,7 +11,7 @@ namespace Grouper
 
             string context = Result.TextResult != null ? Result.TextResult.MatchContext : "";
             string matchedString = Result.TextResult != null ? Result.TextResult.MatchedStrings[0] : "";
-            string msg = $"{{{Result.MatchedRule.Triage}}}<{Result.MatchedRule.RuleName}|{(Result.CanRead ? "R" : "")}{(Result.CanWrite ? "W" : "")}|{matchedString}|Lengthoffile>({Result.ResultFileInfo.FullName}){context}";
+            string msg = $"{{{Result.MatchedRule.Triage}}}<{Result.MatchedRule.RuleName}|{(Result.RwStatus.CanRead ? "R" : "")}{(Result.RwStatus.CanWrite ? "W" : "")}{(Result.RwStatus.CanModify ? "M" : "")}|{matchedString}|Lengthoffile>({Result.ResultFileInfo.FullName}){context}";
             return $"{datetime}[HOSTSTRING] [File]{Delimeter}{msg}";
         }
         public FileResult Result { get; set; }

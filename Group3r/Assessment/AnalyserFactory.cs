@@ -8,6 +8,7 @@ namespace Group3r.Assessment
     {
         public Analyser GetAnalyser(GpoSetting setting)
         {
+            /*
             if (setting.GetType() == typeof(DataSourceSetting))
             {
                 DataSourceSetting castSetting = (DataSourceSetting)setting;
@@ -33,11 +34,14 @@ namespace Group3r.Assessment
                 EventAuditSetting castSetting = (EventAuditSetting)setting;
                 return new EventAuditAnalyser() { setting = castSetting };
             }
+           
             else if (setting.GetType() == typeof(FileSetting))
+
             {
                 FileSetting castSetting = (FileSetting)setting;
                 return new FileAnalyser() { setting = castSetting };
             }
+            
             else if (setting.GetType() == typeof(FolderSetting))
             {
                 FolderSetting castSetting = (FolderSetting)setting;
@@ -102,11 +106,14 @@ namespace Group3r.Assessment
                 SchedTaskSetting castSetting = (SchedTaskSetting)setting;
                 return new SchedTaskAnalyser() { setting = castSetting };
             }
-            else if (setting.GetType() == typeof(ScriptSetting))
+            */
+            //else if (setting.GetType() == typeof(ScriptSetting))
+            if (setting.GetType() == typeof(ScriptSetting))
             {
                 ScriptSetting castSetting = (ScriptSetting)setting;
                 return new ScriptAnalyser() { setting = castSetting };
             }
+            /*
             else if (setting.GetType() == typeof(ShortcutSetting))
             {
                 ShortcutSetting castSetting = (ShortcutSetting)setting;
@@ -123,11 +130,11 @@ namespace Group3r.Assessment
                 UserSetting castSetting = (UserSetting)setting;
                 return new UserAnalyser() { setting = castSetting };
             }
-            
+            */
             else
             {
-                //return null;
-                throw new NotImplementedException("Group3r doesn't have an analyser for the type of setting found in " + setting.Source);
+                return null;
+                //throw new NotImplementedException("Group3r doesn't have an analyser for the type of setting found in " + setting.Source);
             }
         }
     }

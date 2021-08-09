@@ -10,5 +10,13 @@ namespace LibSnaffle.Classifiers.Results
     {
         public ClassifierRule MatchedRule { get; set; }
         public string MatchedString { get; set; }
+        public RwStatus RwStatus { get; set; }
+    }
+
+    public class RwStatus
+    {
+        public bool CanRead { get; set; }
+        public bool CanWrite { get; set; }
+        public bool CanModify { get; set; }
     }
 }
