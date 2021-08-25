@@ -38,7 +38,7 @@ namespace Group3r.Assessment.Analysers
                     findings.Add(new GpoFinding()
                     {
                         PathFindings = new List<PathFinding>() { pathFinding },
-                        FindingReason = "Writable " + setting.ScriptType.ToString() + " file identified at " + pathFinding.AssessedPath,
+                        FindingReason = "Writable " + setting.ScriptType.ToString() + " script file identified at " + pathFinding.AssessedPath,
                         FindingDetail = "This script will run in the context of the users/computers to which this GPO is applied. Change the script, get command exec as those users/computers.",
                         Triage = Constants.Triage.Black
                     }); ;
@@ -49,7 +49,7 @@ namespace Group3r.Assessment.Analysers
                     findings.Add(new GpoFinding()
                     {
                         PathFindings = new List<PathFinding>() { pathFinding },
-                        FindingReason = "Honestly this looks like a misconfigured " + setting.ScriptType.ToString() + "GPO or a bug in Group3r.",
+                        FindingReason = "Honestly this looks like a misconfigured " + setting.ScriptType.ToString() + " script setting in a GPO or a bug in Group3r.",
                         FindingDetail = "Script settings should basically never point directly at a dir.",
                         Triage = Constants.Triage.Green
                     }); ;
@@ -60,7 +60,7 @@ namespace Group3r.Assessment.Analysers
                     findings.Add(new GpoFinding()
                     {
                         PathFindings = new List<PathFinding>() { pathFinding },
-                        FindingReason = "Missing " + setting.ScriptType.ToString() + " with a writable parent dir identified at " + pathFinding.ParentDirectoryExists + ". The original target path was " + pathFinding.AssessedPath,
+                        FindingReason = "Missing " + setting.ScriptType.ToString() + " script with a writable parent dir identified at " + pathFinding.ParentDirectoryExists + ". The original target path was " + pathFinding.AssessedPath,
                         FindingDetail = "Recreate the missing parts of the path in the parent dir, put your code in the script. It will then run in the context of the users/computers to which this GPO is applied.",
                         Triage = Constants.Triage.Red
                     }); ;

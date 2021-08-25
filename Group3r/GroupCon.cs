@@ -55,7 +55,7 @@ namespace Group3r
             statusUpdateTimer.Elapsed += TimedStatusUpdate;
             statusUpdateTimer.Start();
 
-            // Load the AD. If this succeeds we're guaranteed to have GPOs ready to process.
+            // Figure out how we're going to load up all our AD/Sysvol info:
             SysvolHelper svh = new SysvolHelper(Mq);
             ActiveDirectory ad = null;
              
@@ -82,6 +82,7 @@ namespace Group3r
                 DirectoryContext context = getDirectoryContext(Options);
                 Mq.Trace("building ActiveDirectory");
                 ad = new ActiveDirectory(Mq, context);
+
                 if (Options.TargetDc == null)
                 {
                     Mq.Trace("Getting DCs");
@@ -89,12 +90,9 @@ namespace Group3r
                 }
                 else
                 {
-                    ad.DomainControllerIPs.Add(Options.TargetDc);
+                    ad.TargetDC = Options.TargetDc;
                 }
-                //Mq.Trace("Enumerating Computers");
-                //ad.EnumerateComputers();
-                //Mq.Trace("Enumerating Users");
-                //ad.EnumerateUsers();
+                
                 Mq.Trace("Enumerating current user's name and group memberships.");
                 if (Options.AssessmentOptions.TargetTrustees == null)
                 {
@@ -102,6 +100,7 @@ namespace Group3r
                     Options.AssessmentOptions.TargetTrustees = new List<string>() { thing };
                     Options.AssessmentOptions.TargetTrustees.AddRange(ad.GetUsersGroupsAllDomains(thing));
                 }
+                
                 Mq.Trace("Getting GPOs");
                 ad.ObtainDomainGpos();
                 Mq.Trace("Loading files from SYSVOL");

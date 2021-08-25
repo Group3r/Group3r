@@ -61,6 +61,11 @@ namespace LibSnaffle.ActiveDirectory
         public DomainControllerCollection DomainControllers { get; set; }
 
         /// <summary>
+        /// Specifically targeted domain controller
+        /// </summary>
+        public string TargetDC { get; set; }
+
+        /// <summary>
         /// Stores a List of all DC IPs in the domain.
         /// </summary>
         public List<string> DomainControllerIPs { get; set; } = new List<string>();
@@ -155,10 +160,6 @@ namespace LibSnaffle.ActiveDirectory
             try
             {
                 DomainControllers = DomainController.FindAll(Context);
-                foreach (DomainController dc in DomainControllers)
-                {
-                    DomainControllerIPs.Add(dc.IPAddress);
-                }
             }
             catch (Exception e)
             {
@@ -180,7 +181,21 @@ namespace LibSnaffle.ActiveDirectory
 
             Mq.Trace("Testing DC Connectivity");
 
-            foreach (string dc in DomainControllerIPs)
+            List<string> dcs = new List<string>();
+
+            if (TargetDC != null)
+            {
+                dcs.Add(TargetDC);
+            }
+            else
+            {
+                foreach (DomainController domainController in DomainControllers)
+                {
+                    dcs.Add(domainController.Name);
+                }
+            }
+
+            foreach (string dc in dcs)
             {
                 try
                 {

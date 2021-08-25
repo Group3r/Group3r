@@ -11,6 +11,11 @@ namespace LibSnaffle.ActiveDirectory
             FileInfo info = new FileInfo(filePath);
             GpoFile newFile = null;
 
+            if (info.Length == 0)
+            {
+                logger.Degub("Empty file was unparseable " + filePath);
+            }
+
             if (string.Equals(info.Name.ToLower(), "gpttmpl.inf"))
             {
                 newFile = new InfGpoFile(filePath, info, logger);

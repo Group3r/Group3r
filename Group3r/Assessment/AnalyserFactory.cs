@@ -33,14 +33,11 @@ namespace Group3r.Assessment
                 EventAuditSetting castSetting = (EventAuditSetting)setting;
                 return new EventAuditAnalyser() { setting = castSetting };
             }
-           
             else if (setting.GetType() == typeof(FileSetting))
-
             {
                 FileSetting castSetting = (FileSetting)setting;
                 return new FileAnalyser() { setting = castSetting };
             }
-            
             else if (setting.GetType() == typeof(FolderSetting))
             {
                 FolderSetting castSetting = (FolderSetting)setting;
@@ -56,13 +53,11 @@ namespace Group3r.Assessment
                 IniFileSetting castSetting = (IniFileSetting)setting;
                 return new IniFileAnalyser() { setting = castSetting };
             }
-            
             else if (setting.GetType() == typeof(KerbPolicySetting))
             {
                 KerbPolicySetting castSetting = (KerbPolicySetting)setting;
                 return new KerbPolicyAnalyser() { setting = castSetting };
             }
-            
             else if (setting.GetType() == typeof(NetOptionSetting))
             {
                 NetOptionSetting castSetting = (NetOptionSetting)setting;
@@ -88,13 +83,11 @@ namespace Group3r.Assessment
                 PrinterSetting castSetting = (PrinterSetting)setting;
                 return new PrinterAnalyser() { setting = castSetting };
             }
-            
             else if (setting.GetType() == typeof(PrivRightSetting))
             {
                         PrivRightSetting castSetting = (PrivRightSetting)setting;
                 return new PrivRightAnalyser() { setting = castSetting };
             }
-            
             else if (setting.GetType() == typeof(RegistrySetting))
             {
                 RegistrySetting castSetting = (RegistrySetting)setting;
@@ -105,20 +98,16 @@ namespace Group3r.Assessment
                 SchedTaskSetting castSetting = (SchedTaskSetting)setting;
                 return new SchedTaskAnalyser() { setting = castSetting };
             }
-            
-            //else if (setting.GetType() == typeof(ScriptSetting))
-            if (setting.GetType() == typeof(ScriptSetting))
+            else if (setting.GetType() == typeof(ScriptSetting))
             {
                 ScriptSetting castSetting = (ScriptSetting)setting;
                 return new ScriptAnalyser() { setting = castSetting };
             }
-            
             else if (setting.GetType() == typeof(ShortcutSetting))
             {
                 ShortcutSetting castSetting = (ShortcutSetting)setting;
                 return new ShortcutAnalyser() { setting = castSetting };
             }
-            
             else if (setting.GetType() == typeof(SystemAccessSetting))
             {
                 SystemAccessSetting castSetting = (SystemAccessSetting)setting;
@@ -129,7 +118,6 @@ namespace Group3r.Assessment
                 UserSetting castSetting = (UserSetting)setting;
                 return new UserAnalyser() { setting = castSetting };
             }
-            
             else
             {
                 return null;

@@ -231,11 +231,36 @@ namespace Group3r.Assessment.Analysers
             SettingResult.Findings = findings;
 
             // make a new setting object minus the ugly bits we don't care about.
-            SettingResult.Setting = new SystemAccessSetting();
             
-            SettingResult.Setting = setting;
+            SettingResult.Setting = CleanupSetting(setting);
 
             return SettingResult;
+        }
+
+        public SystemAccessSetting CleanupSetting(SystemAccessSetting setting)
+        {
+            SystemAccessSetting cleanSetting = new SystemAccessSetting();
+
+            if (!String.IsNullOrWhiteSpace(setting.Source))
+            {
+                cleanSetting.Source = setting.Source;
+            }
+
+            if (!String.IsNullOrWhiteSpace(setting.SettingName))
+                {
+                cleanSetting.SettingName = setting.SettingName;
+            }
+
+            if (!String.IsNullOrWhiteSpace(setting.ValueString))
+            {
+                cleanSetting.ValueString = setting.ValueString;
+            }
+
+            cleanSetting.PolicyType = setting.PolicyType;
+
+            // everything else is in findings
+
+            return cleanSetting;
         }
     }
 }

@@ -346,7 +346,7 @@ namespace LibSnaffle.ActiveDirectory
                             SystemAccessSetting sysAccSetting = new SystemAccessSetting();
                             sysAccSetting.Source = FilePath;
                             sysAccSetting.SettingName = lineKey;
-                            sysAccSetting.ValueString = splitLine[1];
+                            sysAccSetting.ValueString = splitLine[1].Trim();
                             Settings.Add(sysAccSetting);
                             break;
                         case "Unicode":
