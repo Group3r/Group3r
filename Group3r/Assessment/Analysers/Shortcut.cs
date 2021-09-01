@@ -76,6 +76,16 @@ namespace Group3r.Assessment.Analysers
                 }
             }
 
+            if (setting.Arguments.Contains("pass") || setting.Arguments.Contains("-p") || setting.Arguments.Contains("/p"))
+            {
+                findings.Add(new GpoFinding()
+                {
+                    FindingReason = "Shortcut has an arguments setting that looks like it might have a password in it?",
+                    FindingDetail = "Arguments were: " + setting.Arguments,
+                    Triage = Constants.Triage.Yellow
+                });
+            }
+
             // put findings in settingResult
             SettingResult.Findings = findings;
 
