@@ -93,10 +93,12 @@ namespace Group3r.Assessment.Analysers
 
             // make a new setting object minus the ugly bits we don't care about.
             SettingResult.Setting = CleanupSetting(setting);
+            //SettingResult.Setting = setting;
 
             return SettingResult;
         }
 
+        
         public PrivRightSetting CleanupSetting(PrivRightSetting setting)
         {
             PrivRightSetting cleanSetting = new PrivRightSetting();
@@ -122,5 +124,6 @@ namespace Group3r.Assessment.Analysers
 
             return cleanSetting;
         }
+        
     }
 }

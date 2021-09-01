@@ -102,11 +102,11 @@ namespace Group3r.Assessment.Analysers
             SettingResult.Findings = findings;
 
             // make a new setting object minus the ugly bits we don't care about.
-            SettingResult.Setting = new FileSetting();
+            SettingResult.Setting = CleanupSetting(setting);
 
             return SettingResult;
         }
-
+        
         public FileSetting CleanupSetting(FileSetting setting)
         {
             FileSetting cleanSetting = new FileSetting();

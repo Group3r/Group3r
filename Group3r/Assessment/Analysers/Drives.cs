@@ -30,11 +30,13 @@ namespace Group3r.Assessment.Analysers
             SettingResult.Findings = findings;
 
             // make a new setting object minus the ugly bits we don't care about.
+            //SettingResult.Setting = CleanupSetting(setting);
             SettingResult.Setting = CleanupSetting(setting);
 
             return SettingResult;
         }
 
+        
         public DriveSetting CleanupSetting(DriveSetting setting)
         {
             DriveSetting cleanSetting = new DriveSetting();
@@ -80,5 +82,6 @@ namespace Group3r.Assessment.Analysers
 
             return cleanSetting;
         }
+        
     }
 }

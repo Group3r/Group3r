@@ -36,11 +36,12 @@ namespace Group3r.Assessment.Analysers
             SettingResult.Findings = findings;
 
             // make a new setting object minus the ugly bits we don't care about.
-            SettingResult.Setting = CleanupSetting(setting);
+            //SettingResult.Setting = CleanupSetting(setting);
+            SettingResult.Setting = setting;
 
             return SettingResult;
         }
-
+        
         public DataSourceSetting CleanupSetting(DataSourceSetting setting)
         {
             DataSourceSetting cleanSetting = new DataSourceSetting();
@@ -86,5 +87,6 @@ namespace Group3r.Assessment.Analysers
             cleanSetting.Attributes = setting.Attributes;
             return cleanSetting;
         }
+        
     }
 }

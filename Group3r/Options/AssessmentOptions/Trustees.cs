@@ -374,10 +374,32 @@ namespace Group3r.Options.AssessmentOptions
                     HighPriv = true,
                     LowPriv = false
                 },
+                                new TrusteeOption()
+                {
+                    SID = "S-1-5-21-<DOMAIN>-500",
+                    DisplayName = "BUILTIN\\Administrator",
+                    Description =
+                        "A user account for the system administrator. By default, it is the only user account that is given full control over the system.",
+                    DomainSID = true,
+                    LocalSID = false,
+                    HighPriv = true,
+                    LowPriv = false
+                },
                 new TrusteeOption()
                 {
                     SID = "S-1-5-21-<DOMAIN>-501",
                     DisplayName = "Guest",
+                    Description =
+                        "A user account for people who do not have individual accounts. This user account does not require a password. By default, the Guest account is disabled.",
+                    DomainSID = true,
+                    LocalSID = false,
+                    HighPriv = false,
+                    LowPriv = true
+                },
+                 new TrusteeOption()
+                {
+                    SID = "S-1-5-21-<DOMAIN>-501",
+                    DisplayName = "BUILTIN\\Guest",
                     Description =
                         "A user account for people who do not have individual accounts. This user account does not require a password. By default, the Guest account is disabled.",
                     DomainSID = true,
@@ -539,8 +561,30 @@ namespace Group3r.Options.AssessmentOptions
                 },
                 new TrusteeOption()
                 {
+                    SID = "S-1-5-32-544",
+                    DisplayName = "BUILTIN\\Administrators",
+                    Description =
+                        "A built-in group. After the initial installation of the operating system, the only member of the group is the Administrator account. When a computer joins a domain, the Domain Admins group is added to the Administrators group. When a server becomes a domain controller, the Enterprise Admins group also is added to the Administrators group.",
+                    DomainSID = false,
+                    LocalSID = true,
+                    HighPriv = true,
+                    LowPriv = false
+                },
+                new TrusteeOption()
+                {
                     SID = "S-1-5-32-545",
                     DisplayName = "Users",
+                    Description =
+                        "A built-in group. After the initial installation of the operating system, the only member is the Authenticated Users group. When a computer joins a domain, the Domain Users group is added to the Users group on the computer.",
+                    DomainSID = false,
+                    LocalSID = true,
+                    HighPriv = false,
+                    LowPriv = true
+                },
+                new TrusteeOption()
+                {
+                    SID = "S-1-5-32-545",
+                    DisplayName = "BUILTIN\\Users",
                     Description =
                         "A built-in group. After the initial installation of the operating system, the only member is the Authenticated Users group. When a computer joins a domain, the Domain Users group is added to the Users group on the computer.",
                     DomainSID = false,
@@ -561,8 +605,30 @@ namespace Group3r.Options.AssessmentOptions
                 },
                 new TrusteeOption()
                 {
+                    SID = "S-1-5-32-546",
+                    DisplayName = "BUILTIN\\Guests",
+                    Description =
+                        "A built-in group. By default, the only member is the Guest account. The Guests group allows occasional or one-time users to log on with limited privileges to a computer's built-in Guest account.",
+                    DomainSID = false,
+                    LocalSID = true,
+                    HighPriv = false,
+                    LowPriv = true
+                },
+                new TrusteeOption()
+                {
                     SID = "S-1-5-32-547",
                     DisplayName = "Power Users",
+                    Description =
+                        "A built-in group. By default, the group has no members. Power users can create local users and groups; modify and delete accounts that they have created; and remove users from the Power Users, Users, and Guests groups. Power users also can install programs; create, manage, and delete local printers; and create and delete file shares.",
+                    DomainSID = false,
+                    LocalSID = true,
+                    HighPriv = false,
+                    LowPriv = false
+                },
+                new TrusteeOption()
+                {
+                    SID = "S-1-5-32-547",
+                    DisplayName = "BUILTIN\\Power Users",
                     Description =
                         "A built-in group. By default, the group has no members. Power users can create local users and groups; modify and delete accounts that they have created; and remove users from the Power Users, Users, and Guests groups. Power users also can install programs; create, manage, and delete local printers; and create and delete file shares.",
                     DomainSID = false,
@@ -583,8 +649,30 @@ namespace Group3r.Options.AssessmentOptions
                 },
                 new TrusteeOption()
                 {
+                    SID = "S-1-5-32-548",
+                    DisplayName = "BUILTIN\\Account Operators",
+                    Description =
+                        "A built-in group that exists only on domain controllers. By default, the group has no members. By default, Account Operators have permission to create, modify, and delete accounts for users, groups, and computers in all containers and organizational units of Active Directory except the Builtin container and the Domain Controllers OU. Account Operators do not have permission to modify the Administrators and Domain Admins groups, nor do they have permission to modify the accounts for members of those groups.",
+                    DomainSID = true,
+                    LocalSID = true,
+                    HighPriv = true,
+                    LowPriv = false
+                },
+                new TrusteeOption()
+                {
                     SID = "S-1-5-32-549",
                     DisplayName = "Server Operators",
+                    Description =
+                        "A built-in group that exists only on domain controllers. By default, the group has no members. Server Operators can log on to a server interactively; create and delete network shares; start and stop services; back up and restore files; format the hard disk of the computer; and shut down the computer.",
+                    DomainSID = true,
+                    LocalSID = true,
+                    HighPriv = true,
+                    LowPriv = false
+                },
+                new TrusteeOption()
+                {
+                    SID = "S-1-5-32-549",
+                    DisplayName = "BUILTIN\\Server Operators",
                     Description =
                         "A built-in group that exists only on domain controllers. By default, the group has no members. Server Operators can log on to a server interactively; create and delete network shares; start and stop services; back up and restore files; format the hard disk of the computer; and shut down the computer.",
                     DomainSID = true,
@@ -605,6 +693,17 @@ namespace Group3r.Options.AssessmentOptions
                 },
                 new TrusteeOption()
                 {
+                    SID = "S-1-5-32-550",
+                    DisplayName = "BUILTIN\\Print Operators",
+                    Description =
+                        "A built-in group that exists only on domain controllers. Print Operators can manage printers and document queues.",
+                    DomainSID = true,
+                    LocalSID = true,
+                    HighPriv = true,
+                    LowPriv = false
+                },
+                new TrusteeOption()
+                {
                     SID = "S-1-5-32-551",
                     DisplayName = "Backup Operators",
                     Description =
@@ -616,8 +715,30 @@ namespace Group3r.Options.AssessmentOptions
                 },
                 new TrusteeOption()
                 {
+                    SID = "S-1-5-32-551",
+                    DisplayName = "BUILTIN\\Backup Operators",
+                    Description =
+                        "A built-in group. By default, the group has no members. Backup Operators can back up and restore all files on a computer, regardless of the permissions that protect those files. Backup Operators also can log on to the computer and shut it down.",
+                    DomainSID = true,
+                    LocalSID = true,
+                    HighPriv = true,
+                    LowPriv = false
+                },
+                new TrusteeOption()
+                {
                     SID = "S-1-5-32-552",
                     DisplayName = "Replicators",
+                    Description =
+                        "A built-in group that is used by the File Replication service on domain controllers. By default, the group has no members. Do not add users to this group.",
+                    DomainSID = true,
+                    LocalSID = true,
+                    HighPriv = true,
+                    LowPriv = false
+                },
+                new TrusteeOption()
+                {
+                    SID = "S-1-5-32-552",
+                    DisplayName = "BUILTIN\\Replicators",
                     Description =
                         "A built-in group that is used by the File Replication service on domain controllers. By default, the group has no members. Do not add users to this group.",
                     DomainSID = true,

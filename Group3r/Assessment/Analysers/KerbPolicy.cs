@@ -12,14 +12,6 @@ namespace Group3r.Assessment.Analysers
 
         public override SettingResult Analyse(AssessmentOptions assessmentOptions)
         {
-            // TODO - do simple analysis of this for low-sev findings
-
-            /*        MaxTicketAge = 10
-        MaxRenewAge = 7
-        MaxServiceAge = 600
-        MaxClockSkew = 5
-        TicketValidateClient = 1
-            */
 
             List<GpoFinding> findings = new List<GpoFinding>();
             
@@ -97,7 +89,6 @@ namespace Group3r.Assessment.Analysers
             SettingResult.Findings = findings;
 
             // make a new setting object minus the ugly bits we don't care about.
-            SettingResult.Setting = new KerbPolicySetting();
             SettingResult.Setting = setting;
 
             return SettingResult;

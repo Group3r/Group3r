@@ -28,11 +28,12 @@ namespace Group3r.Assessment.Analysers
             SettingResult.Findings = findings;
 
             // make a new setting object minus the ugly bits we don't care about.
-            SettingResult.Setting = new PrinterSetting();
+            SettingResult.Setting = CleanupSetting(setting);
             
             return SettingResult;
         }
 
+        
         public PrinterSetting CleanupSetting(PrinterSetting setting)
         {
             PrinterSetting cleanSetting = new PrinterSetting();
@@ -83,5 +84,6 @@ namespace Group3r.Assessment.Analysers
 
             return cleanSetting;
         }
+        
     }
 }
