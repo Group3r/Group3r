@@ -18,12 +18,15 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "1")
                 {
-                    findings.Add(new GpoFinding()
+                    if ((int)this.MinTriage < 2)
                     {
-                        FindingReason = "Non-default minimum password age.",
-                        FindingDetail = "Minimum password age is " + setting.ValueString + " days.",
-                        Triage = Constants.Triage.Green
-                    });
+                        findings.Add(new GpoFinding()
+                        {
+                            FindingReason = "Non-default minimum password age.",
+                            FindingDetail = "Minimum password age is " + setting.ValueString + " days.",
+                            Triage = Constants.Triage.Green
+                        });
+                    }
                 }
             }
 
@@ -31,12 +34,15 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "42")
                 {
-                    findings.Add(new GpoFinding()
+                    if ((int)this.MinTriage < 2)
                     {
-                        FindingReason = "Non-default maximum password age.",
-                        FindingDetail = "Maximum password age is " + setting.ValueString + " days.",
-                        Triage = Constants.Triage.Green
-                    });
+                        findings.Add(new GpoFinding()
+                        {
+                            FindingReason = "Non-default maximum password age.",
+                            FindingDetail = "Maximum password age is " + setting.ValueString + " days.",
+                            Triage = Constants.Triage.Green
+                        });
+                    }
                 }
             }
 
@@ -44,12 +50,15 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "7")
                 {
-                    findings.Add(new GpoFinding()
+                    if ((int)this.MinTriage < 2)
                     {
-                        FindingReason = "Non-default minimum password length.",
-                        FindingDetail = "Minimum password length is " + setting.ValueString + " days.",
-                        Triage = Constants.Triage.Green
-                    });
+                        findings.Add(new GpoFinding()
+                        {
+                            FindingReason = "Non-default minimum password length.",
+                            FindingDetail = "Minimum password length is " + setting.ValueString + " days.",
+                            Triage = Constants.Triage.Green
+                        });
+                    }
                 }
             }
 
@@ -57,12 +66,15 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "1")
                 {
-                    findings.Add(new GpoFinding()
+                    if ((int)this.MinTriage < 2)
                     {
-                        FindingReason = "Password complexity disabled.",
-                        FindingDetail = "",
-                        Triage = Constants.Triage.Green
-                    });
+                        findings.Add(new GpoFinding()
+                        {
+                            FindingReason = "Password complexity disabled.",
+                            FindingDetail = "",
+                            Triage = Constants.Triage.Green
+                        });
+                    }
                 }
             }
 
@@ -70,12 +82,15 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "24")
                 {
-                    findings.Add(new GpoFinding()
+                    if ((int)this.MinTriage < 2)
                     {
-                        FindingReason = "Non-default password history size.",
-                        FindingDetail = "Password history value is " + setting.ValueString,
-                        Triage = Constants.Triage.Green
-                    });
+                        findings.Add(new GpoFinding()
+                        {
+                            FindingReason = "Non-default password history size.",
+                            FindingDetail = "Password history value is " + setting.ValueString,
+                            Triage = Constants.Triage.Green
+                        });
+                    }
                 }
             }
 
@@ -83,12 +98,15 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "5")
                 {
-                    findings.Add(new GpoFinding()
+                    if ((int)this.MinTriage < 2)
                     {
-                        FindingReason = "Non-default lockout count value.",
-                        FindingDetail = "Accounts lock out after " + setting.ValueString + " bad passwords",
-                        Triage = Constants.Triage.Green
-                    });
+                        findings.Add(new GpoFinding()
+                        {
+                            FindingReason = "Non-default lockout count value.",
+                            FindingDetail = "Accounts lock out after " + setting.ValueString + " bad passwords",
+                            Triage = Constants.Triage.Green
+                        });
+                    }
                 }
             }
 
@@ -96,12 +114,15 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "30")
                 {
-                    findings.Add(new GpoFinding()
+                    if ((int)this.MinTriage < 2)
                     {
-                        FindingReason = "Non-default lockout reset time value.",
-                        FindingDetail = "Invalid attempt counter resets after" + setting.ValueString + " minutes.",
-                        Triage = Constants.Triage.Green
-                    });
+                        findings.Add(new GpoFinding()
+                        {
+                            FindingReason = "Non-default lockout reset time value.",
+                            FindingDetail = "Invalid attempt counter resets after" + setting.ValueString + " minutes.",
+                            Triage = Constants.Triage.Green
+                        });
+                    }
                 }
             }
 
@@ -109,12 +130,15 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "30")
                 {
-                    findings.Add(new GpoFinding()
+                    if ((int)this.MinTriage < 2)
                     {
-                        FindingReason = "Non-default lockout duration value.",
-                        FindingDetail = "Account unlocks after" + setting.ValueString + " minutes.",
-                        Triage = Constants.Triage.Green
-                    });
+                        findings.Add(new GpoFinding()
+                        {
+                            FindingReason = "Non-default lockout duration value.",
+                            FindingDetail = "Account unlocks after" + setting.ValueString + " minutes.",
+                            Triage = Constants.Triage.Green
+                        });
+                    }
                 }
             }
 
@@ -122,12 +146,15 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "0")
                 {
-                    findings.Add(new GpoFinding()
+                    if ((int)this.MinTriage < 2)
                     {
-                        FindingReason = "Force logoff outside hours is enforced.",
-                        FindingDetail = "",
-                        Triage = Constants.Triage.Green
-                    });
+                        findings.Add(new GpoFinding()
+                        {
+                            FindingReason = "Force logoff outside hours is enforced.",
+                            FindingDetail = "",
+                            Triage = Constants.Triage.Green
+                        });
+                    }
                 }
             }
 
@@ -135,12 +162,15 @@ namespace Group3r.Assessment.Analysers
             {
                 if (!String.IsNullOrEmpty(setting.ValueString))
                 {
-                    findings.Add(new GpoFinding()
+                    if ((int)this.MinTriage < 2)
                     {
-                        FindingReason = "Local Administrator account name changed.",
-                        FindingDetail = "New local Administrator account name is " + setting.ValueString,
-                        Triage = Constants.Triage.Green
-                    });
+                        findings.Add(new GpoFinding()
+                        {
+                            FindingReason = "Local Administrator account name changed.",
+                            FindingDetail = "New local Administrator account name is " + setting.ValueString,
+                            Triage = Constants.Triage.Green
+                        });
+                    }
                 }
             }
 
@@ -148,12 +178,15 @@ namespace Group3r.Assessment.Analysers
             {
                 if (!String.IsNullOrEmpty(setting.ValueString))
                 {
-                    findings.Add(new GpoFinding()
+                    if ((int)this.MinTriage < 2)
                     {
-                        FindingReason = "Local Guest account name changed.",
-                        FindingDetail = "New local Guest account name is " + setting.ValueString,
-                        Triage = Constants.Triage.Green
-                    });
+                        findings.Add(new GpoFinding()
+                        {
+                            FindingReason = "Local Guest account name changed.",
+                            FindingDetail = "New local Guest account name is " + setting.ValueString,
+                            Triage = Constants.Triage.Green
+                        });
+                    }
                 }
             }
 
@@ -161,12 +194,15 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "0")
                 {
-                    findings.Add(new GpoFinding()
+                    if ((int)this.MinTriage < 3)
                     {
-                        FindingReason = "Passwords stored with reversible encryption.",
-                        FindingDetail = "",
-                        Triage = Constants.Triage.Yellow
-                    });
+                        findings.Add(new GpoFinding()
+                        {
+                            FindingReason = "SAM (or domain if this GPO applies to DCs) passwords stored with reversible encryption.",
+                            FindingDetail = "",
+                            Triage = Constants.Triage.Yellow
+                        });
+                    }
                 }
             }
 
@@ -174,12 +210,15 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "0")
                 {
-                    findings.Add(new GpoFinding()
+                    if ((int)this.MinTriage < 3)
                     {
-                        FindingReason = "Local Guest account enabled.",
-                        FindingDetail = "",
-                        Triage = Constants.Triage.Yellow
-                    });
+                        findings.Add(new GpoFinding()
+                        {
+                            FindingReason = "Local Guest account enabled.",
+                            FindingDetail = "",
+                            Triage = Constants.Triage.Yellow
+                        });
+                    }
                 }
             }
 
@@ -187,12 +226,15 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "1")
                 {
-                    findings.Add(new GpoFinding()
+                    if ((int)this.MinTriage < 2)
                     {
-                        FindingReason = "Local Administrator account disabled.",
-                        FindingDetail = "",
-                        Triage = Constants.Triage.Yellow
-                    });
+                        findings.Add(new GpoFinding()
+                        {
+                            FindingReason = "Local Administrator account disabled.",
+                            FindingDetail = "",
+                            Triage = Constants.Triage.Green
+                        });
+                    }
                 }
             }
 
@@ -200,12 +242,15 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "1")
                 {
-                    findings.Add(new GpoFinding()
+                    if ((int)this.MinTriage < 2)
                     {
-                        FindingReason = "Expired passwords require admin intervention to reset.",
-                        FindingDetail = "",
-                        Triage = Constants.Triage.Green
-                    });
+                        findings.Add(new GpoFinding()
+                        {
+                            FindingReason = "Expired passwords require admin intervention to reset.",
+                            FindingDetail = "",
+                            Triage = Constants.Triage.Green
+                        });
+                    }
                 }
             }
 
@@ -213,12 +258,15 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "1")
                 {
-                    findings.Add(new GpoFinding()
+                    if ((int)this.MinTriage < 2)
                     {
-                        FindingReason = "Anonymous users can query the local LSA policy.",
-                        FindingDetail = "",
-                        Triage = Constants.Triage.Green
-                    });
+                        findings.Add(new GpoFinding()
+                        {
+                            FindingReason = "Anonymous users can query the local LSA policy.",
+                            FindingDetail = "",
+                            Triage = Constants.Triage.Green
+                        });
+                    }
                 }
             }
 

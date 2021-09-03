@@ -25,12 +25,15 @@ namespace Group3r.Assessment.Analysers
                 });
             }
 
-            findings.Add(new GpoFinding()
+            if ((int)this.MinTriage < 2)
             {
-                FindingReason = "Potentially useful database connection info identified.",
-                FindingDetail = "Could be helpful for targeting other attacks.",
-                Triage = Constants.Triage.Green
-            });
+                findings.Add(new GpoFinding()
+                {
+                    FindingReason = "Potentially useful database connection info identified.",
+                    FindingDetail = "Could be helpful for targeting other attacks.",
+                    Triage = Constants.Triage.Green
+                });
+            }
 
             // put findings in settingResult
             SettingResult.Findings = findings;

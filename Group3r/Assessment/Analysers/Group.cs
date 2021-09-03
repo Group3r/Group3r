@@ -54,13 +54,16 @@ namespace Group3r.Assessment.Analysers
                     // 
                     if (!String.IsNullOrEmpty(setting.NewName) && group.HighPriv)
                     {
-                        findings.Add(new GpoFinding()
+                        if ((int)this.MinTriage < 2)
                         {
-                            //GpoSetting = setting,
-                            FindingReason = "A privileged local group is being renamed.",
-                            FindingDetail = "Group " + group.DisplayName + " is being renamed to " + setting.NewName,
-                            Triage = Constants.Triage.Green
-                        });
+                            findings.Add(new GpoFinding()
+                            {
+                                //GpoSetting = setting,
+                                FindingReason = "A privileged local group is being renamed.",
+                                FindingDetail = "Group " + group.DisplayName + " is being renamed to " + setting.NewName,
+                                Triage = Constants.Triage.Green
+                            });
+                        }
                     }
                     // if there's no members, who cares?
                     if (setting.Members.Count > 0)
@@ -92,26 +95,32 @@ namespace Group3r.Assessment.Analysers
                             if (toMember.LowPriv && group.HighPriv)
                             {
                                 alreadyred = true;
-                                findings.Add(new GpoFinding()
+                                if ((int)this.MinTriage < 4)
                                 {
-                                    //GpoSetting = setting,
-                                    FindingReason = "A privileged local group is having a low-priv member added to it.",
-                                    FindingDetail = "Group " + group.DisplayName + " is having " + toMember.DisplayName + " added to it.",
-                                    Triage = Constants.Triage.Red
-                                });
+                                    findings.Add(new GpoFinding()
+                                    {
+                                        //GpoSetting = setting,
+                                        FindingReason = "A privileged local group is having a low-priv member added to it.",
+                                        FindingDetail = "Group " + group.DisplayName + " is having " + toMember.DisplayName + " added to it.",
+                                        Triage = Constants.Triage.Red
+                                    });
+                                }
                             }
 
                             // if it's a high priv group and we're adding any other trustee, that's a yellow
                             // we do !toMember.HighPriv because we need it to work whether toMember is resolved to a well known sid or not..
                             if (group.HighPriv && !toMember.HighPriv && !alreadyred)
                             {
-                                findings.Add(new GpoFinding()
+                                if ((int)this.MinTriage < 2)
                                 {
-                                    //GpoSetting = setting,
-                                    FindingReason = "A privileged local group is having a member added to it. Might be interesting, hard to say.",
-                                    FindingDetail = "Group " + group.DisplayName + " is having " + gsMember.Name + " added to it.",
-                                    Triage = Constants.Triage.Green
-                                });
+                                    findings.Add(new GpoFinding()
+                                    {
+                                        //GpoSetting = setting,
+                                        FindingReason = "A privileged local group is having a member added to it. Might be interesting, hard to say.",
+                                        FindingDetail = "Group " + group.DisplayName + " is having " + gsMember.Name + " added to it.",
+                                        Triage = Constants.Triage.Green
+                                    });
+                                }
                             }
                         }
                     }

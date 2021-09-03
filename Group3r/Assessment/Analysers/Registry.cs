@@ -26,11 +26,15 @@ namespace Group3r.Assessment.Analysers
                 List<SimpleAce> simpleAcl = sddlAnalyser.AnalyseSddl(setting.ParsedKeySddl);
                 if (simpleAcl.Count > 0)
                 {
-                    GpoFinding gpoFinding = new GpoFinding();
-                    gpoFinding.AclResult = simpleAcl;
-                    gpoFinding.FindingReason = "Found some interesting ACEs on the file.";
-                    gpoFinding.FindingDetail = "I'm so tired.";
-                    findings.Add(gpoFinding);
+                    if ((int)this.MinTriage < 2)
+                    {
+                        GpoFinding gpoFinding = new GpoFinding();
+                        gpoFinding.AclResult = simpleAcl;
+                        gpoFinding.FindingReason = "Found some interesting ACEs on a registry key, probably because someone was being given control of it.";
+                        gpoFinding.FindingDetail = "You'll need to take a closer look at this key to know if this has any value at all. Good luck.";
+                        gpoFinding.Triage = Constants.Triage.Green;
+                        findings.Add(gpoFinding);
+                    }
                 }
                 // ok who's the owner?
                 if (setting.ParsedKeySddl.Owner != null)
@@ -40,13 +44,16 @@ namespace Group3r.Assessment.Analysers
                         if ((setting.ParsedKeySddl.Owner.Alias.Equals(trustee.DisplayName)) && (!trustee.HighPriv))
                         {
                             // TODO do proper sid comparisons or something fuck
-                            findings.Add(new GpoFinding()
+                            if ((int)this.MinTriage < 3)
                             {
-                                FindingReason =
+                                findings.Add(new GpoFinding()
+                                {
+                                    FindingReason =
                                     "The " + trustee.DisplayName + " trustee has been made owner of this registry key.",
-                                FindingDetail = "You'll need to take a closer look at this key to know if this has any value at all. Good luck.",
-                                Triage = Constants.Triage.Yellow
-                            });
+                                    FindingDetail = "You'll need to take a closer look at this key to know if this has any value at all. Good luck.",
+                                    Triage = Constants.Triage.Green
+                                });
+                            }
                             break;
                         }
                     }
@@ -78,23 +85,18 @@ namespace Group3r.Assessment.Analysers
                                 }
                                 if (trustee.LowPriv)
                                 {
-                                    findings.Add(new GpoFinding()
+                                    if ((int)this.MinTriage < 2)
                                     {
-                                        FindingReason =
+                                        findings.Add(new GpoFinding()
+                                        {
+                                            FindingReason =
                                             "The " + trustee.DisplayName + " trustee has been granted additional rights over this registry key.",
-                                        FindingDetail = "You'll need to take a closer look at this key to know if this has any value at all. Good luck.",
-                                        Triage = Constants.Triage.Yellow
-                                    });
+                                            FindingDetail = "You'll need to take a closer look at this key to know if this has any value at all. Good luck.",
+                                            Triage = Constants.Triage.Green
+                                        });
+                                    }
                                     break;
                                 }
-                                findings.Add(new GpoFinding()
-                                {
-                                    FindingReason =
-                                        "The " + trustee.DisplayName + " trustee has been granted additional rights over this registry key.",
-                                    FindingDetail = "You'll need to take a closer look at this key to know if this has any value at all. Good luck.",
-                                    Triage = Constants.Triage.Green
-                                });
-                                break;
                             }
                         }
                     }
@@ -117,13 +119,16 @@ namespace Group3r.Assessment.Analysers
                                 // That's fine, sometimes we're just looking for the presence of a key and the subkeys don't even matter.
                                 if ((ruleKey.ValueName == null) || (regValue.ValueName.IndexOf(ruleKey.ValueName, StringComparison.OrdinalIgnoreCase) >= 0))
                                 {
-                                    findings.Add(new GpoFinding()
+                                    if ((int)this.MinTriage < (int)ruleKey.Triage)
                                     {
-                                        FindingReason =
+                                        findings.Add(new GpoFinding()
+                                        {
+                                            FindingReason =
                                             "This registry key being present at all is considered interesting.",
-                                        FindingDetail = ruleKey.FriendlyDescription + " " + ruleKey.MsDesc,
-                                        Triage = ruleKey.Triage
-                                    });
+                                            FindingDetail = ruleKey.FriendlyDescription + " " + ruleKey.MsDesc,
+                                            Triage = ruleKey.Triage
+                                        });
+                                    }
                                 }
                                 break;
                             case InterestingIf.Bad:
@@ -154,13 +159,16 @@ namespace Group3r.Assessment.Analysers
 
                                     if (interesting)
                                     {
-                                        findings.Add(new GpoFinding()
+                                        if ((int)this.MinTriage < (int)ruleKey.Triage)
                                         {
-                                            FindingReason =
+                                            findings.Add(new GpoFinding()
+                                            {
+                                                FindingReason =
                                                 "This registry key was found to match a known-vulnerable value.",
-                                            FindingDetail = ruleKey.FriendlyDescription + " " + ruleKey.MsDesc,
-                                            Triage = ruleKey.Triage
-                                        });
+                                                FindingDetail = ruleKey.FriendlyDescription + " " + ruleKey.MsDesc,
+                                                Triage = ruleKey.Triage
+                                            });
+                                        }
                                     }
                                 }
                                 break;
@@ -189,12 +197,15 @@ namespace Group3r.Assessment.Analysers
                                     }
                                     if (interesting)
                                     {
-                                        findings.Add(new GpoFinding()
+                                        if ((int)this.MinTriage < (int)ruleKey.Triage)
                                         {
-                                            FindingReason = "This registry key was set to a non-default value, which was interesting enough for me.",
-                                            FindingDetail = ruleKey.FriendlyDescription + " " + ruleKey.MsDesc,
-                                            Triage = ruleKey.Triage
-                                        });
+                                            findings.Add(new GpoFinding()
+                                            {
+                                                FindingReason = "This registry key was set to a non-default value, which was interesting enough for me.",
+                                                FindingDetail = ruleKey.FriendlyDescription + " " + ruleKey.MsDesc,
+                                                Triage = ruleKey.Triage
+                                            });
+                                        }
                                     }
                                 }
                                 break;
@@ -222,12 +233,15 @@ namespace Group3r.Assessment.Analysers
                                     }
                                     if (interesting)
                                     {
-                                        findings.Add(new GpoFinding()
+                                        if ((int)this.MinTriage < (int)ruleKey.Triage)
                                         {
-                                            FindingReason = "This registry key was set to a non-default value, which was interesting enough for me.",
-                                            FindingDetail = ruleKey.FriendlyDescription + " " + ruleKey.MsDesc,
-                                            Triage = ruleKey.Triage
-                                        });
+                                            findings.Add(new GpoFinding()
+                                            {
+                                                FindingReason = "This registry key was set to a non-default value, which was interesting enough for me.",
+                                                FindingDetail = ruleKey.FriendlyDescription + " " + ruleKey.MsDesc,
+                                                Triage = ruleKey.Triage
+                                            });
+                                        }
                                     }
                                 }
                                 break;

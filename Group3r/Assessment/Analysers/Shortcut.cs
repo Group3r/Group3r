@@ -23,30 +23,39 @@ namespace Group3r.Assessment.Analysers
 
                 if (pathFinding.FileExists && pathFinding.FileWritable)
                 {
-                    findings.Add(new GpoFinding()
+                    if ((int)this.MinTriage < 4)
                     {
-                        FindingReason = "Shortcut points at a file that you can modify.",
-                        FindingDetail = "It points to " + setting.TargetPath + " so maybe see what happens if you modify that file.",
-                        Triage = Constants.Triage.Red
-                    });
+                        findings.Add(new GpoFinding()
+                        {
+                            FindingReason = "Shortcut points at a file that you can modify.",
+                            FindingDetail = "It points to " + setting.TargetPath + " so maybe see what happens if you modify that file.",
+                            Triage = Constants.Triage.Red
+                        });
+                    }
                 }
                 else if (!pathFinding.FileExists && pathFinding.DirectoryExists && pathFinding.DirectoryWritable)
                 {
-                    findings.Add(new GpoFinding()
+                    if ((int)this.MinTriage < 4)
                     {
-                        FindingReason = "Shortcut points to a file that doesn't exist, in a directory that you can write to.",
-                        FindingDetail = "It points to " + setting.TargetPath + " so maybe see what happens if you create that file.",
-                        Triage = Constants.Triage.Red
-                    });
+                        findings.Add(new GpoFinding()
+                        {
+                            FindingReason = "Shortcut points to a file that doesn't exist, in a directory that you can write to.",
+                            FindingDetail = "It points to " + setting.TargetPath + " so maybe see what happens if you create that file.",
+                            Triage = Constants.Triage.Red
+                        });
+                    }
                 }
                 else if (!pathFinding.FileExists && !pathFinding.DirectoryExists && !String.IsNullOrWhiteSpace(pathFinding.ParentDirectoryExists) && pathFinding.ParentDirectoryWritable)
                 {
-                    findings.Add(new GpoFinding()
+                    if ((int)this.MinTriage < 4)
                     {
-                        FindingReason = "Shortcut points to a file that doesn't exist, in a directory that ALSO doesn't exist, but there's a parent directory that DOES exist that you can write to.",
-                        FindingDetail = "It points to " + setting.TargetPath + " so maybe see what happens if you create that file.",
-                        Triage = Constants.Triage.Red
-                    });
+                        findings.Add(new GpoFinding()
+                        {
+                            FindingReason = "Shortcut points to a file that doesn't exist, in a directory that ALSO doesn't exist, but there's a parent directory that DOES exist that you can write to.",
+                            FindingDetail = "It points to " + setting.TargetPath + " so maybe see what happens if you create that file.",
+                            Triage = Constants.Triage.Red
+                        });
+                    }
                 }
             }
 
@@ -58,32 +67,44 @@ namespace Group3r.Assessment.Analysers
 
                 if (pathFinding.DirectoryExists && pathFinding.DirectoryWritable)
                 {
-                    findings.Add(new GpoFinding()
+                    if ((int)this.MinTriage < 3)
                     {
-                        FindingReason = "Shortcut is configured to use a working directory that you can write to.",
-                        FindingDetail = "You might be able to pull some DLL sideloading shenanigans in " + setting.StartIn,
-                        Triage = Constants.Triage.Yellow
-                    });
+                        findings.Add(new GpoFinding()
+                        {
+                            FindingReason = "Shortcut is configured to use a working directory that you can write to.",
+                            FindingDetail = "You might be able to pull some DLL sideloading shenanigans in " + setting.StartIn,
+                            Triage = Constants.Triage.Yellow
+                        });
+                    }
                 }
                 else if (!pathFinding.FileExists && !pathFinding.DirectoryExists && !String.IsNullOrWhiteSpace(pathFinding.ParentDirectoryExists) && pathFinding.ParentDirectoryWritable)
                 {
-                    findings.Add(new GpoFinding()
+                    if ((int)this.MinTriage < 3)
                     {
-                        FindingReason = "Shortcut is configured to use a working directory that doesn't exist, but one of its parent directories DOES, and you can write to it.",
-                        FindingDetail = "You might be able to pull some DLL sideloading shenanigans in " + setting.StartIn + " if you create it.",
-                        Triage = Constants.Triage.Yellow
-                    });
+                        findings.Add(new GpoFinding()
+                        {
+                            FindingReason = "Shortcut is configured to use a working directory that doesn't exist, but one of its parent directories DOES, and you can write to it.",
+                            FindingDetail = "You might be able to pull some DLL sideloading shenanigans in " + setting.StartIn + " if you create it.",
+                            Triage = Constants.Triage.Yellow
+                        });
+                    }
                 }
             }
 
-            if (setting.Arguments.Contains("pass") || setting.Arguments.Contains("-p") || setting.Arguments.Contains("/p"))
+            if (!String.IsNullOrWhiteSpace(setting.Arguments))
             {
-                findings.Add(new GpoFinding()
+                if (setting.Arguments.Contains("pass") || setting.Arguments.Contains("-p") || setting.Arguments.Contains("/p"))
                 {
-                    FindingReason = "Shortcut has an arguments setting that looks like it might have a password in it?",
-                    FindingDetail = "Arguments were: " + setting.Arguments,
-                    Triage = Constants.Triage.Yellow
-                });
+                    if ((int)this.MinTriage < 3)
+                    {
+                        findings.Add(new GpoFinding()
+                        {
+                            FindingReason = "Shortcut has an arguments setting that looks like it might have a password in it?",
+                            FindingDetail = "Arguments were: " + setting.Arguments,
+                            Triage = Constants.Triage.Yellow
+                        });
+                    }
+                }
             }
 
             // put findings in settingResult

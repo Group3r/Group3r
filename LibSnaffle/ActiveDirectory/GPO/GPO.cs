@@ -45,7 +45,8 @@ namespace LibSnaffle.ActiveDirectory
         //public string Cn { get; set; }
         public string Uid { get; set; }
         public string VersionNumber { get; set; }
-        public bool Enabled { get; set; }
+        public bool ComputerPolicyEnabled { get; set; }
+        public bool UserPolicyEnabled { get; set; }
         public List<string> GPOLinks { get; set; }
     }
 }

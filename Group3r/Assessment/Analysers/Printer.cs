@@ -32,7 +32,6 @@ namespace Group3r.Assessment.Analysers
             
             return SettingResult;
         }
-
         
         public PrinterSetting CleanupSetting(PrinterSetting setting)
         {

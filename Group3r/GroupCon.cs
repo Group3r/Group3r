@@ -179,6 +179,8 @@ namespace Group3r
 
                                 if (anal != null)
                                 {
+                                    anal.Mq = Mq;
+                                    anal.MinTriage = Options.AssessmentOptions.MinTriage;
                                     // have analyser return settingResult
 
                                     SettingResult settingResult = anal.Analyse(Options.AssessmentOptions);

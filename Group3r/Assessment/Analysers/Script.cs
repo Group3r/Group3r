@@ -46,24 +46,30 @@ namespace Group3r.Assessment.Analysers
                 // if the path points to a dir and we can write to it, that's a lesser finding
                 if (pathFinding.DirectoryExists && pathFinding.DirectoryWritable)
                 {
-                    findings.Add(new GpoFinding()
+                    if ((int)this.MinTriage < 2)
                     {
-                        PathFindings = new List<PathFinding>() { pathFinding },
-                        FindingReason = "Honestly this looks like a misconfigured " + setting.ScriptType.ToString() + " script setting in a GPO or a bug in Group3r.",
-                        FindingDetail = "Script settings should basically never point directly at a dir.",
-                        Triage = Constants.Triage.Green
-                    }); ;
+                        findings.Add(new GpoFinding()
+                        {
+                            PathFindings = new List<PathFinding>() { pathFinding },
+                            FindingReason = "Honestly this looks like a misconfigured " + setting.ScriptType.ToString() + " script setting in a GPO or a bug in Group3r.",
+                            FindingDetail = "Script settings should basically never point directly at a dir.",
+                            Triage = Constants.Triage.Green
+                        }); ;
+                    }
                 }
                 // if the path points to a dir or a file that doesn't exist, but a parent directory does, and we can write to that, that's a finding
                 if (!String.IsNullOrEmpty(pathFinding.ParentDirectoryExists) && pathFinding.ParentDirectoryWritable)
                 {
-                    findings.Add(new GpoFinding()
+                    if ((int)this.MinTriage < 4)
                     {
-                        PathFindings = new List<PathFinding>() { pathFinding },
-                        FindingReason = "Missing " + setting.ScriptType.ToString() + " script with a writable parent dir identified at " + pathFinding.ParentDirectoryExists + ". The original target path was " + pathFinding.AssessedPath,
-                        FindingDetail = "Recreate the missing parts of the path in the parent dir, put your code in the script. It will then run in the context of the users/computers to which this GPO is applied.",
-                        Triage = Constants.Triage.Red
-                    }); ;
+                        findings.Add(new GpoFinding()
+                        {
+                            PathFindings = new List<PathFinding>() { pathFinding },
+                            FindingReason = "Missing " + setting.ScriptType.ToString() + " script with a writable parent dir identified at " + pathFinding.ParentDirectoryExists + ". The original target path was " + pathFinding.AssessedPath,
+                            FindingDetail = "Recreate the missing parts of the path in the parent dir, put your code in the script. It will then run in the context of the users/computers to which this GPO is applied.",
+                            Triage = Constants.Triage.Red
+                        }); ;
+                    }
                 }
             }
 

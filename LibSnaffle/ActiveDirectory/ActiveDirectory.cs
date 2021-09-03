@@ -258,6 +258,7 @@ namespace LibSnaffle.ActiveDirectory
                     mySearcher.PropertiesToLoad.Add("distinguishedname");
                     mySearcher.PropertiesToLoad.Add("name");
                     mySearcher.PropertiesToLoad.Add("versionnumber");
+                    mySearcher.PropertiesToLoad.Add("flags");
 
                     // No size limit, reads all objects
                     mySearcher.SizeLimit = 0;
@@ -296,7 +297,31 @@ namespace LibSnaffle.ActiveDirectory
                         gpo.Attributes.VersionNumber = resEnt.Properties["versionnumber"][0].ToString();
                         //gpo.Attributes.Cn = resEnt.Properties["cn"][0].ToString();
                         gpo.Attributes.DistinguishedName = resEnt.Properties["distinguishedname"][0].ToString();
-                        
+
+                        string gpoFlags = resEnt.Properties["flags"][0].ToString();
+                        switch (gpoFlags)
+                        {
+                            case "0":
+                                gpo.Attributes.UserPolicyEnabled = true;
+                                gpo.Attributes.ComputerPolicyEnabled = true;
+                                break;
+                            case "1":
+                                gpo.Attributes.ComputerPolicyEnabled = true;
+                                gpo.Attributes.UserPolicyEnabled = false;
+                                break;
+                            case "2":
+                                gpo.Attributes.ComputerPolicyEnabled = false;
+                                gpo.Attributes.UserPolicyEnabled = true; 
+                                break;
+                            case "3":
+                                gpo.Attributes.ComputerPolicyEnabled = false;
+                                gpo.Attributes.UserPolicyEnabled = false; 
+                                break;
+                            default:
+                                Mq.Degub("Couldn't process GPO Enabled Status. Weird.");
+                                break;
+                        }
+
                         domainGpos.Add(gpo);
 
                     }

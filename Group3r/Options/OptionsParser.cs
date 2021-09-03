@@ -40,6 +40,7 @@ namespace Group3r.Options
             parser.Arguments.Add(new SwitchArgument('r', "currentonly", "Only checks current policies, ignoring stuff in those Policies_NTFRS_* directories that result from replication failures.", false));
             parser.Arguments.Add(new ValueArgument<string>('x', "printer", "Type of output to display. Options are none, minimal, or json."));
             parser.Arguments.Add(new SwitchArgument('w', "findingsonly", "Only displays settings that had an associated finding.", false));
+            parser.Arguments.Add(new ValueArgument<int>('a', "mintriage", "Minimum severity of findings to show where 1 is lowest severity and 4 is highest."));
             return parser;
         }
 
@@ -120,6 +121,17 @@ namespace Group3r.Options
                         // If enabled, display findings to the console.
                         options.LogToConsole = true;
                         mq.Degub("Enabled logging to stdout.");
+                        break;
+                    case "mintriage":
+                        int t;
+                        if (int.TryParse(value, out t))
+                        {
+                            options.AssessmentOptions.MinTriage = (LibSnaffle.Classifiers.Rules.Constants.Triage)t;
+                        }
+                        else
+                        {
+                            mq.Error("Invalid mintriage argument passed. Arg only accepts integers between 1 and 4.");
+                        }
                         break;
                     case "domain":
                         // Args that tell us about targeting.

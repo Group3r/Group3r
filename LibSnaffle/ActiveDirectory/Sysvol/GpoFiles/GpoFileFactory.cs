@@ -24,6 +24,10 @@ namespace LibSnaffle.ActiveDirectory
             {
                 newFile = new IniGpoFile(filePath, info, logger);
             }
+            else if (string.Equals(info.Name.ToLower(), "psscripts.ini"))
+            {
+                newFile = new IniGpoFile(filePath, info, logger);
+            }
             else if (string.Equals(info.Name.ToLower(), "registry.pol"))
             {
                 newFile = new PolGpoFile(filePath, info, logger);

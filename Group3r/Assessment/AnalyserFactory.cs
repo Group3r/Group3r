@@ -13,41 +13,50 @@ namespace Group3r.Assessment
                 DataSourceSetting castSetting = (DataSourceSetting)setting;
                  return new DataSourceAnalyser(){ setting = castSetting };
             }
+            /*
             else if (setting.GetType() == typeof(DeviceSetting))
             {
                 DeviceSetting castSetting = (DeviceSetting)setting;
                 return new DeviceAnalyser() { setting = castSetting };
             }
+            */
             else if (setting.GetType() == typeof(DriveSetting))
             {
                 DriveSetting castSetting = (DriveSetting)setting;
                 return new DriveAnalyser() { setting = castSetting };
             }
+            /*
             else if (setting.GetType() == typeof(EnvVarSetting))
             {
                 EnvVarSetting castSetting = (EnvVarSetting)setting;
                 return new EnvVarAnalyser() { setting = castSetting };
             }
+            */
+            /*
             else if (setting.GetType() == typeof(EventAuditSetting))
             {
                 EventAuditSetting castSetting = (EventAuditSetting)setting;
                 return new EventAuditAnalyser() { setting = castSetting };
             }
+            */
             else if (setting.GetType() == typeof(FileSetting))
             {
                 FileSetting castSetting = (FileSetting)setting;
                 return new FileAnalyser() { setting = castSetting };
             }
+            /*
             else if (setting.GetType() == typeof(FolderSetting))
             {
                 FolderSetting castSetting = (FolderSetting)setting;
                 return new FolderAnalyser() { setting = castSetting };
             }
+            */
             else if (setting.GetType() == typeof(GroupSetting))
             {
                 GroupSetting castSetting = (GroupSetting)setting;
                 return new GroupAnalyser() { setting = castSetting };
             }
+            /*
             else if (setting.GetType() == typeof(IniFileSetting))
             {
                 IniFileSetting castSetting = (IniFileSetting)setting;
@@ -68,6 +77,7 @@ namespace Group3r.Assessment
                 NetworkShareSetting castSetting = (NetworkShareSetting)setting;
                 return new NetworkShareAnalyser() { setting = castSetting };
             }
+            */
             else if (setting.GetType() == typeof(NtServiceSetting))
             {
                 NtServiceSetting castSetting = (NtServiceSetting)setting;
