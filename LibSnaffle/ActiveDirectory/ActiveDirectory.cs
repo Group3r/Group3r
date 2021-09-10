@@ -6,8 +6,6 @@ using System.DirectoryServices.ActiveDirectory;
 using System.DirectoryServices.AccountManagement;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using LibSnaffle.Concurrency;
@@ -208,31 +206,172 @@ namespace LibSnaffle.ActiveDirectory
                     }
                     catch (Exception e)
                     {
-                        Mq.Error("Error Obtaining Packages from DC at IP " + dc + " " + e.ToString());
+                        Mq.Error("Error Obtaining Packages from DC " + dc + " " + e.ToString());
                     }
+                    // TODO move package enumeration to work more like link enumeration does
+                    
                     allDomainGpos.AddRange(gpos);
 
                     // as soon as one of these succeeds we can stop trying
+                    Gpos = allDomainGpos;
+                    try
+                    {
+                        EnumerateDomainGpoLinks(dc);
+                    }
+                    catch (Exception e)
+                    {
+                        Mq.Error("Failed to enumerate domain GPO links.");
+                        Mq.Trace(e.ToString());
+                    }
                     break;
                 }
                 catch (Exception e)
                 {
-                    Mq.Error("Error Obtaining GPOs from DC at IP " + dc + " " + e.ToString());
+                    Mq.Error("Error Obtaining GPOs from DC " + dc + " " + e.ToString());
                     continue;
                     //throw new ActiveDirectoryException("Error Obtaining GPOs from DC at IP " + dc, e);
                 }
             }
 
             // Ensure we actually got some data.
-            if (allDomainGpos.Count == 0)
+            if (Gpos.Count == 0)
             {
                 throw new ActiveDirectoryException("Something fucked out finding stuff in the domain. You must be holding it wrong.");
             }
 
-            Gpos = allDomainGpos;
-            Mq.Trace("Successfully got GPOs.");
+            Mq.Trace("Successfully got GPO data.");
         }
 
+        private void EnumerateDomainGpoLinks(string domainController)
+        {
+            // TODO add support for user defined creds here.
+            Dictionary<string, List<string>> gpoLinks = new Dictionary<string, List<string>>();
+
+            DirectoryEntry de = new DirectoryEntry("LDAP://" + domainController + "/RootDSE");
+
+            string domainDN = de.Properties["defaultNamingContext"].Value.ToString();
+
+            List<SearchResult> searchResults = new List<SearchResult>();
+
+            try
+            {
+                // first we gotta get sites so we need to be in the configuration naming context
+                using (DirectoryEntry confEntry = new DirectoryEntry("LDAP://" + domainController + "/CN=Sites,CN=Configuration," + domainDN))
+                {
+                    using (DirectorySearcher mySearcher = new DirectorySearcher(confEntry))
+                    {
+                        mySearcher.Filter = "(objectClass=site)";
+                        mySearcher.PropertiesToLoad.Add("gPLink");
+
+                        // No size limit, reads all objects
+                        mySearcher.SizeLimit = 0;
+
+                        // Read data in pages of 250 objects. Make sure this value is below the limit configured in your AD domain (if there is a limit)
+                        mySearcher.PageSize = 250;
+
+                        SearchResultCollection searchResultCollection = mySearcher.FindAll();
+                        foreach (SearchResult searchResult in searchResultCollection)
+                        {
+                            searchResults.Add(searchResult);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Mq.Error("Something went wrong enumerating links between GPOs and Sites." + e.ToString());
+            }
+
+            try
+            {
+                // then we're gonna get links to OUs, so we need to go back to our existing naming context
+                using (DirectoryEntry entry = new DirectoryEntry("LDAP://" + domainController))
+                {
+
+                    using (DirectorySearcher mySearcher = new DirectorySearcher(entry))
+                    {
+                        mySearcher.Filter = "(objectClass=organizationalUnit)";
+                        mySearcher.PropertiesToLoad.Add("gplink");
+
+
+                        // No size limit, reads all objects
+                        mySearcher.SizeLimit = 0;
+
+                        // Read data in pages of 250 objects. Make sure this value is below the limit configured in your AD domain (if there is a limit)
+                        mySearcher.PageSize = 250;
+
+                        SearchResultCollection searchResultCollection = mySearcher.FindAll();
+                        foreach (SearchResult searchResult in searchResultCollection)
+                        {
+                            searchResults.Add(searchResult);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Mq.Error("Something went wrong enumerating links between GPOs and OUs in the domain." + e.ToString());
+            }
+
+            foreach (SearchResult searchResult in searchResults)
+            {
+                try
+                {
+                    string adspath = (string)searchResult.Properties["adspath"][0];
+                    string linkedGpos = (string)searchResult.Properties["gplink"][0];
+
+                    var splitGpos = linkedGpos.Split(']', '[');
+
+                    foreach (string gpolink in splitGpos)
+                    {
+                        if (gpolink.StartsWith("LDAP"))
+                        {
+                            GPOLink gpoLinkResult = new GPOLink();
+                            //Split the GPLink value. The distinguishedname will be in the first part, and the status of the gplink in the second
+                            var splitLink = gpolink.Split(';');
+                            var distinguishedName = splitLink[0];
+                            distinguishedName =
+                                distinguishedName.Substring(distinguishedName.IndexOf("CN=", StringComparison.OrdinalIgnoreCase));
+
+                            var status = splitLink[1];
+
+                            switch (status)
+                            {
+                                case "0":
+                                    gpoLinkResult.LinkEnforced = "Enabled, Unenforced";
+                                    break;
+                                case "1":
+                                    gpoLinkResult.LinkEnforced = "Disabled, Unenforced";
+                                    break;
+                                case "2":
+                                    gpoLinkResult.LinkEnforced = "Disabled, Enforced";
+                                    break;
+                                case "3":
+                                    gpoLinkResult.LinkEnforced = "Enabled, Enforced";
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            //string linkedpolicy = distinguishedName.Split('{', '}')[1];
+
+                            gpoLinkResult.LinkPath = adspath;
+
+                            GPO gpo = this.Gpos.Where(g => g.Attributes.DistinguishedName.Equals(distinguishedName, StringComparison.OrdinalIgnoreCase)).First();
+                            gpo.Attributes.GpoLinks.Add(gpoLinkResult);
+                        }
+                        else
+                        {
+                            Mq.Trace("Unparsed GPO Link:" + gpolink);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Mq.Error("Something went wrong inserting GPO links into the GPO objects." + e.ToString());
+                }
+            }
+        }
         /// <summary>
         /// Queries a DCS via LDAP and downloads GPOs.
         /// </summary>

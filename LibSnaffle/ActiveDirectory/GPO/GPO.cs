@@ -31,8 +31,15 @@ namespace LibSnaffle.ActiveDirectory
         }
     }
 
+    public class GPOLink
+    {
+        public string LinkPath { get; set; }
+        public string LinkEnforced { get; set; }
+    }
+
     public class GPOAttributes
     {
+        public List<GPOLink> GpoLinks { get; set; } = new List<GPOLink>();
         public string AdsPath { get; set; }
         public string DisplayName { get; set; }
         public DateTime CreatedDate { get; set; }
@@ -47,6 +54,5 @@ namespace LibSnaffle.ActiveDirectory
         public string VersionNumber { get; set; }
         public bool ComputerPolicyEnabled { get; set; }
         public bool UserPolicyEnabled { get; set; }
-        public List<string> GPOLinks { get; set; }
     }
 }
