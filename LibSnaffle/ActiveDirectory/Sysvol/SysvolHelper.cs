@@ -35,7 +35,7 @@ namespace LibSnaffle.ActiveDirectory
 
         /**
           * Summary: Loads the sysvol over the network.
-          * Imports: string targetDomain, string targetDc, BlockingMq mq
+          * Imports: string targetDomain, BlockingMq mq
           * Exports: Sysvol
           */
         public Sysvol LoadSysvolOnlineByDomain(string targetDomain)

@@ -24,10 +24,11 @@ namespace LibSnaffle.ActiveDirectory
             this.Attributes.Uid = uid;
         }
 
-        public GPO(string uid, string pathInSysvol)
+        public GPO(string uid, string pathInSysvol, bool morphed)
         {
             this.Attributes.Uid = uid;
             this.Attributes.PathInSysvol = pathInSysvol;
+            this.Attributes.IsMorphedGPO = morphed;
         }
     }
 
@@ -39,6 +40,7 @@ namespace LibSnaffle.ActiveDirectory
 
     public class GPOAttributes
     {
+        public bool IsMorphedGPO { get; set; } = false;
         public List<GPOLink> GpoLinks { get; set; } = new List<GPOLink>();
         public string AdsPath { get; set; }
         public string DisplayName { get; set; }

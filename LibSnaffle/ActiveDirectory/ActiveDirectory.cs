@@ -130,7 +130,7 @@ namespace LibSnaffle.ActiveDirectory
                 Mq.Trace("Loading SYSVOL by domain " + CurrentDomain.Name);
                 Sysvol = helper.LoadSysvolOnlineByDomain(CurrentDomain.Name);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Mq.Trace("Loading SYSVOL by DC " + DomainControllerIPs[0]);
                 Sysvol = helper.LoadSysvolOnlineByDc(CurrentDomain.Name, DomainControllerIPs[0]);

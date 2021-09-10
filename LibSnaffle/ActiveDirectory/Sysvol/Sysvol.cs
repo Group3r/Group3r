@@ -73,12 +73,16 @@ namespace LibSnaffle.ActiveDirectory
             foreach (string dir in Directory.GetDirectories(sysvolPath))
             {
                 Logger.Trace("Looking for policies dirs in " + dir);
-                if (dir.ToLower().EndsWith("policies"))
+
+                if (dir.ToLower().Contains("policies"))
                 {
+                    if (dir.ToLower().Contains("ntfrs"))
+                    {
+                        Logger.Trace("Found a morphed policies directory: " + dir);
+                    }
                     Logger.Trace("Found policies dir in " + dir);
                     foreach (string subdir in Directory.GetDirectories(dir))
                     {
-
                         try
                         {
                             Guid.Parse(Path.GetFileName(subdir));
@@ -91,8 +95,11 @@ namespace LibSnaffle.ActiveDirectory
                             //Not a guid, not a GPO.
                         }
                     }
-                    return gpoDirs;
                 }
+            }
+            if (gpoDirs.Count >= 0)
+            {
+                return gpoDirs;
             }
             throw new SysvolException($"No GPOs found in '{sysvolPath}'.");
         }
@@ -118,7 +125,10 @@ namespace LibSnaffle.ActiveDirectory
             foreach (string gpoDir in GpoDirs)
             {
                 Logger.Trace("Looking for GP Setting files in " + gpoDir);
-                GPO gpo = new GPO(Path.GetFileName(gpoDir), gpoDir);
+
+                GPO morphedGpo = new GPO(Path.GetFileName(gpoDir), gpoDir, true);
+                GPO gpo = new GPO(Path.GetFileName(gpoDir), gpoDir, false);
+
                 // For each file in PathInSysvol and all subdirectories.
                 List<string> filesInGpo = new List<string>(fe.ListAllFiles(gpoDir));
                 foreach (string file in filesInGpo)
@@ -130,8 +140,16 @@ namespace LibSnaffle.ActiveDirectory
                         GpoFile gpoFile = GpoFileFactory.GetFile(file, Logger);
                         gpoFile.Parse();
                         // File only gets added if it is successfully parsed.
-                        gpo.GpoFiles.Add(file);
-                        sortSettings(gpo, gpoFile);
+                        if (file.ToLower().Contains("ntfrs"))
+                        {
+                            morphedGpo.GpoFiles.Add(file);
+                            sortSettings(morphedGpo, gpoFile);
+                        }
+                        else
+                        {
+                            gpo.GpoFiles.Add(file);
+                            sortSettings(gpo, gpoFile);
+                        }
                     }
                     catch (FileFactoryException e)
                     {
@@ -149,7 +167,14 @@ namespace LibSnaffle.ActiveDirectory
                         }
                     }
                 }
-                gpos.Add(gpo);
+                if (gpo.Settings.Count >= 1)
+                {
+                    gpos.Add(gpo);
+                }
+                if (morphedGpo.Settings.Count >= 1)
+                {
+                    gpos.Add(morphedGpo);
+                }
                 // TODO: Handle other file IO errors here.
             }
             return gpos;

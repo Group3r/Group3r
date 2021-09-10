@@ -6,6 +6,9 @@ namespace LibSnaffle.ActiveDirectory
 {
     public class SchedTaskParser
     {
+
+        // TODO - STILL NOT FINISHED
+
         public SchedTaskSetting ParseSchedTask(SchedTaskType taskType, XmlNode schedTask)
         {
             SchedTaskSetting sts = new SchedTaskSetting();
@@ -64,10 +67,12 @@ namespace LibSnaffle.ActiveDirectory
             }
 
             // runas details
+            sts.Principals = new List<SchedTaskPrincipal>();
             SchedTaskPrincipal stPrincipal = new SchedTaskPrincipal();
             stPrincipal.UserId = stPropAtts?["runAs"]?.Value;
             stPrincipal.LogonType = stPropAtts?["logonType"]?.Value;
             stPrincipal.Cpassword = stPropAtts?["cpassword"]?.Value;
+            sts.Principals.Add(stPrincipal);
             bool enabled;
             if (Boolean.TryParse(stPropAtts?["enabled"]?.Value, out enabled))
             {

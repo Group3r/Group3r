@@ -85,7 +85,6 @@ namespace LibSnaffle.ActiveDirectory
         ImmediateTaskV2
     }
 
-    /*
     public class TaskTrigger
     {
         public string Type { get; set; }
@@ -97,5 +96,5 @@ namespace LibSnaffle.ActiveDirectory
         public bool RepeatTask { get; set; }
         public bool Interval { get; set; }
     }
-    */
+    
 }

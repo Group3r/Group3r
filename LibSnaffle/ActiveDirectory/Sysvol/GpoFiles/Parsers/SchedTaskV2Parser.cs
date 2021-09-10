@@ -45,6 +45,7 @@ namespace LibSnaffle.ActiveDirectory
             sts.Description1 = GetXmlValueSafe(regInfo, "Description");
             // Principals
             XmlNodeList principals = stProperties.SelectNodes("Task/Principals/Principal");
+            sts.Principals = new List<SchedTaskPrincipal>();
             foreach (XmlNode principal in principals)
             {
                 SchedTaskPrincipal stPrincipal = new SchedTaskPrincipal();
@@ -52,6 +53,8 @@ namespace LibSnaffle.ActiveDirectory
                 stPrincipal.UserId = GetXmlValueSafe(principal, "UserId");
                 stPrincipal.LogonType = GetXmlValueSafe(principal, "LogonType");
                 stPrincipal.RunLevel = GetXmlValueSafe(principal, "RunLevel");
+                stPrincipal.Cpassword = GetXmlValueSafe(principal, "Cpassword");
+                sts.Principals.Add(stPrincipal);
             }
             //Settings
               // Idle Settings
