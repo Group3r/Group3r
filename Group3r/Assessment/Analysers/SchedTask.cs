@@ -53,179 +53,136 @@ namespace Group3r.Assessment.Analysers
             {
                 foreach (SchedTaskAction action in setting.Actions)
                 {
-
-                }
-            }
-
-            /*
-            // handle the entries that are specific to some task types but not others
-            // both taskv2 and immediatetaskv2 have the same rough structure
-            if (schedTaskType.EndsWith("V2"))
-            {
-                assessedScheduledTask.Add("Action",
-                    JUtil.GetActionString(scheduledTask["Properties"]["@action"].ToString()));
-                assessedScheduledTask.Add("Description", JUtil.GetSafeString(scheduledTask, "@desc"));
-                assessedScheduledTask.Add("Enabled",
-                    JUtil.GetSafeString(scheduledTask["Properties"]["Task"]["Settings"], "Enabled"));
-                // just adding the Triggers info raw, there are way too many options.
-                assessedScheduledTask.Add("Triggers", scheduledTask["Properties"]["Task"]["Triggers"]);
-
-                if (scheduledTask["Properties"]["Task"]["Actions"]["ShowMessage"] != null)
-                {
-                    assessedScheduledTask.Add(
-                        new JProperty("Action - Show Message", new JObject(
-                                new JProperty("Title",
-                                    JUtil.GetSafeString(scheduledTask["Properties"]["Task"]["Actions"]["ShowMessage"],
-                                        "Title")),
-                                new JProperty("Body",
-                                    JUtil.GetSafeString(scheduledTask["Properties"]["Task"]["Actions"]["ShowMessage"],
-                                        "Body"))
-                            )
-                        )
-                    );
-                }
-
-                if (scheduledTask["Properties"]["Task"]["Actions"]["Exec"] != null)
-                {
-                    // do we have an array of Command?
-                    if (scheduledTask["Properties"]["Task"]["Actions"]["Exec"].Type == JTokenType.Array)
+                    if (action.GetType() == typeof(SchedTaskExecAction))
                     {
-                        int i = 1;
-                        foreach (JToken item in scheduledTask["Properties"]["Task"]["Actions"]["Exec"])
+                        PathAnalyser pathAnalyser = new PathAnalyser(assessmentOptions);
+
+                        SchedTaskExecAction schedTaskExecAction = (SchedTaskExecAction)action;
+
+
+                        if (schedTaskExecAction.WorkingDir != null)
                         {
-                            assessedScheduledTask.Add(ExtractCommandFromScheduledTask(item, ref interestLevel, i));
-                            i++;
+                            if (schedTaskExecAction.WorkingDir.StartsWith("\\\\"))
+                            {
+                                PathFinding pathFinding = pathAnalyser.AnalysePath(schedTaskExecAction.WorkingDir);
+
+                                // schedtask uses a startin directory on a network share, we need to look at that.
+
+                                if (pathFinding.DirectoryExists && pathFinding.DirectoryWritable)
+                                {
+                                    if ((int)this.MinTriage < 3)
+                                    {
+                                        findings.Add(new GpoFinding()
+                                        {
+                                            FindingReason = "Scheduled task exec action is configured to use a working directory that you can write to.",
+                                            FindingDetail = "You might be able to pull some DLL sideloading shenanigans in " + schedTaskExecAction.WorkingDir,
+                                            Triage = Constants.Triage.Yellow
+                                        });
+                                    }
+                                }
+                                else if (!pathFinding.FileExists && !pathFinding.DirectoryExists && !String.IsNullOrWhiteSpace(pathFinding.ParentDirectoryExists) && pathFinding.ParentDirectoryWritable)
+                                {
+                                    if ((int)this.MinTriage < 3)
+                                    {
+                                        findings.Add(new GpoFinding()
+                                        {
+                                            FindingReason = "Scheduled task exec action is configured to use a working directory that doesn't exist, but one of its parent directories DOES, and you can write to it.",
+                                            FindingDetail = "You might be able to pull some DLL sideloading shenanigans in " + schedTaskExecAction.WorkingDir + " if you create it.",
+                                            Triage = Constants.Triage.Yellow
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                        
+
+                        if (!String.IsNullOrWhiteSpace(schedTaskExecAction.Args))
+                        {
+                            if (schedTaskExecAction.Args.Contains("pass") || schedTaskExecAction.Args.Contains("-p") || schedTaskExecAction.Args.Contains("/p"))
+                            {
+                                if ((int)this.MinTriage < 3)
+                                {
+                                    findings.Add(new GpoFinding()
+                                    {
+                                        FindingReason = "Scheduled Task exec action has an arguments setting that looks like it might have a password in it?",
+                                        FindingDetail = "Arguments were: " + schedTaskExecAction.Args,
+                                        Triage = Constants.Triage.Yellow
+                                    });
+                                }
+                            }
+                        }
+                        
+
+                        if (schedTaskExecAction.Command != null)
+                        {
+                            if (schedTaskExecAction.Command.StartsWith("\\\\"))
+                            {
+                                PathFinding pathFinding = pathAnalyser.AnalysePath(schedTaskExecAction.Command);
+
+                                if (pathFinding.FileExists && pathFinding.FileWritable)
+                                {
+                                    if ((int)this.MinTriage < 4)
+                                    {
+                                        findings.Add(new GpoFinding()
+                                        {
+                                            FindingReason = "Scheduled Task execute action points at a file that you can modify.",
+                                            FindingDetail = "It points to " + schedTaskExecAction.Command + ", so maybe see what happens if you modify that file.",
+                                            Triage = Constants.Triage.Red
+                                        });
+                                    }
+                                }
+                                else if (!pathFinding.FileExists && pathFinding.DirectoryExists && pathFinding.DirectoryWritable)
+                                {
+                                    if ((int)this.MinTriage < 4)
+                                    {
+                                        findings.Add(new GpoFinding()
+                                        {
+                                            FindingReason = "Scheduled Task execute action points to a file that doesn't exist, in a directory that you can write to.",
+                                            FindingDetail = "It points to " + schedTaskExecAction.Command + " so maybe see what happens if you create that file.",
+                                            Triage = Constants.Triage.Red
+                                        });
+                                    }
+                                }
+                                else if (!pathFinding.FileExists && !pathFinding.DirectoryExists && !String.IsNullOrWhiteSpace(pathFinding.ParentDirectoryExists) && pathFinding.ParentDirectoryWritable)
+                                {
+                                    if ((int)this.MinTriage < 4)
+                                    {
+                                        findings.Add(new GpoFinding()
+                                        {
+                                            FindingReason = "Scheduled Task execute action points to a file that doesn't exist, in a directory that ALSO doesn't exist, but there's a parent directory that DOES exist that you can write to.",
+                                            FindingDetail = "It points to " + schedTaskExecAction.Command + " so maybe see what happens if you create that file.",
+                                            Triage = Constants.Triage.Red
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if (action.GetType() == typeof(SchedTaskEmailAction))
+                    {
+                        SchedTaskEmailAction schedTaskEmailAction = (SchedTaskEmailAction)action;
+
+                        if (schedTaskEmailAction.Attachments != null)
+                        {
+                            if (schedTaskEmailAction.Attachments.Count >=1)
+                            {
+                                findings.Add(new GpoFinding()
+                                {
+                                    FindingReason = "Scheduled Task is emailing attachments. Could be interesting.",
+                                    FindingDetail = "Check out " + schedTaskEmailAction.Attachments,
+                                    Triage = Constants.Triage.Green
+                                });
+                            }
                         }
                     }
                     else
                     {
-                        // or just one?
-                        assessedScheduledTask.Add(ExtractCommandFromScheduledTask(scheduledTask["Properties"]["Task"]["Actions"]["Exec"], ref interestLevel));
+                        Mq.Error("Unknown Scheduled Task action type.");
                     }
                 }
-
-                if (scheduledTask["Properties"]["Task"]["Actions"]["SendEmail"] != null)
-                {
-                    string attachmentString =
-                        JUtil.GetSafeString(
-                            scheduledTask["Properties"]["Task"]["Actions"]["SendEmail"]["Attachments"], "File");
-
-                    JObject attachment = new JObject(new JProperty("Attachment", attachmentString));
-
-                    if (GlobalVar.OnlineChecks)
-                    {
-                        attachment = FileSystem.InvestigateString(attachmentString);
-                        if (attachment["InterestLevel"] != null)
-                        {
-                            int attachmentInterest = (int) attachment["InterestLevel"];
-                            interestLevel = interestLevel + attachmentInterest;
-                        }
-                    }
-
-                    assessedScheduledTask.Add(
-                        new JProperty("Action - Send Email", new JObject(
-                                new JProperty("From",
-                                    JUtil.GetSafeString(scheduledTask["Properties"]["Task"]["Actions"]["SendEmail"],
-                                        "From")),
-                                new JProperty("To",
-                                    JUtil.GetSafeString(scheduledTask["Properties"]["Task"]["Actions"]["SendEmail"],
-                                        "To")),
-                                new JProperty("Subject",
-                                    JUtil.GetSafeString(scheduledTask["Properties"]["Task"]["Actions"]["SendEmail"],
-                                        "Subject")),
-                                new JProperty("Body",
-                                    JUtil.GetSafeString(scheduledTask["Properties"]["Task"]["Actions"]["SendEmail"],
-                                        "Body")),
-                                new JProperty("Header Fields",
-                                    JUtil.GetSafeString(scheduledTask["Properties"]["Task"]["Actions"]["SendEmail"],
-                                        "HeaderFields")),
-                                new JProperty("Attachment", attachment),
-                                new JProperty("Server",
-                                    JUtil.GetSafeString(scheduledTask["Properties"]["Task"]["Actions"]["SendEmail"],
-                                        "Server"))
-                            )
-                        )
-                    );
-                }
             }
 
-            if (schedTaskType == "Task")
-            {
-                string commandString = JUtil.GetSafeString(scheduledTask["Properties"], "@appname");
-                string argumentsString = JUtil.GetSafeString(scheduledTask["Properties"], "@args");
-                JObject command = new JObject(new JProperty("Command", commandString));
-                JObject arguments = new JObject(new JProperty("Arguments", argumentsString));
-                
-                command = FileSystem.InvestigatePath(commandString);
-                arguments = FileSystem.InvestigateString(argumentsString);
-
-                if ((arguments != null) && (arguments["InterestLevel"] != null))
-                {
-                    int argumentInterest = (int) arguments["InterestLevel"];
-                    interestLevel = interestLevel + argumentInterest;
-                }
-
-                if ((command != null) && (command["InterestLevel"] != null))
-                {
-                    int commandInterest = (int) command["InterestLevel"];
-                    interestLevel = interestLevel + commandInterest;
-                }
-                
-
-                assessedScheduledTask.Add("Action",
-                    JUtil.GetActionString(scheduledTask["Properties"]["@action"].ToString()));
-                assessedScheduledTask.Add("Command", command);
-                assessedScheduledTask.Add("Args", arguments);
-                JObject assessedWorkingDir =
-                    FileSystem.InvestigatePath(JUtil.GetSafeString(scheduledTask["Properties"], "@startIn"));
-                if ((assessedWorkingDir != null) && assessedWorkingDir.HasValues)
-                {
-                    assessedScheduledTask.Add("Working Dir", assessedWorkingDir);
-                }
-                
-                if (scheduledTask["Properties"]["Triggers"] != null)
-                {
-                    assessedScheduledTask.Add("Triggers", scheduledTask["Properties"]["Triggers"]);
-                }
-            }
-
-            if (schedTaskType == "ImmediateTask")
-            {
-                string argumentsString = JUtil.GetSafeString(scheduledTask["Properties"], "@args");
-                string commandString = JUtil.GetSafeString(scheduledTask["Properties"], "@appName");
-                JObject command = new JObject(new JProperty("Command", commandString));
-                JObject arguments = new JObject(new JProperty("Arguments", argumentsString));
-
-                
-                command = FileSystem.InvestigatePath(commandString);
-                arguments = FileSystem.InvestigateString(argumentsString);
-
-                if ((arguments != null) && (arguments["InterestLevel"] != null))
-                {
-                    int argumentInterest = (int) arguments["InterestLevel"];
-                    interestLevel = interestLevel + argumentInterest;
-                }
-
-                if ((command != null) && (command["InterestLevel"] != null))
-                {
-                    int commandInterest = (int) command["InterestLevel"];
-                    interestLevel = interestLevel + commandInterest;
-                }
-                
-
-                assessedScheduledTask.Add("Command", command);
-                assessedScheduledTask.Add("Arguments", arguments);
-
-                JObject assessedWorkingDir =
-                    FileSystem.InvestigatePath(JUtil.GetSafeString(scheduledTask["Properties"], "@startIn"));
-                if ((assessedWorkingDir != null) && assessedWorkingDir.HasValues)
-                {
-                    assessedScheduledTask.Add("Working Dir", assessedWorkingDir);
-                }
-
-                assessedScheduledTask.Add("Comment", JUtil.GetSafeString(scheduledTask["Properties"], "@comment"));
-            }
-             */
+            SettingResult.Findings = findings;
             SettingResult.Setting = setting;
 
             return SettingResult;
