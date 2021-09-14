@@ -38,7 +38,7 @@ namespace Group3r.Options
             //parser.Arguments.Add(new ValueArgument<string>('u', "username", "Username to use for LDAP operations."));
             parser.Arguments.Add(new ValueArgument<string>('v', "verobsity", "Sets verobsity level. Do you want degubs?"));
             parser.Arguments.Add(new SwitchArgument('r', "currentonly", "Only checks current policies, ignoring stuff in those Policies_NTFRS_* directories that result from replication failures.", false));
-            parser.Arguments.Add(new ValueArgument<string>('x', "printer", "Type of output to display. Options are none, minimal, or json."));
+            parser.Arguments.Add(new ValueArgument<string>('x', "printer", "Type of output to display. Options are none, nice, minimal, or json."));
             parser.Arguments.Add(new SwitchArgument('w', "findingsonly", "Only displays settings that had an associated finding.", false));
             parser.Arguments.Add(new ValueArgument<int>('a', "mintriage", "Minimum severity of findings to show where 1 is lowest severity and 4 is highest."));
             return parser;

@@ -31,7 +31,7 @@ namespace Group3r.Options
         public char Separator { get; set; } = ' ';
         public bool LogToConsole { get; set; } = true;
         public string LogLevelString { get; set; } = "info";
-        public string PrinterType { get; set; } = "nice";
+        public string PrinterType { get; set; } = "json";
         public bool FindingsOnly { get; set; } = false;
 
         public AssessmentOptions.AssessmentOptions AssessmentOptions { get; set; }
