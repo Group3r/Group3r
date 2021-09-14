@@ -28,7 +28,7 @@ namespace Group3r.View
                     processor = new JsonGpoPrinter();
                     break;
                 default:
-                    processor = new JsonGpoPrinter();
+                    processor = new NiceGpoPrinter();
                     break;
             }
             return processor;

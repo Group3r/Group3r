@@ -101,6 +101,7 @@
     <Compile Include="Assessment\Analysers\User.cs" />
     <Compile Include="Assessment\GpoFinding.cs" />
     <Compile Include="Assessment\GpoResult.cs" />
+    <Compile Include="View\NiceGpoPrinter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assessment\PathAnalyser.cs" />
