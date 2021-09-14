@@ -30,12 +30,12 @@ namespace Group3r.Options
             parser.Arguments.Add(new SwitchArgument('h', "help", "Displays this help.", false));
             parser.Arguments.Add(new SwitchArgument('o', "offline", "Disables checks that require LDAP comms with a DC or SMB comms with file shares found in policy settings. Requires that you define a value for -s.", false));
             parser.Arguments.Add(new ValueArgument<string>('f', "outfile", "Path for output file. You probably want this if you're not using -s."));
-            parser.Arguments.Add(new ValueArgument<string>('p', "password", "Password to use for LDAP operations."));
-            parser.Arguments.Add(new SwitchArgument('q', "quiet", "Enables quiet mode. Turns off progress updates.", false));
+            //parser.Arguments.Add(new ValueArgument<string>('p', "password", "Password to use for LDAP operations."));
+            //parser.Arguments.Add(new SwitchArgument('q', "quiet", "Enables quiet mode. Turns off progress updates.", false));
             parser.Arguments.Add(new SwitchArgument('s', "stdout", "Enables outputting results to stdout as soon as they're found. You probably want this if you're not using -o.", false));
             parser.Arguments.Add(new ValueArgument<string>('y', "sysvol", "Set the path to a domain SYSVOL directory."));
             parser.Arguments.Add(new ValueArgument<int>('t', "threads", "Max number of threads. Defaults to 10."));
-            parser.Arguments.Add(new ValueArgument<string>('u', "username", "Username to use for LDAP operations."));
+            //parser.Arguments.Add(new ValueArgument<string>('u', "username", "Username to use for LDAP operations."));
             parser.Arguments.Add(new ValueArgument<string>('v', "verobsity", "Sets verobsity level. Do you want degubs?"));
             parser.Arguments.Add(new SwitchArgument('r', "currentonly", "Only checks current policies, ignoring stuff in those Policies_NTFRS_* directories that result from replication failures.", false));
             parser.Arguments.Add(new ValueArgument<string>('x', "printer", "Type of output to display. Options are none, minimal, or json."));
@@ -141,6 +141,7 @@ namespace Group3r.Options
                             mq.Degub("Target domain is " + value);
                         }
                         break;
+                        /*
                     case "username":
                         if (!String.IsNullOrEmpty(value))
                         {
@@ -148,6 +149,7 @@ namespace Group3r.Options
                             mq.Degub("Username for LDAP is " + value);
                         }
                         break;
+                        
                     case "password":
                         if (!String.IsNullOrEmpty(value))
                         {
@@ -158,6 +160,7 @@ namespace Group3r.Options
                     case "quiet":
                         options.QuietMode = true;
                         break;
+                        */
                     case "dc":
                         options.TargetDc = value;
                         mq.Degub("Target DC is " + value);
