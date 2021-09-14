@@ -1,0 +1,31 @@
+name: BuildAndRelease
+
+on: [push]
+
+jobs:
+
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v1
+      name: Checkout Code
+
+    - name: Setup MSBuild Path
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1
+
+    - name: Restore NuGet Packages
+      run: nuget restore Group3r.sln
+
+    - name: Build
+      run: msbuild Group3r.sln /p:Configuration=Release
+
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: "D:\\a\\Group3r\\Group3r\\Group3r\\bin\\Release\\Group3r.exe"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
