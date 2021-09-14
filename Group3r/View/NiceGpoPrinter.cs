@@ -90,7 +90,7 @@ namespace Group3r.View
 
             foreach (SettingResult sr in gpoResult.SettingResults)
             {
-                if (sr.Setting.GetType() == typeof(DataSourceSetting){
+                if (sr.Setting.GetType() == typeof(DataSourceSetting)){
 
                 }
 
