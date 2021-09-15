@@ -35,23 +35,12 @@ namespace Group3r
                 Task groupConThread = Task.Factory.StartNew(() => { controller.Execute(); });
                 HandleForever(options, mq);
             }
-            catch (ActiveDirectoryException e)
-            {
-                mq.Error(e.Message);
-            }
-            catch (ArgumentException e)
-            {
-                mq.Error(e.Message);
-            }
-            // TODO: eliminate generic exception.
-            // ALL fatal exceptions should be caught here.
             catch (Exception e)
             {
-                mq.Error(e.Message);
-            }
-            finally
-            {
+                Console.WriteLine("Unhandled exception in Group3rRunner. Please report the following error directly to l0ss or file an issue in GitHub:");
+                Console.WriteLine(e.ToString());
                 DumpQueue(mq);
+                Environment.Exit(1);
             }
         }
 

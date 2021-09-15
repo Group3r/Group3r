@@ -3,23 +3,15 @@ using System.Diagnostics;
 using System.Threading;
 using System.Timers;
 using Timer = System.Timers.Timer;
-using System.IO; 
 using LibSnaffle.Concurrency;
 using Group3r.Options;
 using LibSnaffle.ActiveDirectory;
 using System.DirectoryServices.ActiveDirectory;
 using LibSnaffle.Errors;
 using Group3r.Concurrency;
-using Group3r.View;
 using System.Collections.Generic;
 using Group3r.Assessment;
 using Group3r.Assessment.Analysers;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using LibSnaffle.FileDiscovery;
-using LibSnaffle.Classifiers;
-using LibSnaffle.Classifiers.Results;
 using System.Security.Principal;
 
 namespace Group3r
@@ -40,6 +32,7 @@ namespace Group3r
             Mq = mq;
 
             GpoTaskScheduler = new BlockingStaticTaskScheduler(Options.MaxSysvolThreads, Options.MaxSysvolQueue);
+            // TODO is this task scheduler still needed?
             SnafflerTaskScheduler = new BlockingStaticTaskScheduler(50, 0);
         }
 
@@ -78,20 +71,8 @@ namespace Group3r
             }
             else
             {
-                Mq.Trace("getting DirectoryContext");
-                DirectoryContext context = getDirectoryContext(Options);
                 Mq.Trace("building ActiveDirectory");
-                ad = new ActiveDirectory(Mq, context);
-
-                if (Options.TargetDc == null)
-                {
-                    Mq.Trace("Getting DCs");
-                    ad.EnumerateDomainControllers();
-                }
-                else
-                {
-                    ad.TargetDC = Options.TargetDc;
-                }
+                ad = new ActiveDirectory(Mq, Options.TargetDomain, Options.TargetDc);
                 
                 Mq.Trace("Enumerating current user's name and group memberships.");
                 if (Options.AssessmentOptions.TargetTrustees == null)
@@ -126,29 +107,6 @@ namespace Group3r
             Mq.Finish();
         }
 
-        private DirectoryContext getDirectoryContext(GrouperOptions options)
-        {
-            DirectoryContext context = null;
-
-            try
-            {
-                if (!string.IsNullOrEmpty(options.TargetDomain))
-                {
-                    context = new DirectoryContext(DirectoryContextType.Domain, options.TargetDomain);
-                }
-                else // Then they are both null
-                {
-                    context = new DirectoryContext(DirectoryContextType.Domain, Domain.GetCurrentDomain().Name);
-                    options.TargetDomain = Domain.GetCurrentDomain().Name;
-                }
-            }
-            // TODO: tidy up generic exception.
-            catch (Exception e)
-            {
-                throw new ActiveDirectoryException("Problem figuring out DirectoryContext, you might need to define manually with -d and/or -c.", e);
-            }
-            return context;
-        }
 
         /**
          * Summary: Enqueues tasks to analyse GPOs.

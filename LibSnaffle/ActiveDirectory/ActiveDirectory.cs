@@ -57,11 +57,13 @@ namespace LibSnaffle.ActiveDirectory
         /// Stores a DomainControllerCollection of all DCs in the domain.
         /// </summary>
         public DomainControllerCollection DomainControllers { get; set; }
+        public List<String> DomainControllerNames { get; set; } = new List<string>();
 
         /// <summary>
         /// Specifically targeted domain controller
         /// </summary>
         public string TargetDC { get; set; }
+        public string TargetDomain { get; set; }
 
         /// <summary>
         /// Stores a List of all DC IPs in the domain.
@@ -93,26 +95,80 @@ namespace LibSnaffle.ActiveDirectory
         /// </remarks>
         /// <param name="context"></param>
         /// <param name="fullCollection"></param>
-        public ActiveDirectory(BlockingMq mq, DirectoryContext context, bool fullCollection = false)
+        public ActiveDirectory(BlockingMq mq, string targetDomain = null, string targetDc = null)
         {
             this.Mq = mq;
+            this.TargetDC = targetDc;
+            this.TargetDomain = targetDomain;
 
             try
             {
-                Context = context;
-                CurrentDomain = Domain.GetDomain(context);
-                CurrentForest = CurrentDomain.Forest;
-                if (fullCollection == true)
-                {
-                    EnumerateDomainControllers();
-                    EnumerateComputers();
-                    EnumerateUsers();
-                    ObtainDomainGpos();
-                }
+                SetDirectoryContext();
             }
             catch (ActiveDirectoryOperationException e)
             {
-                throw new ActiveDirectoryException("Unable to load AD", e);
+                throw new ActiveDirectoryException("Unable to talk to AD. ", e);
+            }
+        }
+
+        private void SetDirectoryContext()
+        {            
+            try
+            {
+                // target dc set, no target domain set
+                if ((!string.IsNullOrEmpty(this.TargetDC)) && (string.IsNullOrEmpty(this.TargetDomain)))
+                {
+                    Mq.Trace("Target DC specified: " + this.TargetDC + ", using it for DirectoryContext.");
+                    this.Context = new DirectoryContext(DirectoryContextType.Domain, TargetDC);
+                    Mq.Trace("Adding " + this.TargetDC + " to ActiveDirectory.DomainControllerNames.");
+                    DomainControllerNames.Add(this.TargetDC);
+                    Mq.Trace("Testing domain connectivity...");
+                    this.CurrentDomain = Domain.GetDomain(Context);
+                    this.CurrentForest = CurrentDomain.Forest;
+                    Mq.Trace("Successfully queried the " + this.CurrentDomain.Name + " domain. Hope that's what you had in mind...");
+                }
+                // target domain set, no target dc set
+                else if ((!string.IsNullOrEmpty(this.TargetDomain)) && (string.IsNullOrEmpty(this.TargetDC)))
+                {
+                    Mq.Trace("Target domain specified: " + this.TargetDomain + ", using it for DirectoryContext.");
+                    this.Context = new DirectoryContext(DirectoryContextType.Domain, TargetDomain);
+                    Mq.Trace("Testing domain connectivity...");
+                    this.CurrentDomain = Domain.GetDomain(Context);
+                    this.CurrentForest = CurrentDomain.Forest;
+                    Mq.Trace("Successfully queried the " + this.CurrentDomain.Name + " domain. Hope that's what you had in mind...");
+                }
+                // target domain and dc set
+                else if ((!string.IsNullOrEmpty(this.TargetDomain)) && (!string.IsNullOrEmpty(this.TargetDC)))
+                {
+                    Mq.Trace("Target DC and Domain specified: " + this.TargetDC + ", using DC for DirectoryContext.");
+                    this.Context = new DirectoryContext(DirectoryContextType.Domain, TargetDC);
+                    Mq.Trace("Adding " + this.TargetDC + " to ActiveDirectory.DomainControllerNames.");
+                    DomainControllerNames.Add(this.TargetDC);
+                    Mq.Trace("Testing domain connectivity...");
+                    this.CurrentDomain = Domain.GetDomain(Context);
+                    this.CurrentForest = CurrentDomain.Forest;
+                    Mq.Trace("Successfully queried the " + this.CurrentDomain.Name + " domain. Hope that's what you had in mind...");
+                }
+                // no target DC or domain set
+                else
+                {
+                    Mq.Trace("Getting current domain from user context.");
+                    this.CurrentDomain = Domain.GetCurrentDomain();
+                    this.TargetDomain = this.CurrentDomain.Name;
+                    Mq.Trace("Current domain is " + this.CurrentDomain.Name + " using it for DirectoryContext.");
+                    this.Context = new DirectoryContext(DirectoryContextType.Domain, this.CurrentDomain.Name);
+                    Mq.Trace("Using domain name as DC name for future operations.");
+                    DomainControllerNames.Add(TargetDomain);
+                    this.TargetDC = TargetDomain;
+                    this.CurrentDomain = Domain.GetDomain(Context);
+                    this.CurrentForest = CurrentDomain.Forest;
+                    Mq.Trace("Successfully queried the " + this.CurrentDomain.Name + " domain. Hope that's what you had in mind...");
+                }
+            }
+            // TODO: tidy up generic exception.
+            catch (Exception e)
+            {
+                throw new ActiveDirectoryException("Problem figuring out DirectoryContext and/or DCs, you might need to fix your DNS, or define manually with -d and/or -c.", e);
             }
         }
 
@@ -148,25 +204,6 @@ namespace LibSnaffle.ActiveDirectory
         }
 
         /// <summary>
-        /// Enumerates DCs into the AD object.
-        /// </summary>
-        /// <returns>
-        /// DomainControllerCollection.
-        /// </returns>
-        public void EnumerateDomainControllers()
-        {
-            try
-            {
-                DomainControllers = DomainController.FindAll(Context);
-            }
-            catch (Exception e)
-            {
-                throw new ActiveDirectoryException("Something went wrong trying to find domain controllers", e);
-            }
-
-        }
-
-        /// <summary>
         /// Iterates over each DC trying to pull GPOs until it finds one that works, then stops.
         /// </summary>
         /// <param name="dcs">Collection of DCs</param>
@@ -177,61 +214,39 @@ namespace LibSnaffle.ActiveDirectory
         {
             List<GPO> allDomainGpos = new List<GPO>();
 
-            Mq.Trace("Testing DC Connectivity");
-
-            List<string> dcs = new List<string>();
-
-            if (TargetDC != null)
+            try
             {
-                dcs.Add(TargetDC);
-            }
-            else
-            {
-                foreach (DomainController domainController in DomainControllers)
-                {
-                    dcs.Add(domainController.Name);
-                }
-            }
-
-            foreach (string dc in dcs)
-            {
+                Mq.Trace("Trying to enumerate GPOs from " + TargetDC);
+                List<GPO> gpos = EnumerateDomainGposFromDC();
                 try
                 {
-                    Mq.Trace("Trying to enumerate GPOs from " + dc);
-                    List<GPO> gpos = EnumerateDomainGposFromDC(dc);
-                    try
-                    {
-                        Mq.Trace("Trying to enumerate Packages from " + dc);
-                        EnumerateGpoPackages(dc, gpos);
-                    }
-                    catch (Exception e)
-                    {
-                        Mq.Error("Error Obtaining Packages from DC " + dc + " " + e.ToString());
-                    }
-                    // TODO move package enumeration to work more like link enumeration does
-                    
-                    allDomainGpos.AddRange(gpos);
-
-                    // as soon as one of these succeeds we can stop trying
-                    Gpos = allDomainGpos;
-                    try
-                    {
-                        EnumerateDomainGpoLinks(dc);
-                    }
-                    catch (Exception e)
-                    {
-                        Mq.Error("Failed to enumerate domain GPO links.");
-                        Mq.Trace(e.ToString());
-                    }
-                    break;
+                    Mq.Trace("Trying to enumerate Packages from " + TargetDC);
+                    EnumerateGpoPackages(gpos);
                 }
                 catch (Exception e)
                 {
-                    Mq.Error("Error Obtaining GPOs from DC " + dc + " " + e.ToString());
-                    continue;
-                    //throw new ActiveDirectoryException("Error Obtaining GPOs from DC at IP " + dc, e);
+                    Mq.Error("Error Obtaining Packages from DC " + TargetDC + " " + e.ToString());
+                }
+                // TODO move package enumeration to work more like link enumeration does
+
+                allDomainGpos.AddRange(gpos);
+
+                Gpos = allDomainGpos;
+                try
+                {
+                    EnumerateDomainGpoLinks();
+                }
+                catch (Exception e)
+                {
+                    Mq.Error("Failed to enumerate domain GPO links.");
+                    Mq.Trace(e.ToString());
                 }
             }
+            catch (Exception e)
+            {
+                Mq.Error("Error Obtaining GPOs from DC " + TargetDC + " " + e.ToString());
+            }
+            
 
             // Ensure we actually got some data.
             if (Gpos.Count == 0)
@@ -242,12 +257,12 @@ namespace LibSnaffle.ActiveDirectory
             Mq.Trace("Successfully got GPO data.");
         }
 
-        private void EnumerateDomainGpoLinks(string domainController)
+        private void EnumerateDomainGpoLinks()
         {
             // TODO add support for user defined creds here.
             Dictionary<string, List<string>> gpoLinks = new Dictionary<string, List<string>>();
 
-            DirectoryEntry de = new DirectoryEntry("LDAP://" + domainController + "/RootDSE");
+            DirectoryEntry de = new DirectoryEntry("LDAP://" + TargetDC + "/RootDSE");
 
             string domainDN = de.Properties["defaultNamingContext"].Value.ToString();
 
@@ -256,7 +271,7 @@ namespace LibSnaffle.ActiveDirectory
             try
             {
                 // first we gotta get sites so we need to be in the configuration naming context
-                using (DirectoryEntry confEntry = new DirectoryEntry("LDAP://" + domainController + "/CN=Sites,CN=Configuration," + domainDN))
+                using (DirectoryEntry confEntry = new DirectoryEntry("LDAP://" + TargetDC + "/CN=Sites,CN=Configuration," + domainDN))
                 {
                     using (DirectorySearcher mySearcher = new DirectorySearcher(confEntry))
                     {
@@ -285,7 +300,7 @@ namespace LibSnaffle.ActiveDirectory
             try
             {
                 // then we're gonna get links to OUs, so we need to go back to our existing naming context
-                using (DirectoryEntry entry = new DirectoryEntry("LDAP://" + domainController))
+                using (DirectoryEntry entry = new DirectoryEntry("LDAP://" + TargetDC))
                 {
 
                     using (DirectorySearcher mySearcher = new DirectorySearcher(entry))
@@ -362,7 +377,10 @@ namespace LibSnaffle.ActiveDirectory
                         }
                         else
                         {
-                            Mq.Trace("Unparsed GPO Link:" + gpolink);
+                            if (!String.IsNullOrWhiteSpace(gpolink))
+                            {
+                                Mq.Error("Unparsed GPO Link:" + gpolink);
+                            }
                         }
                     }
                 }
@@ -377,11 +395,11 @@ namespace LibSnaffle.ActiveDirectory
         /// </summary>
         /// <param name="domainController">The IP of the DC.</param>
         /// <returns></returns>
-        private List<GPO> EnumerateDomainGposFromDC(string domainController)
+        private List<GPO> EnumerateDomainGposFromDC()
         {
             // TODO add support for user defined creds here.
             List<GPO> domainGpos = new List<GPO>();
-            using (DirectoryEntry entry = new DirectoryEntry("LDAP://" + domainController))
+            using (DirectoryEntry entry = new DirectoryEntry("LDAP://" + TargetDC))
             {
                 using (DirectorySearcher mySearcher = new DirectorySearcher(entry))
                 {
@@ -482,7 +500,7 @@ namespace LibSnaffle.ActiveDirectory
         {
             List<string> ComputerNames = new List<string>();
 
-            DirectoryEntry entry = new DirectoryEntry($"LDAP://{CurrentDomain.Name}");
+            DirectoryEntry entry = new DirectoryEntry($"LDAP://{TargetDC}");
             DirectorySearcher mySearcher = new DirectorySearcher(entry);
             mySearcher.Filter = ("(objectClass=computer)");
             mySearcher.SizeLimit = int.MaxValue;
@@ -490,7 +508,6 @@ namespace LibSnaffle.ActiveDirectory
 
             foreach (SearchResult resEnt in mySearcher.FindAll())
             {
-                //"CN=SGSVG007DC"
                 string ComputerName = resEnt.GetDirectoryEntry().Name;
                 if (ComputerName.StartsWith("CN="))
                 {
@@ -509,7 +526,7 @@ namespace LibSnaffle.ActiveDirectory
         {
             List<string> users = new List<string>();
 
-            using (var context = new PrincipalContext(ContextType.Domain, CurrentDomain.Name))
+            using (var context = new PrincipalContext(ContextType.Domain, TargetDC))
             {
                 using (var searcher = new PrincipalSearcher(new UserPrincipal(context)))
                 {
@@ -559,12 +576,11 @@ namespace LibSnaffle.ActiveDirectory
         /// <summary>
         /// Pulls info about Packages from AD
         /// </summary>
-        /// <param name="domainController"></param>
         /// <param name="gpos"></param>
-        private void EnumerateGpoPackages(string domainController, List<GPO> gpos)
+        private void EnumerateGpoPackages(List<GPO> gpos)
         {
             using (DirectorySearcher packageSearcher =
-                new DirectorySearcher("LDAP://" + domainController + "/System/Policies"))
+                new DirectorySearcher("LDAP://" + TargetDC + "/System/Policies"))
             {
                 // this bit c/o @grouppolicyguy, thanks Darren!
                 packageSearcher.Filter = "(objectClass=packageRegistration)";
@@ -684,7 +700,7 @@ namespace LibSnaffle.ActiveDirectory
 
         public List<string> GetUsersGroupsAllDomains(string username)
         {
-            UserPrincipal foundUser = UserPrincipal.FindByIdentity(new PrincipalContext(ContextType.Domain, CurrentDomain.Name), IdentityType.SamAccountName, username);
+            UserPrincipal foundUser = UserPrincipal.FindByIdentity(new PrincipalContext(ContextType.Domain, TargetDC), IdentityType.SamAccountName, username);
 
             if (foundUser != null)
             {
@@ -763,6 +779,5 @@ namespace LibSnaffle.ActiveDirectory
             }
             return new List<string>();
         }
-
     }
 }

@@ -90,10 +90,98 @@ namespace Group3r.View
 
             foreach (SettingResult sr in gpoResult.SettingResults)
             {
-                if (sr.Setting.GetType() == typeof(DataSourceSetting)){
+                if (sr.Setting.GetType() == typeof(DataSourceSetting))
+                {
+                    DataSourceSetting castSetting = (DataSourceSetting)sr.Setting;
+                }
+                else if (sr.Setting.GetType() == typeof(DeviceSetting))
+                {
 
                 }
+                else if (sr.Setting.GetType() == typeof(DriveSetting))
+                {
 
+                }
+                else if (sr.Setting.GetType() == typeof(EnvVarSetting))
+                {
+
+                }
+                else if (sr.Setting.GetType() == typeof(EventAuditSetting))
+                {
+
+                }
+                else if (sr.Setting.GetType() == typeof(FileSetting))
+                {
+
+                }
+                else if (sr.Setting.GetType() == typeof(FolderSetting))
+                {
+
+                }
+                else if (sr.Setting.GetType() == typeof(GroupSetting))
+                {
+
+                }
+                else if (sr.Setting.GetType() == typeof(IniFileSetting))
+                {
+
+                }
+                else if (sr.Setting.GetType() == typeof(KerbPolicySetting))
+                {
+
+                }
+                else if (sr.Setting.GetType() == typeof(NetOptionSetting))
+                {
+
+                }
+                else if (sr.Setting.GetType() == typeof(NetworkShareSetting))
+                {
+
+                }
+                else if (sr.Setting.GetType() == typeof(NtServiceSetting))
+                {
+
+                }
+                else if (sr.Setting.GetType() == typeof(PackageSetting))
+                {
+
+                }
+                else if (sr.Setting.GetType() == typeof(PrinterSetting))
+                {
+
+                }
+                else if (sr.Setting.GetType() == typeof(PrivRightSetting))
+                {
+
+                }
+                else if (sr.Setting.GetType() == typeof(RegistrySetting))
+                {
+
+                }
+                else if (sr.Setting.GetType() == typeof(SchedTaskSetting))
+                {
+
+                }
+                else if (sr.Setting.GetType() == typeof(ScriptSetting))
+                {
+
+                }
+                else if (sr.Setting.GetType() == typeof(ShortcutSetting))
+                {
+
+                }
+                else if (sr.Setting.GetType() == typeof(SystemAccessSetting))
+                {
+
+                }
+                else if (sr.Setting.GetType() == typeof(UserSetting))
+                {
+
+                }
+                else
+                {
+
+                }
             }
 
             /*
