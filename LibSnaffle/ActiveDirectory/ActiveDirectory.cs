@@ -43,6 +43,7 @@ namespace LibSnaffle.ActiveDirectory
         /// </summary>
         public DirectoryContext Context { get; set; }
 
+        public PrincipalContext PContext { get; set; }
         /// <summary>
         /// Stores the Sysvol.
         /// </summary>
@@ -120,6 +121,7 @@ namespace LibSnaffle.ActiveDirectory
                 {
                     Mq.Trace("Target DC specified: " + this.TargetDC + ", using it for DirectoryContext.");
                     this.Context = new DirectoryContext(DirectoryContextType.Domain, TargetDC);
+                    this.PContext = new PrincipalContext(ContextType.Domain, TargetDC);
                     Mq.Trace("Adding " + this.TargetDC + " to ActiveDirectory.DomainControllerNames.");
                     DomainControllerNames.Add(this.TargetDC);
                     Mq.Trace("Testing domain connectivity...");
@@ -132,6 +134,7 @@ namespace LibSnaffle.ActiveDirectory
                 {
                     Mq.Trace("Target domain specified: " + this.TargetDomain + ", using it for DirectoryContext.");
                     this.Context = new DirectoryContext(DirectoryContextType.Domain, TargetDomain);
+                    this.PContext = new PrincipalContext(ContextType.Domain, TargetDomain);
                     Mq.Trace("Testing domain connectivity...");
                     this.CurrentDomain = Domain.GetDomain(Context);
                     this.CurrentForest = CurrentDomain.Forest;
@@ -142,6 +145,7 @@ namespace LibSnaffle.ActiveDirectory
                 {
                     Mq.Trace("Target DC and Domain specified: " + this.TargetDC + ", using DC for DirectoryContext.");
                     this.Context = new DirectoryContext(DirectoryContextType.Domain, TargetDC);
+                    this.PContext = new PrincipalContext(ContextType.Domain, TargetDC);
                     Mq.Trace("Adding " + this.TargetDC + " to ActiveDirectory.DomainControllerNames.");
                     DomainControllerNames.Add(this.TargetDC);
                     Mq.Trace("Testing domain connectivity...");
@@ -157,6 +161,7 @@ namespace LibSnaffle.ActiveDirectory
                     this.TargetDomain = this.CurrentDomain.Name;
                     Mq.Trace("Current domain is " + this.CurrentDomain.Name + " using it for DirectoryContext.");
                     this.Context = new DirectoryContext(DirectoryContextType.Domain, this.CurrentDomain.Name);
+                    this.PContext = new PrincipalContext(ContextType.Domain, this.CurrentDomain.Name);
                     Mq.Trace("Using domain name as DC name for future operations.");
                     DomainControllerNames.Add(TargetDomain);
                     this.TargetDC = TargetDomain;
@@ -526,19 +531,16 @@ namespace LibSnaffle.ActiveDirectory
         {
             List<string> users = new List<string>();
 
-            using (var context = new PrincipalContext(ContextType.Domain, TargetDC))
+            using (var searcher = new PrincipalSearcher(new UserPrincipal(PContext)))
             {
-                using (var searcher = new PrincipalSearcher(new UserPrincipal(context)))
+                foreach (var result in searcher.FindAll())
                 {
-                    foreach (var result in searcher.FindAll())
+                    try
                     {
-                        try
-                        {
-                            DirectoryEntry de = result.GetUnderlyingObject() as DirectoryEntry;
-                            users.Add(de.Properties["samAccountName"].Value.ToString());
-                        }
-                        catch { }
+                        DirectoryEntry de = result.GetUnderlyingObject() as DirectoryEntry;
+                        users.Add(de.Properties["samAccountName"].Value.ToString());
                     }
+                    catch { }
                 }
             }
 
@@ -700,7 +702,7 @@ namespace LibSnaffle.ActiveDirectory
 
         public List<string> GetUsersGroupsAllDomains(string username)
         {
-            UserPrincipal foundUser = UserPrincipal.FindByIdentity(new PrincipalContext(ContextType.Domain, TargetDC), IdentityType.SamAccountName, username);
+            UserPrincipal foundUser = UserPrincipal.FindByIdentity(PContext, IdentityType.SamAccountName, username);
 
             if (foundUser != null)
             {
@@ -713,6 +715,8 @@ namespace LibSnaffle.ActiveDirectory
                     de.RefreshCache(new[] { "canonicalName", "objectSid", "distinguishedName" });
 
                     var userCn = (string)de.Properties["canonicalName"].Value;
+
+                    // we may have to get the domain etc again in case we're running from a foreign domain?
                     var domainDns = userCn.Substring(0, userCn.IndexOf("/", StringComparison.Ordinal));
 
                     var d = Domain.GetDomain(new DirectoryContext(DirectoryContextType.Domain, domainDns));
