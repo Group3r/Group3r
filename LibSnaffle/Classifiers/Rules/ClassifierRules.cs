@@ -81,22 +81,22 @@ namespace LibSnaffle.Classifiers
 
             // sort everything into enumeration scopes
             ShareClassifierRules = (from classifier in AllClassifierRules
-                                where classifier.EnumerationScope == Constants.EnumerationScope.ShareEnumeration
-                                select classifier).ToList();
+                                    where classifier.EnumerationScope == Constants.EnumerationScope.ShareEnumeration
+                                    select classifier).ToList();
             DirClassifierRules = (from classifier in AllClassifierRules
-                              where classifier.EnumerationScope == Constants.EnumerationScope.DirectoryEnumeration
-                              select classifier).ToList();
+                                  where classifier.EnumerationScope == Constants.EnumerationScope.DirectoryEnumeration
+                                  select classifier).ToList();
             FileClassifierRules = (from classifier in AllClassifierRules
-                               where classifier.EnumerationScope == Constants.EnumerationScope.FileEnumeration
-                               select classifier).ToList();
-            ContentsClassifierRules = (from classifier in AllClassifierRules
-                                   where classifier.EnumerationScope == Constants.EnumerationScope.ContentsEnumeration
+                                   where classifier.EnumerationScope == Constants.EnumerationScope.FileEnumeration
                                    select classifier).ToList();
+            ContentsClassifierRules = (from classifier in AllClassifierRules
+                                       where classifier.EnumerationScope == Constants.EnumerationScope.ContentsEnumeration
+                                       select classifier).ToList();
         }
 
         public void BuildDefaultClassifiers()
         {
-            this.AllClassifierRules = new List<ClassifierRule>();
+            AllClassifierRules = new List<ClassifierRule>();
             BuildShareRules();
             BuildPathRules();
             BuildFileDiscardRules();

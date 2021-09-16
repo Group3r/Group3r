@@ -1,8 +1,9 @@
-﻿using LibSnaffle.ActiveDirectory;
+﻿using Group3r.Assessment;
+using LibSnaffle.ActiveDirectory;
 using Newtonsoft.Json;
-using Group3r.Assessment;
 using Newtonsoft.Json.Converters;
 using System.Collections.Generic;
+using Group3r.Options;
 
 namespace Group3r.View
 {
@@ -12,13 +13,15 @@ namespace Group3r.View
     class JsonGpoPrinter : IGpoPrinter
     {
         private JsonSerializerSettings jSettings;
+        private GrouperOptions grouperOptions;
         /**
          * Summary: constructor
          * Arguments: none
          * Returns: JsonGpoPrinter instance
          */
-        public JsonGpoPrinter()
+        public JsonGpoPrinter(GrouperOptions options)
         {
+            grouperOptions = options;
             // Set up the Json serializer
             jSettings = new JsonSerializerSettings
             {

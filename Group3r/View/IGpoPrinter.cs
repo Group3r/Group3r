@@ -1,5 +1,6 @@
-﻿using LibSnaffle.ActiveDirectory;
-using Group3r.Assessment;
+﻿using Group3r.Assessment;
+using Group3r.Options;
+using LibSnaffle.ActiveDirectory;
 
 namespace Group3r.View
 {

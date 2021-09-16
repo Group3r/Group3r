@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.AccessControl;
-using System.Text;
 
 namespace LibSnaffle.ActiveDirectory
 {
@@ -39,7 +36,7 @@ namespace LibSnaffle.ActiveDirectory
             switch (hiveString)
             {
                 case "MACHINE":
-                    this.Hive = RegHive.HKEY_LOCAL_MACHINE;
+                    Hive = RegHive.HKEY_LOCAL_MACHINE;
                     break;
                 default:
                     throw new NotImplementedException("Found a registry hive short name I don't recognise in RegHiveFromString");

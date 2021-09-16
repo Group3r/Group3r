@@ -22,7 +22,7 @@ namespace LibSnaffle.ActiveDirectory
 
         public override void Parse()
         {
-            this.GetSettings();
+            GetSettings();
         }
 
         public void GetSettings()
@@ -30,12 +30,12 @@ namespace LibSnaffle.ActiveDirectory
             using (var file = File.OpenRead(FilePath))
             using (var reader = new BinaryReader(file, Encoding.Unicode))
             {
-                this.Signature = reader.ReadUInt32();
-                if (this.Signature != SIGNATURE)
+                Signature = reader.ReadUInt32();
+                if (Signature != SIGNATURE)
                 {
                     throw new NotSupportedException("File format is not supported");
                 }
-                this.Version = reader.ReadUInt32();
+                Version = reader.ReadUInt32();
 
                 var length = reader.BaseStream.Length;
                 while (reader.BaseStream.Position < length)
@@ -45,11 +45,11 @@ namespace LibSnaffle.ActiveDirectory
                     string keyPath = ReadString(reader);
                     string[] splitKeyPath = keyPath.Split('\\');
                     //  these don't say a hive, the hive is determined by whether it's user policy or machine policy, so it's always either hkcu or hklm.
-                    if (this.FilePath.ToLower().Contains("\\machine\\"))
+                    if (FilePath.ToLower().Contains("\\machine\\"))
                     {
                         setting.Hive = RegHive.HKEY_LOCAL_MACHINE;
                     }
-                    else if (this.FilePath.ToLower().Contains("\\user\\"))
+                    else if (FilePath.ToLower().Contains("\\user\\"))
                     {
                         setting.Hive = RegHive.HKEY_CURRENT_USER;
                     }
@@ -59,8 +59,10 @@ namespace LibSnaffle.ActiveDirectory
                     }
                     setting.Key = String.Join("\\", splitKeyPath.Skip(1));
                     reader.ReadChar();
-                    RegistryValue regVal = new RegistryValue();
-                    regVal.ValueName = ReadString(reader);
+                    RegistryValue regVal = new RegistryValue
+                    {
+                        ValueName = ReadString(reader)
+                    };
                     reader.ReadChar();
                     regVal.RegKeyValType = (RegKeyValType)reader.ReadUInt32();
                     reader.ReadChar();

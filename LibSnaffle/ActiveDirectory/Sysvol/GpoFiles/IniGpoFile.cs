@@ -70,7 +70,7 @@ namespace LibSnaffle.ActiveDirectory
             foreach (KeyValuePair<int, int> sectionSlice in sectionSlices)
             {
                 //get the section heading
-                char[] squareBrackets = {'[', ']'};
+                char[] squareBrackets = { '[', ']' };
                 string sectionSliceKey = infContentArray[sectionSlice.Key];
                 string sectionHeading = sectionSliceKey.Trim(squareBrackets);
                 //get the line where the section content starts by adding one to the heading's line
@@ -85,7 +85,7 @@ namespace LibSnaffle.ActiveDirectory
 
                 // BE DEV DO CRIMES
                 Dictionary<int, List<string>> linesDict = new Dictionary<int, List<string>>();
-                    
+
                 //iterate over the lines in the section;
                 for (int b = sectionContent.Offset; b < (sectionContent.Offset + sectionContent.Count); b++)
                 {
@@ -103,7 +103,7 @@ namespace LibSnaffle.ActiveDirectory
                         }
                         else
                         {
-                            linesDict.Add(lineIndex, new List<string>() {line.Substring(1)});
+                            linesDict.Add(lineIndex, new List<string>() { line.Substring(1) });
                         }
                     }
                     else
@@ -153,7 +153,7 @@ namespace LibSnaffle.ActiveDirectory
                             scriptSetting.Parameters = splitLine[1];
                         }
                         else
-                        { 
+                        {
                             if (Logger != null)
                             {
                                 Logger.Error("I dunno what the hell a " + splitLine[0] + " is but it scares me.");

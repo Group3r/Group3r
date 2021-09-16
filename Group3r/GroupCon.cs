@@ -1,18 +1,17 @@
+using Group3r.Assessment;
+using Group3r.Assessment.Analysers;
+using Group3r.Concurrency;
+using Group3r.Options;
+using LibSnaffle.ActiveDirectory;
+using LibSnaffle.Concurrency;
+using LibSnaffle.Errors;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Security.Principal;
 using System.Threading;
 using System.Timers;
 using Timer = System.Timers.Timer;
-using LibSnaffle.Concurrency;
-using Group3r.Options;
-using LibSnaffle.ActiveDirectory;
-using System.DirectoryServices.ActiveDirectory;
-using LibSnaffle.Errors;
-using Group3r.Concurrency;
-using System.Collections.Generic;
-using Group3r.Assessment;
-using Group3r.Assessment.Analysers;
-using System.Security.Principal;
 
 namespace Group3r
 {
@@ -44,14 +43,14 @@ namespace Group3r
         {
             // Set the time (1 min in this case)
             DateTime startTime = DateTime.Now;
-            Timer statusUpdateTimer = new Timer(TimeSpan.FromMinutes(1).TotalMilliseconds){ AutoReset = true }; 
+            Timer statusUpdateTimer = new Timer(TimeSpan.FromMinutes(1).TotalMilliseconds) { AutoReset = true };
             statusUpdateTimer.Elapsed += TimedStatusUpdate;
             statusUpdateTimer.Start();
 
             // Figure out how we're going to load up all our AD/Sysvol info:
             SysvolHelper svh = new SysvolHelper(Mq);
             ActiveDirectory ad = null;
-             
+
             if (Options.OfflineMode)
             {
                 // make sure the user gave us a sysvol target for offline mode to work
@@ -63,31 +62,44 @@ namespace Group3r
                 // Manually load SYSVOL offline.
                 Sysvol sysvol = svh.LoadSysvolOffline(Options.SysvolPath);
                 // make an empty AD object
-                ad = new ActiveDirectory(Mq);
-                // stick our sysvol in it
-                ad.Sysvol = sysvol;
+                ad = new ActiveDirectory(Mq)
+                {
+                    // stick our sysvol in it
+                    Sysvol = sysvol
+                };
                 // and merge them straight into the slot in AD - no point calling ConsolidateGpos() as there's no AD data there.
                 ad.Gpos = ad.Sysvol.Gpos;
             }
             else
             {
                 Mq.Trace("building ActiveDirectory");
-                ad = new ActiveDirectory(Mq, Options.TargetDomain, Options.TargetDc);
-                
-                Mq.Trace("Enumerating current user's name and group memberships.");
-                if (Options.AssessmentOptions.TargetTrustees == null)
+                try
                 {
-                    string thing = WindowsIdentity.GetCurrent().Name;
-                    Options.AssessmentOptions.TargetTrustees = new List<string>() { thing };
-                    Options.AssessmentOptions.TargetTrustees.AddRange(ad.GetUsersGroupsAllDomains(thing));
+                    ad = new ActiveDirectory(Mq, Options.TargetDomain, Options.TargetDc);
+
+                    Mq.Trace("Enumerating current user's name and group memberships.");
+                    if (Options.AssessmentOptions.TargetTrustees == null)
+                    {
+                        string thing = WindowsIdentity.GetCurrent().Name;
+                        Options.AssessmentOptions.TargetTrustees = new List<string>() {thing};
+                        Options.AssessmentOptions.TargetTrustees.AddRange(ad.GetUsersGroupsAllDomains(thing));
+                    }
+
+                    Mq.Degub("Getting GPOs.");
+                    ad.ObtainDomainGpos();
+                    Mq.Degub("Loading files from SYSVOL.");
+                    ad.LoadSysvolOnline(svh);
+                    Mq.Degub("Consolidating GPOs.");
+                    ad.ConsolidateGpos();
                 }
-                
-                Mq.Trace("Getting GPOs");
-                ad.ObtainDomainGpos();
-                Mq.Trace("Loading files from SYSVOL");
-                ad.LoadSysvolOnline(svh);
-                Mq.Trace("Consolidating GPOs");
-                ad.ConsolidateGpos();
+                catch (Exception e)
+                {
+                    Mq.Error(e.ToString());
+                    while (true)
+                    {
+                        Mq.Terminate();
+                    }
+                }
             }
             Mq.Trace("Enqueuing GPO Tasks");
             EnqueueGpoTasks(ad);

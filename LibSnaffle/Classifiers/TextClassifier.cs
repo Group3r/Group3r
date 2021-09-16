@@ -67,7 +67,7 @@ namespace LibSnaffle.Classifiers
             }
             catch (Exception e)
             {
-                this.Mq.Error(e.ToString());
+                Mq.Error(e.ToString());
             }
 
             return "";

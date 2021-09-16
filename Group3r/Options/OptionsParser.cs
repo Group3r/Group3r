@@ -1,10 +1,10 @@
 ﻿using CommandLineParser.Arguments;
+using CommandLineParser.Exceptions;
 using Group3r.Concurrency;
 using Nett;
 using NLog;
 using System;
 using System.Linq;
-using CommandLineParser.Exceptions;
 
 namespace Group3r.Options
 {
@@ -80,7 +80,7 @@ namespace Group3r.Options
                 {
                     value = ((ValueArgument<string>)arg).Value;
                 }
-                else if(arg is ValueArgument<int>)
+                else if (arg is ValueArgument<int>)
                 {
                     value = ((ValueArgument<int>)arg).Value.ToString();
                 }
@@ -141,26 +141,26 @@ namespace Group3r.Options
                             mq.Degub("Target domain is " + value);
                         }
                         break;
-                        /*
-                    case "username":
-                        if (!String.IsNullOrEmpty(value))
-                        {
-                            options.Username = value;
-                            mq.Degub("Username for LDAP is " + value);
-                        }
-                        break;
-                        
-                    case "password":
-                        if (!String.IsNullOrEmpty(value))
-                        {
-                            options.Password = value;
-                            mq.Degub("Password for LDAP is " + value);
-                        }
-                        break;
-                    case "quiet":
-                        options.QuietMode = true;
-                        break;
-                        */
+                    /*
+                case "username":
+                    if (!String.IsNullOrEmpty(value))
+                    {
+                        options.Username = value;
+                        mq.Degub("Username for LDAP is " + value);
+                    }
+                    break;
+
+                case "password":
+                    if (!String.IsNullOrEmpty(value))
+                    {
+                        options.Password = value;
+                        mq.Degub("Password for LDAP is " + value);
+                    }
+                    break;
+                case "quiet":
+                    options.QuietMode = true;
+                    break;
+                    */
                     case "dc":
                         options.TargetDc = value;
                         mq.Degub("Target DC is " + value);

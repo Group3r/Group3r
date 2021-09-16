@@ -1,5 +1,4 @@
-﻿using LibSnaffle.Classifiers.Results;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 
 namespace LibSnaffle.Concurrency

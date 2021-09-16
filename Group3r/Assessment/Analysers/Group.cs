@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Group3r.Options.AssessmentOptions;
+﻿using Group3r.Options.AssessmentOptions;
 using LibSnaffle.ActiveDirectory;
 using LibSnaffle.Classifiers.Rules;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Group3r.Assessment.Analysers
 {
@@ -14,7 +14,7 @@ namespace Group3r.Assessment.Analysers
         {
             // Need to write logic to figure out when a group membership is good/fun/interesting and not extremely boring.
 
-            
+
             List<GpoFinding> findings = new List<GpoFinding>();
 
             /*
@@ -54,7 +54,7 @@ namespace Group3r.Assessment.Analysers
                     // 
                     if (!String.IsNullOrEmpty(setting.NewName) && group.HighPriv)
                     {
-                        if ((int)this.MinTriage < 2)
+                        if ((int)MinTriage < 2)
                         {
                             findings.Add(new GpoFinding()
                             {
@@ -95,7 +95,7 @@ namespace Group3r.Assessment.Analysers
                             if (toMember.LowPriv && group.HighPriv)
                             {
                                 alreadyred = true;
-                                if ((int)this.MinTriage < 4)
+                                if ((int)MinTriage < 4)
                                 {
                                     findings.Add(new GpoFinding()
                                     {
@@ -111,7 +111,7 @@ namespace Group3r.Assessment.Analysers
                             // we do !toMember.HighPriv because we need it to work whether toMember is resolved to a well known sid or not..
                             if (group.HighPriv && !toMember.HighPriv && !alreadyred)
                             {
-                                if ((int)this.MinTriage < 2)
+                                if ((int)MinTriage < 2)
                                 {
                                     findings.Add(new GpoFinding()
                                     {
@@ -132,7 +132,7 @@ namespace Group3r.Assessment.Analysers
 
             // make a new setting object minus the ugly bits we don't care about.
             SettingResult.Setting = new GroupSetting();
-            
+
             SettingResult.Setting = setting;
 
             return SettingResult;

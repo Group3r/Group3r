@@ -13,7 +13,7 @@ namespace Sddl.Parser
         Directory,
 
         Pipe,
-        
+
         Process,
         Thread,
 

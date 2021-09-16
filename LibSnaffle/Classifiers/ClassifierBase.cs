@@ -1,10 +1,5 @@
 ﻿using LibSnaffle.Classifiers.Results;
 using LibSnaffle.Concurrency;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace LibSnaffle.Classifiers
 {

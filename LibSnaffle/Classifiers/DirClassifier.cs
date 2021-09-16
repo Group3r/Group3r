@@ -39,5 +39,5 @@ namespace LibSnaffle.Classifiers
             }
             return dirResult;
         }
-    } 
+    }
 }

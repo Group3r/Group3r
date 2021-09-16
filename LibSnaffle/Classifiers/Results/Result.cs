@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace LibSnaffle.Classifiers.Results
+﻿namespace LibSnaffle.Classifiers.Results
 {
 
     public class Result

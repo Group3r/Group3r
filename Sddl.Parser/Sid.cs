@@ -7,7 +7,7 @@ namespace Sddl.Parser
         public string Raw { get; }
 
         public string Alias { get; }
-        
+
         public Sid(string sid)
         {
             Raw = sid;
@@ -17,10 +17,10 @@ namespace Sddl.Parser
             if (alias == null)
             {
                 Report(Error.SDP001.Format(sid));
-                
+
                 alias = Format.Unknown(sid);
             }
-            
+
             Alias = alias;
         }
 
@@ -145,7 +145,7 @@ namespace Sddl.Parser
                    Alias == sid.Alias;
         }
 
-        public static bool operator== (Sid sid0, Sid sid1)
+        public static bool operator ==(Sid sid0, Sid sid1)
         {
             if (sid0 is null && sid1 is null)
                 return true;
@@ -155,7 +155,7 @@ namespace Sddl.Parser
                 return sid0.Equals(sid1);
         }
 
-        public static bool operator!= (Sid sid0, Sid sid1)
+        public static bool operator !=(Sid sid0, Sid sid1)
         {
             return !(sid0 == sid1);
         }

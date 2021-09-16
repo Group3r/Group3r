@@ -1,11 +1,9 @@
-﻿using NLog;
+﻿using Group3r.Options;
+using Grouper;
+using LibSnaffle.Concurrency;
+using NLog;
 using System;
 using System.Diagnostics;
-using Newtonsoft.Json;
-using LibSnaffle.Concurrency;
-using Group3r.Options;
-using LibSnaffle.ActiveDirectory;
-using Grouper;
 
 namespace Group3r.View
 {
@@ -62,10 +60,12 @@ namespace Group3r.View
             else if (message is FatalMessage)
             {
                 Logger.Fatal(message.GetMessage());
-            }
-            else if (message is GpoResultMessage)
-            {
-                Logger.Info(message.GetMessage());
+                if (Debugger.IsAttached)
+                {
+                    Console.WriteLine("Press any key to exit.");
+                    Console.ReadKey();
+                }
+                Environment.Exit(1);
             }
             else if (message is FinishMessage)
             {

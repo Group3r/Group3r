@@ -8,7 +8,7 @@ namespace LibSnaffle.Classifiers
         private void BuildFileContentRules()
         {
             // Python
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 Description = "Files with these extensions will be searched for python related strings.",
                 RuleName = "PyContentByExt",
@@ -24,7 +24,7 @@ namespace LibSnaffle.Classifiers
                 },
             });
 
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 Description = "Files with contents matching these regexen are very interesting.",
                 RuleName = "KeepPyRegexRed",
@@ -53,7 +53,7 @@ namespace LibSnaffle.Classifiers
                 }
             });
             // PHP
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 Description = "Files with these extensions will be searched for php related strings.",
                 RuleName = "phpContentByExt",
@@ -73,7 +73,7 @@ namespace LibSnaffle.Classifiers
                     ".php7"
                 },
             });
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 Description = "Files with contents matching these regexen are very interesting.",
                 RuleName = "KeepPhpRegexRed",
@@ -105,7 +105,7 @@ namespace LibSnaffle.Classifiers
                 }
             });
             // CSharp
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 Description = "Files with these extensions will be searched for CSharp and ASP.NET related strings.",
                 RuleName = "csContentByExt",
@@ -126,7 +126,7 @@ namespace LibSnaffle.Classifiers
                     ".ascx"
                 },
             });
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 Description = "Files with contents matching these regexen are very interesting.",
                 RuleName = "KeepCsRegexRed",
@@ -155,7 +155,7 @@ namespace LibSnaffle.Classifiers
                 }
             });
             //Java
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 Description = "Files with these extensions will be searched for Java and ColdFusion related strings.",
                 RuleName = "javaContentByExt",
@@ -174,7 +174,7 @@ namespace LibSnaffle.Classifiers
                     ".cfm",
                 },
             });
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 Description = "Files with contents matching these regexen are very interesting.",
                 RuleName = "KeepJavaRegexRed",
@@ -202,7 +202,7 @@ namespace LibSnaffle.Classifiers
                 }
             });
             // Ruby
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 Description = "Files with these extensions will be searched for Rubby related strings.",
                 RuleName = "rubyContentByExt",
@@ -217,7 +217,7 @@ namespace LibSnaffle.Classifiers
                     ".rb"
                 },
             });
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 Description = "Files with contents matching these regexen are very interesting.",
                 RuleName = "KeepRubyRegexRed",
@@ -246,7 +246,7 @@ namespace LibSnaffle.Classifiers
             });
 
             // Perl
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 Description = "Files with these extensions will be searched for Perl related strings.",
                 RuleName = "perlContentByExt",
@@ -261,7 +261,7 @@ namespace LibSnaffle.Classifiers
                     ".pl"
                 },
             });
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 Description = "Files with contents matching these regexen are very interesting.",
                 RuleName = "KeepPerlRegexRed",
@@ -290,7 +290,7 @@ namespace LibSnaffle.Classifiers
             });
 
             // PowerShell
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 Description = "Files with these extensions will be searched for PowerShell related strings.",
                 RuleName = "psContentByExt",
@@ -307,7 +307,7 @@ namespace LibSnaffle.Classifiers
                     ".ps1",
                 },
             });
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 Description = "Files with contents matching these regexen are very interesting.",
                 RuleName = "KeepPsRegexRed",
@@ -338,7 +338,7 @@ namespace LibSnaffle.Classifiers
             });
 
             // Batch
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 Description = "Files with these extensions will be searched for cmd.exe/batch file related strings.",
                 RuleName = "cmdContentByExt",
@@ -353,7 +353,7 @@ namespace LibSnaffle.Classifiers
                     ".bat"
                 },
             });
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 Description = "Files with contents matching these regexen are very interesting.",
                 RuleName = "KeepCmdRegexRed",
@@ -371,7 +371,7 @@ namespace LibSnaffle.Classifiers
             });
 
             // bash/sh/zsh/etc
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 Description = "Files with these extensions will be searched for Bash related strings.",
                 RuleName = "bashContentByExt",
@@ -388,7 +388,7 @@ namespace LibSnaffle.Classifiers
                     ".profile"
                 },
             });
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 Description = "Files with contents matching these regexen are very interesting.",
                 RuleName = "KeepBashRegexRed",
@@ -416,7 +416,7 @@ namespace LibSnaffle.Classifiers
                 }
             });
             // Firefox/Thunderbird backups
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 Description = "Files with these extensions will be searched for Firefox/Thunderbird backups related strings.",
                 RuleName = "browerContentByName",
@@ -431,7 +431,7 @@ namespace LibSnaffle.Classifiers
                     "logins.json"
                 },
             });
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 Description = "Files with contents matching these regexes are very interesting.",
                 RuleName = "KeepFFRegexRed",
@@ -479,7 +479,7 @@ namespace LibSnaffle.Classifiers
             });
             */
 
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 Description = "Files with these extensions will be subjected to a generic search for keys and such.",
                 RuleName = "ConfigContentByExt",
@@ -513,7 +513,7 @@ namespace LibSnaffle.Classifiers
                 },
             });
 
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 RuleName = "KeepConfigRegexRed",
                 EnumerationScope = Constants.EnumerationScope.ContentsEnumeration,
@@ -544,7 +544,7 @@ namespace LibSnaffle.Classifiers
                     "simple-bind authenticated encrypt",
                 },
             });
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 Description = "Files with these extensions will be grepped for private keys.",
                 RuleName = "CertContentByExt",
@@ -563,7 +563,7 @@ namespace LibSnaffle.Classifiers
                 },
             });
 
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 RuleName = "KeepCertRegexRed",
                 EnumerationScope = Constants.EnumerationScope.ContentsEnumeration,
@@ -577,8 +577,8 @@ namespace LibSnaffle.Classifiers
                 },
             });
 
-  // dsa | ecdsa | ed25519 | rsa]
-            this.AllClassifierRules.Add(
+            // dsa | ecdsa | ed25519 | rsa]
+            AllClassifierRules.Add(
                 new ClassifierRule()
                 {
                     Description = "Files with these extensions will be parsed as x509 certificates to see if they have private keys.",

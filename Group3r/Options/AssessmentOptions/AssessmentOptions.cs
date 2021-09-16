@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using LibSnaffle.ActiveDirectory;
+﻿using LibSnaffle.ActiveDirectory;
 using LibSnaffle.Classifiers;
 using LibSnaffle.Classifiers.Rules;
+using System.Collections.Generic;
 
 namespace Group3r.Options.AssessmentOptions
 {
@@ -44,8 +43,10 @@ namespace Group3r.Options.AssessmentOptions
         public AssessmentOptions()
         {
             // create default snaffler rules
-            ClassifierOptions = new ClassifierOptions();
-            ClassifierOptions.AllRules = new ClassifierRules();
+            ClassifierOptions = new ClassifierOptions
+            {
+                AllRules = new ClassifierRules()
+            };
             ClassifierOptions.AllRules.BuildDefaultClassifiers();
             ClassifierOptions.AllRules.PrepareClassifiers();
 

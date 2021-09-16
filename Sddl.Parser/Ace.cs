@@ -29,7 +29,7 @@ namespace Sddl.Parser
             if (parts.Length > 0 && parts[0].Length > 0)
             {
                 string aceType = Match.OneByPrefix(parts[0], AceTypesDict, out var reminder);
-                
+
                 if (aceType == null || !string.IsNullOrEmpty(reminder))
                     aceType = Format.Unknown(parts[0]);
 
@@ -40,7 +40,7 @@ namespace Sddl.Parser
             if (parts.Length > 1 && parts[1].Length > 0)
             {
                 var flags = Match.ManyByPrefix(parts[1], AceFlagsDict, out var reminder);
-                
+
                 if (!string.IsNullOrEmpty(reminder))
                     flags.AddLast(Format.Unknown(reminder));
 
@@ -67,7 +67,7 @@ namespace Sddl.Parser
                 else
                 {
                     var rights = Match.ManyByPrefix(parts[2], AceAliasRightsDict, out var reminder);
-                    
+
                     if (!string.IsNullOrEmpty(reminder))
                         rights.AddLast(Format.Unknown(reminder));
 
@@ -103,7 +103,7 @@ namespace Sddl.Parser
         private bool TryParseHex(string hex, out uint result)
         {
             if (hex.StartsWith("0x", StringComparison.CurrentCultureIgnoreCase) ||
-                hex.StartsWith("&H", StringComparison.CurrentCultureIgnoreCase)) 
+                hex.StartsWith("&H", StringComparison.CurrentCultureIgnoreCase))
             {
                 hex = hex.Substring(2);
             }
@@ -419,7 +419,7 @@ namespace Sddl.Parser
                    AceSid == ace.AceSid;
         }
 
-        public static bool operator== (Ace ace0, Ace ace1)
+        public static bool operator ==(Ace ace0, Ace ace1)
         {
             if (ace0 is null && ace1 is null)
                 return true;
@@ -429,7 +429,7 @@ namespace Sddl.Parser
                 return ace0.Equals(ace1);
         }
 
-        public static bool operator!= (Ace ace0, Ace ace1)
+        public static bool operator !=(Ace ace0, Ace ace1)
         {
             return !(ace0 == ace1);
         }

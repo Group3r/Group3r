@@ -1,7 +1,4 @@
-﻿using LibSnaffle.FileDiscovery;
-using System;
-using System.IO;
-using System.Security.AccessControl;
+﻿using System.IO;
 using static LibSnaffle.Classifiers.Rules.Constants;
 
 namespace LibSnaffle.Classifiers.Results
@@ -16,7 +13,7 @@ namespace LibSnaffle.Classifiers.Results
         public DirResult(DirectoryInfo dirInfo)
         {
             ResultDirInfo = dirInfo;
-            this.RwStatus = EffectiveAccess.EffectivePermissions.CanRw(dirInfo);
+            RwStatus = EffectiveAccess.EffectivePermissions.CanRw(dirInfo);
         }
 
 

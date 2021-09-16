@@ -1,11 +1,7 @@
-﻿using LibSnaffle.ActiveDirectory;
-using LibSnaffle.Concurrency;
+﻿using LibSnaffle.Concurrency;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LibSnaffle.ActiveDirectory
 {

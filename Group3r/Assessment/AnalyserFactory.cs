@@ -1,5 +1,4 @@
-﻿using System;
-using Group3r.Assessment.Analysers;
+﻿using Group3r.Assessment.Analysers;
 using LibSnaffle.ActiveDirectory;
 
 namespace Group3r.Assessment
@@ -12,7 +11,7 @@ namespace Group3r.Assessment
             if (setting.GetType() == typeof(DataSourceSetting))
             {
                 DataSourceSetting castSetting = (DataSourceSetting)setting;
-                 return new DataSourceAnalyser(){ setting = castSetting };
+                return new DataSourceAnalyser() { setting = castSetting };
             }
             /*
             else if (setting.GetType() == typeof(DeviceSetting))
@@ -98,7 +97,7 @@ namespace Group3r.Assessment
             }
             else if (setting.GetType() == typeof(PrivRightSetting))
             {
-                        PrivRightSetting castSetting = (PrivRightSetting)setting;
+                PrivRightSetting castSetting = (PrivRightSetting)setting;
                 return new PrivRightAnalyser() { setting = castSetting };
             }
             else if (setting.GetType() == typeof(RegistrySetting))

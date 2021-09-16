@@ -1,13 +1,12 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using LibSnaffle.Concurrency;
-using LibSnaffle.Logging;
-using LibSnaffle.Errors;
+﻿using Group3r.Concurrency;
 using Group3r.Options;
 using Group3r.View;
-using Group3r.Concurrency;
+using LibSnaffle.Concurrency;
+using LibSnaffle.Logging;
 using NLog.Targets;
+using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Group3r
 {

@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Group3r.Options.AssessmentOptions;
+﻿using Group3r.Options.AssessmentOptions;
 using LibSnaffle.ActiveDirectory;
 using LibSnaffle.Classifiers.Rules;
+using System;
+using System.Collections.Generic;
 
 namespace Group3r.Assessment.Analysers
 {
@@ -70,7 +70,7 @@ namespace Group3r.Assessment.Analysers
 
                                 if (pathFinding.DirectoryExists && pathFinding.DirectoryWritable)
                                 {
-                                    if ((int)this.MinTriage < 3)
+                                    if ((int)MinTriage < 3)
                                     {
                                         findings.Add(new GpoFinding()
                                         {
@@ -82,7 +82,7 @@ namespace Group3r.Assessment.Analysers
                                 }
                                 else if (!pathFinding.FileExists && !pathFinding.DirectoryExists && !String.IsNullOrWhiteSpace(pathFinding.ParentDirectoryExists) && pathFinding.ParentDirectoryWritable)
                                 {
-                                    if ((int)this.MinTriage < 3)
+                                    if ((int)MinTriage < 3)
                                     {
                                         findings.Add(new GpoFinding()
                                         {
@@ -94,13 +94,13 @@ namespace Group3r.Assessment.Analysers
                                 }
                             }
                         }
-                        
+
 
                         if (!String.IsNullOrWhiteSpace(schedTaskExecAction.Args))
                         {
                             if (schedTaskExecAction.Args.Contains("pass") || schedTaskExecAction.Args.Contains("-p") || schedTaskExecAction.Args.Contains("/p"))
                             {
-                                if ((int)this.MinTriage < 3)
+                                if ((int)MinTriage < 3)
                                 {
                                     findings.Add(new GpoFinding()
                                     {
@@ -111,7 +111,7 @@ namespace Group3r.Assessment.Analysers
                                 }
                             }
                         }
-                        
+
 
                         if (schedTaskExecAction.Command != null)
                         {
@@ -121,7 +121,7 @@ namespace Group3r.Assessment.Analysers
 
                                 if (pathFinding.FileExists && pathFinding.FileWritable)
                                 {
-                                    if ((int)this.MinTriage < 4)
+                                    if ((int)MinTriage < 4)
                                     {
                                         findings.Add(new GpoFinding()
                                         {
@@ -133,7 +133,7 @@ namespace Group3r.Assessment.Analysers
                                 }
                                 else if (!pathFinding.FileExists && pathFinding.DirectoryExists && pathFinding.DirectoryWritable)
                                 {
-                                    if ((int)this.MinTriage < 4)
+                                    if ((int)MinTriage < 4)
                                     {
                                         findings.Add(new GpoFinding()
                                         {
@@ -145,7 +145,7 @@ namespace Group3r.Assessment.Analysers
                                 }
                                 else if (!pathFinding.FileExists && !pathFinding.DirectoryExists && !String.IsNullOrWhiteSpace(pathFinding.ParentDirectoryExists) && pathFinding.ParentDirectoryWritable)
                                 {
-                                    if ((int)this.MinTriage < 4)
+                                    if ((int)MinTriage < 4)
                                     {
                                         findings.Add(new GpoFinding()
                                         {
@@ -164,7 +164,7 @@ namespace Group3r.Assessment.Analysers
 
                         if (schedTaskEmailAction.Attachments != null)
                         {
-                            if (schedTaskEmailAction.Attachments.Count >=1)
+                            if (schedTaskEmailAction.Attachments.Count >= 1)
                             {
                                 findings.Add(new GpoFinding()
                                 {

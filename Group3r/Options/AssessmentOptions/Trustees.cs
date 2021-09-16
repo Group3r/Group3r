@@ -6,7 +6,7 @@ namespace Group3r.Options.AssessmentOptions
     {
         public void LoadTrusteeOptions()
         {
-            this.TrusteeOptions = new List<TrusteeOption>()
+            TrusteeOptions = new List<TrusteeOption>()
             {
                 new TrusteeOption()
                 {

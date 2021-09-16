@@ -7,7 +7,7 @@ namespace LibSnaffle.Classifiers
     {
         private void BuildFileNameRules()
         {
-            this.AllClassifierRules.Add(
+            AllClassifierRules.Add(
                 new ClassifierRule()
                 {
                     Description = "Files with these extensions are very very interesting.",
@@ -40,7 +40,7 @@ namespace LibSnaffle.Classifiers
                     },
                 });
 
-            this.AllClassifierRules.Add(
+            AllClassifierRules.Add(
                 new ClassifierRule()
                 {
                     Description = "Files with these exact names are very very interesting.",
@@ -73,7 +73,7 @@ namespace LibSnaffle.Classifiers
                 }
                 );
 
-            this.AllClassifierRules.Add(
+            AllClassifierRules.Add(
                 new ClassifierRule()
                 {
                     Description = "Files with a path containing these strings are very very interesting.",
@@ -96,7 +96,7 @@ namespace LibSnaffle.Classifiers
             );
 
 
-            this.AllClassifierRules.Add(
+            AllClassifierRules.Add(
                 new ClassifierRule()
                 {
                     Description = "Files with these extensions are QUITE interesting.",
@@ -139,7 +139,7 @@ namespace LibSnaffle.Classifiers
                 );
 
 
-            this.AllClassifierRules.Add(
+            AllClassifierRules.Add(
                 new ClassifierRule()
                 {
                     Description = "Files with these exact names are very interesting.",

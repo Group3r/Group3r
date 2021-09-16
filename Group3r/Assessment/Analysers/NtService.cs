@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using Group3r.Options.AssessmentOptions;
+﻿using Group3r.Options.AssessmentOptions;
 using LibSnaffle.ActiveDirectory;
-using LibSnaffle.Classifiers.Rules;
+using System.Collections.Generic;
 
 namespace Group3r.Assessment.Analysers
 {

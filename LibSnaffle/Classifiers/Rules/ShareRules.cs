@@ -7,7 +7,7 @@ namespace LibSnaffle.Classifiers
     {
         private void BuildShareRules()
         {
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 RuleName = "DiscardShareEndsWith",
                 Description = "Skips scanning inside shares ending with these words.",
@@ -21,7 +21,7 @@ namespace LibSnaffle.Classifiers
                         "\\ipc$"
                     },
             });
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 RuleName = "KeepShareBlack",
                 Description = "Notifies the user that they can read C$ or ADMIN$ or something fun/noisy, but doesn't actually scan inside it.",

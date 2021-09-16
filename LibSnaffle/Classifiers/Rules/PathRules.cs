@@ -7,7 +7,7 @@ namespace LibSnaffle.Classifiers
     {
         private void BuildPathRules()
         {
-            this.AllClassifierRules.Add(new ClassifierRule()
+            AllClassifierRules.Add(new ClassifierRule()
             {
                 Description = "File paths that will be skipped entirely.",
                 RuleName = "DiscardFilepathContains",

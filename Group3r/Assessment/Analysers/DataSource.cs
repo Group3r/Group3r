@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Group3r.Options.AssessmentOptions;
+﻿using Group3r.Options.AssessmentOptions;
 using LibSnaffle.ActiveDirectory;
 using LibSnaffle.Classifiers.Rules;
+using System;
+using System.Collections.Generic;
 
 namespace Group3r.Assessment.Analysers
 {
@@ -25,7 +25,7 @@ namespace Group3r.Assessment.Analysers
                 });
             }
 
-            if ((int)this.MinTriage < 2)
+            if ((int)MinTriage < 2)
             {
                 findings.Add(new GpoFinding()
                 {
@@ -44,7 +44,7 @@ namespace Group3r.Assessment.Analysers
 
             return SettingResult;
         }
-        
+
         public DataSourceSetting CleanupSetting(DataSourceSetting setting)
         {
             DataSourceSetting cleanSetting = new DataSourceSetting();
@@ -90,6 +90,6 @@ namespace Group3r.Assessment.Analysers
             cleanSetting.Attributes = setting.Attributes;
             return cleanSetting;
         }
-        
+
     }
 }

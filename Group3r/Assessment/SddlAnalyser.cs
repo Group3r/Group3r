@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Group3r.Options.AssessmentOptions;
 using Sddl.Parser;
-using Group3r.Options.AssessmentOptions;
+using System;
+using System.Collections.Generic;
 
 namespace Group3r.Assessment
 {
@@ -14,7 +12,7 @@ namespace Group3r.Assessment
         private AssessmentOptions AssessmentOptions { get; set; }
         public SddlAnalyser(AssessmentOptions assessmentOptions)
         {
-            this.AssessmentOptions = assessmentOptions;
+            AssessmentOptions = assessmentOptions;
         }
 
         public List<SimpleAce> AnalyseSddl(Sddl.Parser.Sddl sddl)
@@ -27,7 +25,7 @@ namespace Group3r.Assessment
             return AclResult;
         }
 
-        public List<SimpleAce> AssessSimpleAC(List<SimpleAce> SimpleAC) 
+        public List<SimpleAce> AssessSimpleAC(List<SimpleAce> SimpleAC)
         {
             List<SimpleAce> aclResult = new List<SimpleAce>();
             // make a new List<SimpleAce> to put the ones that aren't boring into.
@@ -44,7 +42,8 @@ namespace Group3r.Assessment
                     };
                 }
 
-                if (intRights.Count > 0) {
+                if (intRights.Count > 0)
+                {
                     // iterate over trustees in assessmentoptions
                     foreach (TrusteeOption trustee in AssessmentOptions.TrusteeOptions)
                     {
@@ -53,15 +52,19 @@ namespace Group3r.Assessment
                         {
                             if (trustee.LowPriv && intRights.Count > 0)
                             {
-                                SimpleAce aceResult = new SimpleAce();
-                                aceResult.ACEType = ace.ACEType;
-                                aceResult.Trustee = ace.Trustee;
-                                aceResult.Rights = ace.Rights;
+                                SimpleAce aceResult = new SimpleAce
+                                {
+                                    ACEType = ace.ACEType,
+                                    Trustee = ace.Trustee,
+                                    Rights = ace.Rights
+                                };
 
-                                AceFinding aceFinding = new AceFinding();
-                                aceFinding.Triage = LibSnaffle.Classifiers.Rules.Constants.Triage.Red;
-                                aceFinding.FindingReason = "AccessControl on this object grants interesting privileges to a very common low-privilege group or user.";
-                                aceFinding.FindingDetail = ace.Trustee + " was assigned the following rights: " + String.Join(", ", intRights) + ".";
+                                AceFinding aceFinding = new AceFinding
+                                {
+                                    Triage = LibSnaffle.Classifiers.Rules.Constants.Triage.Red,
+                                    FindingReason = "AccessControl on this object grants interesting privileges to a very common low-privilege group or user.",
+                                    FindingDetail = ace.Trustee + " was assigned the following rights: " + String.Join(", ", intRights) + "."
+                                };
                                 aceResult.AceFinding = aceFinding;
 
                                 aclResult.Add(aceResult);
@@ -74,9 +77,11 @@ namespace Group3r.Assessment
                             }
                             else if (!trustee.LowPriv)
                             {
-                                SimpleAce aceResult = new SimpleAce();
-                                aceResult.Trustee = ace.Trustee;
-                                aceResult.Rights = ace.Rights;
+                                SimpleAce aceResult = new SimpleAce
+                                {
+                                    Trustee = ace.Trustee,
+                                    Rights = ace.Rights
+                                };
                                 aclResult.Add(aceResult);
                                 break;
                             }
@@ -90,24 +95,30 @@ namespace Group3r.Assessment
                         {
                             if (intRights.Count > 0)
                             {
-                                SimpleAce aceResult = new SimpleAce();
-                                aceResult.ACEType = ace.ACEType;
-                                aceResult.Trustee = ace.Trustee;
-                                aceResult.Rights = ace.Rights;
+                                SimpleAce aceResult = new SimpleAce
+                                {
+                                    ACEType = ace.ACEType,
+                                    Trustee = ace.Trustee,
+                                    Rights = ace.Rights
+                                };
 
-                                AceFinding aceFinding = new AceFinding();
-                                aceFinding.Triage = LibSnaffle.Classifiers.Rules.Constants.Triage.Red;
-                                aceFinding.FindingReason = "AccessControl on this object grants interesting privileges to an explicitly targeted user or group.";
-                                aceFinding.FindingDetail = "By default this targets the current user and any groups they're a member of. Specifically, " + ace.Trustee + " was assigned the following rights: " + String.Join(", ", intRights) + ".";
+                                AceFinding aceFinding = new AceFinding
+                                {
+                                    Triage = LibSnaffle.Classifiers.Rules.Constants.Triage.Red,
+                                    FindingReason = "AccessControl on this object grants interesting privileges to an explicitly targeted user or group.",
+                                    FindingDetail = "By default this targets the current user and any groups they're a member of. Specifically, " + ace.Trustee + " was assigned the following rights: " + String.Join(", ", intRights) + "."
+                                };
                                 aceResult.AceFinding = aceFinding;
                             }
 
                             if (intRights.Count == 0)
                             {
-                                SimpleAce aceResult = new SimpleAce();
-                                aceResult.ACEType = ace.ACEType;
-                                aceResult.Trustee = ace.Trustee;
-                                aceResult.Rights = ace.Rights;
+                                SimpleAce aceResult = new SimpleAce
+                                {
+                                    ACEType = ace.ACEType,
+                                    Trustee = ace.Trustee,
+                                    Rights = ace.Rights
+                                };
                                 aclResult.Add(aceResult);
                             }
                         }
@@ -130,8 +141,10 @@ namespace Group3r.Assessment
             {
                 foreach (Ace ace in sddl.Dacl.Aces)
                 {
-                    SimpleAce simpleAce = new SimpleAce();
-                    simpleAce.Trustee = ace.AceSid.Alias;
+                    SimpleAce simpleAce = new SimpleAce
+                    {
+                        Trustee = ace.AceSid.Alias
+                    };
                     switch (ace.AceType)
                     {
                         case "OBJECT_ACCESS_ALLOWED":

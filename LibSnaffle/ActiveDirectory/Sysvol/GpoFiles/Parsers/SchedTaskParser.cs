@@ -11,8 +11,10 @@ namespace LibSnaffle.ActiveDirectory
 
         public SchedTaskSetting ParseSchedTask(SchedTaskType taskType, XmlNode schedTask)
         {
-            SchedTaskSetting sts = new SchedTaskSetting();
-            sts.TaskType = taskType;
+            SchedTaskSetting sts = new SchedTaskSetting
+            {
+                TaskType = taskType
+            };
             XmlAttributeCollection stAttributes = schedTask.Attributes;
             XmlNode stProperties = schedTask.SelectSingleNode("Properties");
             XmlAttributeCollection stPropAtts = stProperties.Attributes;
@@ -27,12 +29,16 @@ namespace LibSnaffle.ActiveDirectory
             // detailed properties
             // these older v1 ones are single action
             sts.SettingAction = sts.ParseSettingAction(stPropAtts?["action"]?.Value);
-            SchedTaskExecAction stAction = new SchedTaskExecAction();
-            stAction.Command = stPropAtts?["appName"]?.Value;
-            stAction.Args = stPropAtts?["args"]?.Value;
-            stAction.WorkingDir = stPropAtts?["startIn"]?.Value;
-            List<SchedTaskAction> stsActions = new List<SchedTaskAction>();
-            stsActions.Add(stAction);
+            SchedTaskExecAction stAction = new SchedTaskExecAction
+            {
+                Command = stPropAtts?["appName"]?.Value,
+                Args = stPropAtts?["args"]?.Value,
+                WorkingDir = stPropAtts?["startIn"]?.Value
+            };
+            List<SchedTaskAction> stsActions = new List<SchedTaskAction>
+            {
+                stAction
+            };
             sts.Actions = stsActions;
             sts.Comment = stPropAtts?["comment"]?.Value;
 
@@ -68,10 +74,12 @@ namespace LibSnaffle.ActiveDirectory
 
             // runas details
             sts.Principals = new List<SchedTaskPrincipal>();
-            SchedTaskPrincipal stPrincipal = new SchedTaskPrincipal();
-            stPrincipal.UserId = stPropAtts?["runAs"]?.Value;
-            stPrincipal.LogonType = stPropAtts?["logonType"]?.Value;
-            stPrincipal.Cpassword = stPropAtts?["cpassword"]?.Value;
+            SchedTaskPrincipal stPrincipal = new SchedTaskPrincipal
+            {
+                UserId = stPropAtts?["runAs"]?.Value,
+                LogonType = stPropAtts?["logonType"]?.Value,
+                Cpassword = stPropAtts?["cpassword"]?.Value
+            };
             sts.Principals.Add(stPrincipal);
             bool enabled;
             if (Boolean.TryParse(stPropAtts?["enabled"]?.Value, out enabled))

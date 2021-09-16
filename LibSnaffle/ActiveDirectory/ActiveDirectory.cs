@@ -1,14 +1,14 @@
-﻿using LibSnaffle.Errors;
+﻿using LibSnaffle.Concurrency;
+using LibSnaffle.Errors;
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
-using System.DirectoryServices.ActiveDirectory;
 using System.DirectoryServices.AccountManagement;
+using System.DirectoryServices.ActiveDirectory;
 using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Security.Principal;
-using LibSnaffle.Concurrency;
 
 namespace LibSnaffle.ActiveDirectory
 {
@@ -85,7 +85,7 @@ namespace LibSnaffle.ActiveDirectory
         /// </summary>
         public ActiveDirectory(BlockingMq mq)
         {
-            this.Mq = mq;
+            Mq = mq;
         }
 
         /// <summary>
@@ -98,9 +98,9 @@ namespace LibSnaffle.ActiveDirectory
         /// <param name="fullCollection"></param>
         public ActiveDirectory(BlockingMq mq, string targetDomain = null, string targetDc = null)
         {
-            this.Mq = mq;
-            this.TargetDC = targetDc;
-            this.TargetDomain = targetDomain;
+            Mq = mq;
+            TargetDC = targetDc;
+            TargetDomain = targetDomain;
 
             try
             {
@@ -113,61 +113,61 @@ namespace LibSnaffle.ActiveDirectory
         }
 
         private void SetDirectoryContext()
-        {            
+        {
             try
             {
                 // target dc set, no target domain set
-                if ((!string.IsNullOrEmpty(this.TargetDC)) && (string.IsNullOrEmpty(this.TargetDomain)))
+                if ((!string.IsNullOrEmpty(TargetDC)) && (string.IsNullOrEmpty(TargetDomain)))
                 {
-                    Mq.Trace("Target DC specified: " + this.TargetDC + ", using it for DirectoryContext.");
-                    this.Context = new DirectoryContext(DirectoryContextType.Domain, TargetDC);
-                    this.PContext = new PrincipalContext(ContextType.Domain, TargetDC);
-                    Mq.Trace("Adding " + this.TargetDC + " to ActiveDirectory.DomainControllerNames.");
-                    DomainControllerNames.Add(this.TargetDC);
+                    Mq.Trace("Target DC specified: " + TargetDC + ", using it for DirectoryContext.");
+                    Context = new DirectoryContext(DirectoryContextType.Domain, TargetDC);
+                    PContext = new PrincipalContext(ContextType.Domain, TargetDC);
+                    Mq.Trace("Adding " + TargetDC + " to ActiveDirectory.DomainControllerNames.");
+                    DomainControllerNames.Add(TargetDC);
                     Mq.Trace("Testing domain connectivity...");
-                    this.CurrentDomain = Domain.GetDomain(Context);
-                    this.CurrentForest = CurrentDomain.Forest;
-                    Mq.Trace("Successfully queried the " + this.CurrentDomain.Name + " domain. Hope that's what you had in mind...");
+                    CurrentDomain = Domain.GetDomain(Context);
+                    CurrentForest = CurrentDomain.Forest;
+                    Mq.Trace("Successfully queried the " + CurrentDomain.Name + " domain. Hope that's what you had in mind...");
                 }
                 // target domain set, no target dc set
-                else if ((!string.IsNullOrEmpty(this.TargetDomain)) && (string.IsNullOrEmpty(this.TargetDC)))
+                else if ((!string.IsNullOrEmpty(TargetDomain)) && (string.IsNullOrEmpty(TargetDC)))
                 {
-                    Mq.Trace("Target domain specified: " + this.TargetDomain + ", using it for DirectoryContext.");
-                    this.Context = new DirectoryContext(DirectoryContextType.Domain, TargetDomain);
-                    this.PContext = new PrincipalContext(ContextType.Domain, TargetDomain);
+                    Mq.Trace("Target domain specified: " + TargetDomain + ", using it for DirectoryContext.");
+                    Context = new DirectoryContext(DirectoryContextType.Domain, TargetDomain);
+                    PContext = new PrincipalContext(ContextType.Domain, TargetDomain);
                     Mq.Trace("Testing domain connectivity...");
-                    this.CurrentDomain = Domain.GetDomain(Context);
-                    this.CurrentForest = CurrentDomain.Forest;
-                    Mq.Trace("Successfully queried the " + this.CurrentDomain.Name + " domain. Hope that's what you had in mind...");
+                    CurrentDomain = Domain.GetDomain(Context);
+                    CurrentForest = CurrentDomain.Forest;
+                    Mq.Trace("Successfully queried the " + CurrentDomain.Name + " domain. Hope that's what you had in mind...");
                 }
                 // target domain and dc set
-                else if ((!string.IsNullOrEmpty(this.TargetDomain)) && (!string.IsNullOrEmpty(this.TargetDC)))
+                else if ((!string.IsNullOrEmpty(TargetDomain)) && (!string.IsNullOrEmpty(TargetDC)))
                 {
-                    Mq.Trace("Target DC and Domain specified: " + this.TargetDC + ", using DC for DirectoryContext.");
-                    this.Context = new DirectoryContext(DirectoryContextType.Domain, TargetDC);
-                    this.PContext = new PrincipalContext(ContextType.Domain, TargetDC);
-                    Mq.Trace("Adding " + this.TargetDC + " to ActiveDirectory.DomainControllerNames.");
-                    DomainControllerNames.Add(this.TargetDC);
+                    Mq.Trace("Target DC and Domain specified: " + TargetDC + ", using DC for DirectoryContext.");
+                    Context = new DirectoryContext(DirectoryContextType.Domain, TargetDC);
+                    PContext = new PrincipalContext(ContextType.Domain, TargetDC);
+                    Mq.Trace("Adding " + TargetDC + " to ActiveDirectory.DomainControllerNames.");
+                    DomainControllerNames.Add(TargetDC);
                     Mq.Trace("Testing domain connectivity...");
-                    this.CurrentDomain = Domain.GetDomain(Context);
-                    this.CurrentForest = CurrentDomain.Forest;
-                    Mq.Trace("Successfully queried the " + this.CurrentDomain.Name + " domain. Hope that's what you had in mind...");
+                    CurrentDomain = Domain.GetDomain(Context);
+                    CurrentForest = CurrentDomain.Forest;
+                    Mq.Trace("Successfully queried the " + CurrentDomain.Name + " domain. Hope that's what you had in mind...");
                 }
                 // no target DC or domain set
                 else
                 {
                     Mq.Trace("Getting current domain from user context.");
-                    this.CurrentDomain = Domain.GetCurrentDomain();
-                    this.TargetDomain = this.CurrentDomain.Name;
-                    Mq.Trace("Current domain is " + this.CurrentDomain.Name + " using it for DirectoryContext.");
-                    this.Context = new DirectoryContext(DirectoryContextType.Domain, this.CurrentDomain.Name);
-                    this.PContext = new PrincipalContext(ContextType.Domain, this.CurrentDomain.Name);
+                    CurrentDomain = Domain.GetCurrentDomain();
+                    TargetDomain = CurrentDomain.Name;
+                    Mq.Trace("Current domain is " + CurrentDomain.Name + " using it for DirectoryContext.");
+                    Context = new DirectoryContext(DirectoryContextType.Domain, CurrentDomain.Name);
+                    PContext = new PrincipalContext(ContextType.Domain, CurrentDomain.Name);
                     Mq.Trace("Using domain name as DC name for future operations.");
                     DomainControllerNames.Add(TargetDomain);
-                    this.TargetDC = TargetDomain;
-                    this.CurrentDomain = Domain.GetDomain(Context);
-                    this.CurrentForest = CurrentDomain.Forest;
-                    Mq.Trace("Successfully queried the " + this.CurrentDomain.Name + " domain. Hope that's what you had in mind...");
+                    TargetDC = TargetDomain;
+                    CurrentDomain = Domain.GetDomain(Context);
+                    CurrentForest = CurrentDomain.Forest;
+                    Mq.Trace("Successfully queried the " + CurrentDomain.Name + " domain. Hope that's what you had in mind...");
                 }
             }
             // TODO: tidy up generic exception.
@@ -251,7 +251,7 @@ namespace LibSnaffle.ActiveDirectory
             {
                 Mq.Error("Error Obtaining GPOs from DC " + TargetDC + " " + e.ToString());
             }
-            
+
 
             // Ensure we actually got some data.
             if (Gpos.Count == 0)
@@ -377,7 +377,7 @@ namespace LibSnaffle.ActiveDirectory
 
                             gpoLinkResult.LinkPath = adspath;
 
-                            GPO gpo = this.Gpos.Where(g => g.Attributes.DistinguishedName.Equals(distinguishedName, StringComparison.OrdinalIgnoreCase)).First();
+                            GPO gpo = Gpos.Where(g => g.Attributes.DistinguishedName.Equals(distinguishedName, StringComparison.OrdinalIgnoreCase)).First();
                             gpo.Attributes.GpoLinks.Add(gpoLinkResult);
                         }
                         else
@@ -443,8 +443,8 @@ namespace LibSnaffle.ActiveDirectory
 
                         gpo.Attributes.AdsPath = resEnt.Properties["adspath"][0].ToString();
                         gpo.Attributes.DisplayName = resEnt.Properties["displayname"][0].ToString();
-                        gpo.Attributes.CreatedDate = (DateTime) (resEnt.Properties["whenCreated"][0]);
-                        gpo.Attributes.ModifiedDate = (DateTime) (resEnt.Properties["whenChanged"][0]);
+                        gpo.Attributes.CreatedDate = (DateTime)(resEnt.Properties["whenCreated"][0]);
+                        gpo.Attributes.ModifiedDate = (DateTime)(resEnt.Properties["whenChanged"][0]);
                         //string ntSecurityDescriptorString = resEnt.Properties["ntsecuritydescriptor"][0].ToString();
                         byte[] ntSecurityDescriptor = (byte[])resEnt.Properties["ntsecuritydescriptor"][0];
                         RawSecurityDescriptor rawSecurityDescriptor = new RawSecurityDescriptor(ntSecurityDescriptor, 0);
@@ -473,11 +473,11 @@ namespace LibSnaffle.ActiveDirectory
                                 break;
                             case "2":
                                 gpo.Attributes.ComputerPolicyEnabled = false;
-                                gpo.Attributes.UserPolicyEnabled = true; 
+                                gpo.Attributes.UserPolicyEnabled = true;
                                 break;
                             case "3":
                                 gpo.Attributes.ComputerPolicyEnabled = false;
-                                gpo.Attributes.UserPolicyEnabled = false; 
+                                gpo.Attributes.UserPolicyEnabled = false;
                                 break;
                             default:
                                 Mq.Degub("Couldn't process GPO Enabled Status. Weird.");
@@ -506,10 +506,12 @@ namespace LibSnaffle.ActiveDirectory
             List<string> ComputerNames = new List<string>();
 
             DirectoryEntry entry = new DirectoryEntry($"LDAP://{TargetDC}");
-            DirectorySearcher mySearcher = new DirectorySearcher(entry);
-            mySearcher.Filter = ("(objectClass=computer)");
-            mySearcher.SizeLimit = int.MaxValue;
-            mySearcher.PageSize = int.MaxValue;
+            DirectorySearcher mySearcher = new DirectorySearcher(entry)
+            {
+                Filter = ("(objectClass=computer)"),
+                SizeLimit = int.MaxValue,
+                PageSize = int.MaxValue
+            };
 
             foreach (SearchResult resEnt in mySearcher.FindAll())
             {
@@ -524,7 +526,7 @@ namespace LibSnaffle.ActiveDirectory
             mySearcher.Dispose();
             entry.Dispose();
 
-            this.Computers = ComputerNames;
+            Computers = ComputerNames;
         }
 
         public void EnumerateUsers()
@@ -544,7 +546,7 @@ namespace LibSnaffle.ActiveDirectory
                 }
             }
 
-            this.Users = users;
+            Users = users;
         }
 
         /// <summary>
@@ -605,10 +607,12 @@ namespace LibSnaffle.ActiveDirectory
                     {
                         try
                         {
-                            PackageSetting gpoPackage = new PackageSetting();
-                            // do stuff to put the right shit in the gpopackage.
+                            PackageSetting gpoPackage = new PackageSetting
+                            {
+                                // do stuff to put the right shit in the gpopackage.
 
-                            gpoPackage.DisplayName = package.Properties["displayName"][0].ToString();
+                                DisplayName = package.Properties["displayName"][0].ToString()
+                            };
 
                             //check to see if there are transforms
                             if (package.Properties["msiFileList"].Count > 1)

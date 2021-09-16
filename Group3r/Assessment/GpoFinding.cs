@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Security.AccessControl;
-using LibSnaffle.ActiveDirectory;
+﻿using LibSnaffle.ActiveDirectory;
 using LibSnaffle.Classifiers.Results;
 using LibSnaffle.Classifiers.Rules;
-using Group3r.Assessment;
+using System.Collections.Generic;
 using System.IO;
+using System.Security.AccessControl;
 
 namespace Group3r.Assessment
 {
@@ -47,13 +46,13 @@ namespace Group3r.Assessment
             if (exists)
             {
                 FileInfo fileInfo = new FileInfo(originalPath);
-                this.FileSecurity = fileInfo.GetAccessControl(System.Security.AccessControl.AccessControlSections.Access | System.Security.AccessControl.AccessControlSections.Owner);
-                string fileSecuritySddlString = this.FileSecurity.GetSecurityDescriptorSddlForm(System.Security.AccessControl.AccessControlSections.Access | System.Security.AccessControl.AccessControlSections.Owner);
-                this.AclResult = sddlAnalyser.AnalyseSddl(new Sddl.Parser.Sddl(fileSecuritySddlString, Sddl.Parser.SecurableObjectType.File));
-                this.FileExists = true;
+                FileSecurity = fileInfo.GetAccessControl(System.Security.AccessControl.AccessControlSections.Access | System.Security.AccessControl.AccessControlSections.Owner);
+                string fileSecuritySddlString = FileSecurity.GetSecurityDescriptorSddlForm(System.Security.AccessControl.AccessControlSections.Access | System.Security.AccessControl.AccessControlSections.Owner);
+                AclResult = sddlAnalyser.AnalyseSddl(new Sddl.Parser.Sddl(fileSecuritySddlString, Sddl.Parser.SecurableObjectType.File));
+                FileExists = true;
             }
-            this.AssessedPath = originalPath;
-            this.FileSecurity = null;
+            AssessedPath = originalPath;
+            FileSecurity = null;
         }
     }
 
@@ -64,13 +63,13 @@ namespace Group3r.Assessment
             if (exists)
             {
                 DirectoryInfo dirInfo = new DirectoryInfo(originalPath);
-                this.DirectorySecurity = dirInfo.GetAccessControl(System.Security.AccessControl.AccessControlSections.Access | System.Security.AccessControl.AccessControlSections.Owner);
-                string dirSecuritySddlString = this.DirectorySecurity.GetSecurityDescriptorSddlForm(System.Security.AccessControl.AccessControlSections.Access | System.Security.AccessControl.AccessControlSections.Owner);
-                this.AclResult = sddlAnalyser.AnalyseSddl(new Sddl.Parser.Sddl(dirSecuritySddlString, Sddl.Parser.SecurableObjectType.Directory));
-                this.DirectoryExists = true;
+                DirectorySecurity = dirInfo.GetAccessControl(System.Security.AccessControl.AccessControlSections.Access | System.Security.AccessControl.AccessControlSections.Owner);
+                string dirSecuritySddlString = DirectorySecurity.GetSecurityDescriptorSddlForm(System.Security.AccessControl.AccessControlSections.Access | System.Security.AccessControl.AccessControlSections.Owner);
+                AclResult = sddlAnalyser.AnalyseSddl(new Sddl.Parser.Sddl(dirSecuritySddlString, Sddl.Parser.SecurableObjectType.Directory));
+                DirectoryExists = true;
             }
-            this.AssessedPath = originalPath;
-            this.DirectorySecurity = null;
+            AssessedPath = originalPath;
+            DirectorySecurity = null;
         }
     }
 
@@ -86,7 +85,7 @@ namespace Group3r.Assessment
     {
         public string FindingReason { get; set; }
         public string FindingDetail { get; set; }
-        public AccessType AccessType {get; set;}
+        public AccessType AccessType { get; set; }
         /*
          trustee with access
         reason it's interesting

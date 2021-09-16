@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Xml;
 
 namespace LibSnaffle.ActiveDirectory
@@ -96,5 +94,5 @@ namespace LibSnaffle.ActiveDirectory
         public bool RepeatTask { get; set; }
         public bool Interval { get; set; }
     }
-    
+
 }

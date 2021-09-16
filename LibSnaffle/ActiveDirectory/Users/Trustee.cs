@@ -1,7 +1,6 @@
 ﻿using LibSnaffle.Errors;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
@@ -20,25 +19,25 @@ namespace LibSnaffle.ActiveDirectory
             input = input.Trim('*');
             if (isSid)
             {
-                this.Sid = input;
+                Sid = input;
                 // try to resolve the sid
                 try
                 {
-                    this.DisplayName = GetUserFromSid(input);
+                    DisplayName = GetUserFromSid(input);
                 }
                 catch (Exception e)
                 {
-                    this.DisplayName = "Failed SID resolution.";
+                    DisplayName = "Failed SID resolution.";
                     //throw new UserException("Failed to resolve SID: " + input, e);
                 }
                 // try to see if it's a well-known high or low privileged group/user
                 try
                 {
-                    this.WkHighOrLowPriv = GetWKSidHighOrLow(input);
+                    WkHighOrLowPriv = GetWKSidHighOrLow(input);
                 }
                 catch (Exception e)
                 {
-                    this.WkHighOrLowPriv = "Unknown";
+                    WkHighOrLowPriv = "Unknown";
                     //throw new UserException("Failed to check high/low priv status on SID: " + input, e);
                 }
             }
@@ -53,9 +52,9 @@ namespace LibSnaffle.ActiveDirectory
             // stolen wholesale from http://www.pinvoke.net/default.aspx/advapi32.LookupAccountSid
 
             StringBuilder name = new StringBuilder();
-            uint cchName = (uint) name.Capacity;
+            uint cchName = (uint)name.Capacity;
             StringBuilder referencedDomainName = new StringBuilder();
-            uint cchReferencedDomainName = (uint) referencedDomainName.Capacity;
+            uint cchReferencedDomainName = (uint)referencedDomainName.Capacity;
             SID_NAME_USE sidUse;
             int err = 0;
             try
@@ -72,8 +71,8 @@ namespace LibSnaffle.ActiveDirectory
                     err = Marshal.GetLastWin32Error();
                     if (err == ERROR_INSUFFICIENT_BUFFER)
                     {
-                        name.EnsureCapacity((int) cchName);
-                        referencedDomainName.EnsureCapacity((int) cchReferencedDomainName);
+                        name.EnsureCapacity((int)cchName);
+                        referencedDomainName.EnsureCapacity((int)cchReferencedDomainName);
                         err = NO_ERROR;
                         if (!LookupAccountSid(null, sidBytes, name, ref cchName, referencedDomainName,
                             ref cchReferencedDomainName, out sidUse))

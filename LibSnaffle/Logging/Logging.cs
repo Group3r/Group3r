@@ -1,12 +1,7 @@
-﻿using NLog;
+﻿using LibSnaffle.Concurrency;
+using NLog;
 using NLog.Config;
 using NLog.Targets;
-using System;
-using System.Diagnostics;
-using System.Text;
-using System.Threading.Tasks;
-using LibSnaffle.Concurrency;
-using System.Collections.Generic;
 
 namespace LibSnaffle.Logging
 {
@@ -30,13 +25,13 @@ namespace LibSnaffle.Logging
         {
             LoggingConfiguration nlogConfig = new LoggingConfiguration();
             LogLevel logLevel = ParseLogLevelString(logLevelString, Mq);
-            
+
             //bool logToConsole = !logToFile;
 
             // Targets where to log to: File and Console
             if (logToConsole)
             {
-                
+
                 nlogConfig.AddRule(logLevel, LogLevel.Fatal, logconsole);
                 logconsole.Layout = "${message}";
             }

@@ -1,9 +1,9 @@
-﻿using System;
+﻿using LibSnaffle.FileDiscovery;
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
-using LibSnaffle.FileDiscovery;
 
 namespace LibSnaffle.Concurrency
 {
@@ -137,10 +137,10 @@ namespace LibSnaffle.Concurrency
         {
             lock (_taskCounters)
             {
-                this._taskCounters.CurrentTasksQueued = _tasks.Count;
-                this._taskCounters.CurrentTasksRunning = _delegatesQueuedOrRunning;
-                this._taskCounters.CurrentTasksRemaining = this._taskCounters.CurrentTasksQueued + this._taskCounters.CurrentTasksRunning;
-                this._taskCounters.CompletedTasks = this._taskCounters.TotalTasksQueued - this._taskCounters.CurrentTasksRemaining;
+                _taskCounters.CurrentTasksQueued = _tasks.Count;
+                _taskCounters.CurrentTasksRunning = _delegatesQueuedOrRunning;
+                _taskCounters.CurrentTasksRemaining = _taskCounters.CurrentTasksQueued + _taskCounters.CurrentTasksRunning;
+                _taskCounters.CompletedTasks = _taskCounters.TotalTasksQueued - _taskCounters.CurrentTasksRemaining;
             }
         }
 
@@ -160,11 +160,11 @@ namespace LibSnaffle.Concurrency
         public LimitedConcurrencyLevelTaskScheduler(int maxThreads)
         {
             if (maxThreads < 1)
-            { 
-                throw new ArgumentException("Max threads cannot be less than 1."); 
+            {
+                throw new ArgumentException("Max threads cannot be less than 1.");
             }
             _maxThreads = maxThreads;
-            this._taskCounters = new TaskCounters();
+            _taskCounters = new TaskCounters();
         }
 
         // Queues a task to the scheduler. 

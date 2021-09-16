@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Group3r.Options.AssessmentOptions;
+﻿using Group3r.Options.AssessmentOptions;
 using LibSnaffle.ActiveDirectory;
 using LibSnaffle.Classifiers.Rules;
+using System;
+using System.Collections.Generic;
 
 namespace Group3r.Assessment.Analysers
 {
@@ -23,7 +23,7 @@ namespace Group3r.Assessment.Analysers
 
                 if (pathFinding.FileExists && pathFinding.FileWritable)
                 {
-                    if ((int)this.MinTriage < 4)
+                    if ((int)MinTriage < 4)
                     {
                         findings.Add(new GpoFinding()
                         {
@@ -35,7 +35,7 @@ namespace Group3r.Assessment.Analysers
                 }
                 else if (!pathFinding.FileExists && pathFinding.DirectoryExists && pathFinding.DirectoryWritable)
                 {
-                    if ((int)this.MinTriage < 4)
+                    if ((int)MinTriage < 4)
                     {
                         findings.Add(new GpoFinding()
                         {
@@ -47,7 +47,7 @@ namespace Group3r.Assessment.Analysers
                 }
                 else if (!pathFinding.FileExists && !pathFinding.DirectoryExists && !String.IsNullOrWhiteSpace(pathFinding.ParentDirectoryExists) && pathFinding.ParentDirectoryWritable)
                 {
-                    if ((int)this.MinTriage < 4)
+                    if ((int)MinTriage < 4)
                     {
                         findings.Add(new GpoFinding()
                         {
@@ -67,7 +67,7 @@ namespace Group3r.Assessment.Analysers
 
                 if (pathFinding.DirectoryExists && pathFinding.DirectoryWritable)
                 {
-                    if ((int)this.MinTriage < 3)
+                    if ((int)MinTriage < 3)
                     {
                         findings.Add(new GpoFinding()
                         {
@@ -79,7 +79,7 @@ namespace Group3r.Assessment.Analysers
                 }
                 else if (!pathFinding.FileExists && !pathFinding.DirectoryExists && !String.IsNullOrWhiteSpace(pathFinding.ParentDirectoryExists) && pathFinding.ParentDirectoryWritable)
                 {
-                    if ((int)this.MinTriage < 3)
+                    if ((int)MinTriage < 3)
                     {
                         findings.Add(new GpoFinding()
                         {
@@ -95,7 +95,7 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.Arguments.Contains("pass") || setting.Arguments.Contains("-p") || setting.Arguments.Contains("/p"))
                 {
-                    if ((int)this.MinTriage < 3)
+                    if ((int)MinTriage < 3)
                     {
                         findings.Add(new GpoFinding()
                         {
@@ -111,7 +111,7 @@ namespace Group3r.Assessment.Analysers
             SettingResult.Findings = findings;
 
             // make a new setting object minus the ugly bits we don't care about.
-            
+
             SettingResult.Setting = setting;
 
             return SettingResult;

@@ -4,10 +4,8 @@ using LibSnaffle.Concurrency;
 using System;
 using System.IO;
 using System.Linq;
-using System.Security.AccessControl;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Security.Principal;
 
 namespace LibSnaffle.Classifiers
 {
@@ -119,7 +117,7 @@ namespace LibSnaffle.Classifiers
                     {
                         //TODO this needs to iterate over all relay rules
                         ClassifierRule nextRule = AllRules.AllClassifierRules.Where(x => x.RuleName.Equals(classifierRule.RelayTarget)).FirstOrDefault();
-                        if(nextRule.EnumerationScope == Constants.EnumerationScope.ContentsEnumeration)
+                        if (nextRule.EnumerationScope == Constants.EnumerationScope.ContentsEnumeration)
                         {
                             ContentClassifier c = new ContentClassifier(Mq, Options);
                             return c.Classify(nextRule, artefact);
@@ -146,7 +144,7 @@ namespace LibSnaffle.Classifiers
                     return null;
             }
         }
-       
+
         public bool x509PrivKeyMatch(FileInfo fileInfo)
         {
             try
@@ -155,7 +153,7 @@ namespace LibSnaffle.Classifiers
                 return parsedCert.HasPrivateKey;
             }
             catch (CryptographicException)
-            {}
+            { }
             return false;
         }
     }

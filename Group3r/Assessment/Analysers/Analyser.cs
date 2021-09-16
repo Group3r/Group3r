@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using LibSnaffle.ActiveDirectory;
+﻿using Group3r.Concurrency;
 using Group3r.Options.AssessmentOptions;
-using Group3r.Concurrency;
 using LibSnaffle.Classifiers.Rules;
 
 namespace Group3r.Assessment.Analysers

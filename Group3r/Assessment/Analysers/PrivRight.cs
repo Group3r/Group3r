@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Group3r.Options.AssessmentOptions;
+﻿using Group3r.Options.AssessmentOptions;
 using LibSnaffle.ActiveDirectory;
 using LibSnaffle.Classifiers.Rules;
+using System;
+using System.Collections.Generic;
 
 namespace Group3r.Assessment.Analysers
 {
@@ -41,22 +41,26 @@ namespace Group3r.Assessment.Analysers
                                 else if (trusteeOption.LowPriv)
                                 {
                                     // finding
-                                    GpoFinding gpoFinding = new GpoFinding();
-                                    gpoFinding.FindingReason = "Well-known low-priv user/group assigned an interesting OS privilege.";
-                                    gpoFinding.FindingDetail = setting.Privilege + " was assigned to " + trustee.DisplayName + " - " + trustee.Sid;
-                                    gpoFinding.Triage = Constants.Triage.Black;
+                                    GpoFinding gpoFinding = new GpoFinding
+                                    {
+                                        FindingReason = "Well-known low-priv user/group assigned an interesting OS privilege.",
+                                        FindingDetail = setting.Privilege + " was assigned to " + trustee.DisplayName + " - " + trustee.Sid,
+                                        Triage = Constants.Triage.Black
+                                    };
                                     // add details
                                     findings.Add(gpoFinding);
                                 }
                                 else
                                 {
-                                    if ((int)this.MinTriage < 2)
+                                    if ((int)MinTriage < 2)
                                     {
                                         // finding
-                                        GpoFinding gpoFinding = new GpoFinding();
-                                        gpoFinding.FindingReason = "User/group assigned an interesting OS privilege. ";
-                                        gpoFinding.FindingDetail = setting.Privilege + " was assigned to " + trustee.DisplayName + " - " + trustee.Sid;
-                                        gpoFinding.Triage = Constants.Triage.Green;
+                                        GpoFinding gpoFinding = new GpoFinding
+                                        {
+                                            FindingReason = "User/group assigned an interesting OS privilege. ",
+                                            FindingDetail = setting.Privilege + " was assigned to " + trustee.DisplayName + " - " + trustee.Sid,
+                                            Triage = Constants.Triage.Green
+                                        };
                                         // add details
                                         findings.Add(gpoFinding);
                                     }
@@ -69,26 +73,30 @@ namespace Group3r.Assessment.Analysers
                             if (trustee.DisplayName.ToLower() == targetuser)
                             {
                                 matched = true;
-                                if ((int)this.MinTriage < 4)
+                                if ((int)MinTriage < 4)
                                 {
                                     // finding
-                                    GpoFinding gpoFinding = new GpoFinding();
-                                    gpoFinding.FindingReason = "Targeted user/group assigned an interesting OS privilege.";
-                                    gpoFinding.FindingDetail = setting.Privilege + " was assigned to " + trustee.DisplayName + " - " + trustee.Sid;
-                                    gpoFinding.Triage = Constants.Triage.Red;
+                                    GpoFinding gpoFinding = new GpoFinding
+                                    {
+                                        FindingReason = "Targeted user/group assigned an interesting OS privilege.",
+                                        FindingDetail = setting.Privilege + " was assigned to " + trustee.DisplayName + " - " + trustee.Sid,
+                                        Triage = Constants.Triage.Red
+                                    };
                                     findings.Add(gpoFinding);
                                 }
                             }
                         }
                         if (matched == false)
                         {
-                            if ((int)this.MinTriage < 2)
+                            if ((int)MinTriage < 2)
                             {
                                 // finding
-                                GpoFinding gpoFinding = new GpoFinding();
-                                gpoFinding.FindingReason = "User/group assigned an interesting OS privilege. ";
-                                gpoFinding.FindingDetail = setting.Privilege + " was assigned to " + trustee.DisplayName + " - " + trustee.Sid;
-                                gpoFinding.Triage = Constants.Triage.Green;
+                                GpoFinding gpoFinding = new GpoFinding
+                                {
+                                    FindingReason = "User/group assigned an interesting OS privilege. ",
+                                    FindingDetail = setting.Privilege + " was assigned to " + trustee.DisplayName + " - " + trustee.Sid,
+                                    Triage = Constants.Triage.Green
+                                };
                                 // add details
                                 findings.Add(gpoFinding);
                             }
@@ -107,7 +115,7 @@ namespace Group3r.Assessment.Analysers
             return SettingResult;
         }
 
-        
+
         public PrivRightSetting CleanupSetting(PrivRightSetting setting)
         {
             PrivRightSetting cleanSetting = new PrivRightSetting();
@@ -125,7 +133,7 @@ namespace Group3r.Assessment.Analysers
             }
 
             cleanSetting.TrusteeSids = null;
-            
+
             if (setting.Trustees.Count > 0)
             {
                 cleanSetting.Trustees = setting.Trustees;
@@ -133,6 +141,6 @@ namespace Group3r.Assessment.Analysers
 
             return cleanSetting;
         }
-        
+
     }
 }

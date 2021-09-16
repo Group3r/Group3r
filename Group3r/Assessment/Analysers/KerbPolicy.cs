@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Group3r.Options.AssessmentOptions;
+﻿using Group3r.Options.AssessmentOptions;
 using LibSnaffle.ActiveDirectory;
 using LibSnaffle.Classifiers.Rules;
+using System.Collections.Generic;
 
 namespace Group3r.Assessment.Analysers
 {
@@ -14,7 +13,7 @@ namespace Group3r.Assessment.Analysers
         {
 
             List<GpoFinding> findings = new List<GpoFinding>();
-            
+
             if (setting.Key == "MaxTicketAge")
             {
                 if (setting.Value != "10")
@@ -28,7 +27,7 @@ namespace Group3r.Assessment.Analysers
                     });
                 }
             }
-            
+
             else if (setting.Key == "MaxRenewAge")
             {
                 if (setting.Value != "7")
@@ -84,7 +83,7 @@ namespace Group3r.Assessment.Analysers
                     });
                 }
             }
-            
+
             // put findings in settingResult
             SettingResult.Findings = findings;
 

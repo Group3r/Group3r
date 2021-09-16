@@ -1,12 +1,7 @@
 ﻿using LibSnaffle.Concurrency;
-using LibSnaffle.Errors;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace LibSnaffle.ActiveDirectory
@@ -75,12 +70,14 @@ namespace LibSnaffle.ActiveDirectory
                                 foreach (XmlNode groupMember in groupMembers)
                                 {
                                     XmlAttributeCollection groupMemberAttributes = groupMember.Attributes;
-                                    GroupSettingMember groupSettingMember = new GroupSettingMember();
-                                    groupSettingMember.Action =
+                                    GroupSettingMember groupSettingMember = new GroupSettingMember
+                                    {
+                                        Action =
                                         groupSetting.ParseSettingAction(
-                                            groupMemberAttributes?["action"]?.Value);
-                                    groupSettingMember.Name = groupMemberAttributes?["name"]?.Value;
-                                    groupSettingMember.Sid = groupMemberAttributes?["sid"]?.Value;
+                                            groupMemberAttributes?["action"]?.Value),
+                                        Name = groupMemberAttributes?["name"]?.Value,
+                                        Sid = groupMemberAttributes?["sid"]?.Value
+                                    };
                                     groupSetting.Members.Add(groupSettingMember);
                                 }
                             }
@@ -381,8 +378,10 @@ namespace LibSnaffle.ActiveDirectory
                             rs.Key = rsPropAtts?["key"]?.Value;
 
                             //stuff about the value. make a value and put stuff in it.
-                            RegistryValue regVal = new RegistryValue();
-                            regVal.ValueName = rsPropAtts?["name"]?.Value;
+                            RegistryValue regVal = new RegistryValue
+                            {
+                                ValueName = rsPropAtts?["name"]?.Value
+                            };
                             // make a val type to parse into
                             RegKeyValType valType = RegKeyValType.REG_NONE;
                             // try to parse it

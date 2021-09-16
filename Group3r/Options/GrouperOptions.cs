@@ -1,8 +1,4 @@
-﻿using Group3r.Assessment;
-using LibSnaffle.ActiveDirectory;
-using Group3r.Options.AssessmentOptions;
-using Group3r.View;
-using LibSnaffle.Classifiers;
+﻿using Group3r.View;
 
 namespace Group3r.Options
 {
@@ -31,7 +27,7 @@ namespace Group3r.Options
         public char Separator { get; set; } = ' ';
         public bool LogToConsole { get; set; } = true;
         public string LogLevelString { get; set; } = "info";
-        public string PrinterType { get; set; } = "json";
+        public string PrinterType { get; set; }
         public bool FindingsOnly { get; set; } = false;
 
         public AssessmentOptions.AssessmentOptions AssessmentOptions { get; set; }
@@ -44,8 +40,8 @@ namespace Group3r.Options
 
         public GrouperOptions()
         {
-            Printer = GpoPrinterFactory.GetPrinter(PrinterType);
-            
+            Printer = GpoPrinterFactory.GetPrinter(PrinterType, this);
+
             AssessmentOptions = new AssessmentOptions.AssessmentOptions();
         }
     }

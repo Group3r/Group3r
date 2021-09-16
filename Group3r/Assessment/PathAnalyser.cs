@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Group3r.Options.AssessmentOptions;
+﻿using Group3r.Options.AssessmentOptions;
 using LibSnaffle.Classifiers;
 using LibSnaffle.Classifiers.Results;
 using LibSnaffle.Concurrency;
+using System;
+using System.IO;
 
 namespace Group3r.Assessment
 {
@@ -15,7 +13,7 @@ namespace Group3r.Assessment
 
         public PathAnalyser(AssessmentOptions assessmentOptions)
         {
-            this.AssessmentOptions = assessmentOptions;
+            AssessmentOptions = assessmentOptions;
         }
 
         public PathFinding AnalysePath(string originalPath)
@@ -62,7 +60,7 @@ namespace Group3r.Assessment
                     throw e;
                 }
             }
-            else 
+            else
             {
                 // if it doesn't exist at all, we need to step up the path to see if there's a parent dir that exists that might be writable.
                 // so we trim backslashes to get an idea of how many elements there are in the path
@@ -107,7 +105,7 @@ namespace Group3r.Assessment
 
             FileClassifier fileClassifier = new FileClassifier(mq, AssessmentOptions.ClassifierOptions);
 
-            PathFinding filePathFinding = new FilePathFinding(); 
+            PathFinding filePathFinding = new FilePathFinding();
 
             foreach (ClassifierRule rule in AssessmentOptions.ClassifierOptions.AllRules.FileClassifierRules)
             {

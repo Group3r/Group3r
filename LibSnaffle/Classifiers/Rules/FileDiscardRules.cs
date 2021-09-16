@@ -7,7 +7,7 @@ namespace LibSnaffle.Classifiers
     {
         private void BuildFileDiscardRules()
         {
-            this.AllClassifierRules.Add(
+            AllClassifierRules.Add(
                 new ClassifierRule()
                 {
                     Description = "Skip any further scanning for files with these extensions.",

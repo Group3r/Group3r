@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Group3r.Options.AssessmentOptions;
+﻿using Group3r.Options.AssessmentOptions;
 using LibSnaffle.ActiveDirectory;
 using LibSnaffle.Classifiers.Rules;
+using System;
+using System.Collections.Generic;
 
 namespace Group3r.Assessment.Analysers
 {
@@ -18,7 +18,7 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "1")
                 {
-                    if ((int)this.MinTriage < 2)
+                    if ((int)MinTriage < 2)
                     {
                         findings.Add(new GpoFinding()
                         {
@@ -34,7 +34,7 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "42")
                 {
-                    if ((int)this.MinTriage < 2)
+                    if ((int)MinTriage < 2)
                     {
                         findings.Add(new GpoFinding()
                         {
@@ -50,7 +50,7 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "7")
                 {
-                    if ((int)this.MinTriage < 2)
+                    if ((int)MinTriage < 2)
                     {
                         findings.Add(new GpoFinding()
                         {
@@ -66,7 +66,7 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "1")
                 {
-                    if ((int)this.MinTriage < 2)
+                    if ((int)MinTriage < 2)
                     {
                         findings.Add(new GpoFinding()
                         {
@@ -82,7 +82,7 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "24")
                 {
-                    if ((int)this.MinTriage < 2)
+                    if ((int)MinTriage < 2)
                     {
                         findings.Add(new GpoFinding()
                         {
@@ -98,7 +98,7 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "5")
                 {
-                    if ((int)this.MinTriage < 2)
+                    if ((int)MinTriage < 2)
                     {
                         findings.Add(new GpoFinding()
                         {
@@ -114,7 +114,7 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "30")
                 {
-                    if ((int)this.MinTriage < 2)
+                    if ((int)MinTriage < 2)
                     {
                         findings.Add(new GpoFinding()
                         {
@@ -130,7 +130,7 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "30")
                 {
-                    if ((int)this.MinTriage < 2)
+                    if ((int)MinTriage < 2)
                     {
                         findings.Add(new GpoFinding()
                         {
@@ -146,7 +146,7 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "0")
                 {
-                    if ((int)this.MinTriage < 2)
+                    if ((int)MinTriage < 2)
                     {
                         findings.Add(new GpoFinding()
                         {
@@ -162,7 +162,7 @@ namespace Group3r.Assessment.Analysers
             {
                 if (!String.IsNullOrEmpty(setting.ValueString))
                 {
-                    if ((int)this.MinTriage < 2)
+                    if ((int)MinTriage < 2)
                     {
                         findings.Add(new GpoFinding()
                         {
@@ -178,7 +178,7 @@ namespace Group3r.Assessment.Analysers
             {
                 if (!String.IsNullOrEmpty(setting.ValueString))
                 {
-                    if ((int)this.MinTriage < 2)
+                    if ((int)MinTriage < 2)
                     {
                         findings.Add(new GpoFinding()
                         {
@@ -194,7 +194,7 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "0")
                 {
-                    if ((int)this.MinTriage < 3)
+                    if ((int)MinTriage < 3)
                     {
                         findings.Add(new GpoFinding()
                         {
@@ -210,7 +210,7 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "0")
                 {
-                    if ((int)this.MinTriage < 3)
+                    if ((int)MinTriage < 3)
                     {
                         findings.Add(new GpoFinding()
                         {
@@ -226,7 +226,7 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "1")
                 {
-                    if ((int)this.MinTriage < 2)
+                    if ((int)MinTriage < 2)
                     {
                         findings.Add(new GpoFinding()
                         {
@@ -242,7 +242,7 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "1")
                 {
-                    if ((int)this.MinTriage < 2)
+                    if ((int)MinTriage < 2)
                     {
                         findings.Add(new GpoFinding()
                         {
@@ -258,7 +258,7 @@ namespace Group3r.Assessment.Analysers
             {
                 if (setting.ValueString != "1")
                 {
-                    if ((int)this.MinTriage < 2)
+                    if ((int)MinTriage < 2)
                     {
                         findings.Add(new GpoFinding()
                         {
@@ -279,7 +279,7 @@ namespace Group3r.Assessment.Analysers
             SettingResult.Findings = findings;
 
             // make a new setting object minus the ugly bits we don't care about.
-            
+
             SettingResult.Setting = CleanupSetting(setting);
 
             return SettingResult;
@@ -295,7 +295,7 @@ namespace Group3r.Assessment.Analysers
             }
 
             if (!String.IsNullOrWhiteSpace(setting.SettingName))
-                {
+            {
                 cleanSetting.SettingName = setting.SettingName;
             }
 

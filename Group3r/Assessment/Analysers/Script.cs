@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Group3r.Options.AssessmentOptions;
+﻿using Group3r.Options.AssessmentOptions;
 using LibSnaffle.ActiveDirectory;
 using LibSnaffle.Classifiers.Rules;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Group3r.Assessment.Analysers
 {
@@ -46,7 +46,7 @@ namespace Group3r.Assessment.Analysers
                 // if the path points to a dir and we can write to it, that's a lesser finding
                 if (pathFinding.DirectoryExists && pathFinding.DirectoryWritable)
                 {
-                    if ((int)this.MinTriage < 2)
+                    if ((int)MinTriage < 2)
                     {
                         findings.Add(new GpoFinding()
                         {
@@ -60,7 +60,7 @@ namespace Group3r.Assessment.Analysers
                 // if the path points to a dir or a file that doesn't exist, but a parent directory does, and we can write to that, that's a finding
                 if (!String.IsNullOrEmpty(pathFinding.ParentDirectoryExists) && pathFinding.ParentDirectoryWritable)
                 {
-                    if ((int)this.MinTriage < 4)
+                    if ((int)MinTriage < 4)
                     {
                         findings.Add(new GpoFinding()
                         {

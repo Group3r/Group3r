@@ -80,7 +80,7 @@ namespace Sddl.Parser
 
             if (Owner != null)
                 sb.AppendLineEnv($"{nameof(Owner)}: {Owner.ToString()}");
-            
+
             if (Group != null)
                 sb.AppendLineEnv($"{nameof(Group)}: {Group.ToString()}");
 
@@ -108,7 +108,7 @@ namespace Sddl.Parser
                    Sacl == sddl.Sacl;
         }
 
-        public static bool operator== (Sddl sddl0, Sddl sddl1)
+        public static bool operator ==(Sddl sddl0, Sddl sddl1)
         {
             if (sddl0 is null && sddl1 is null)
                 return true;
@@ -118,7 +118,7 @@ namespace Sddl.Parser
                 return sddl0.Equals(sddl1);
         }
 
-        public static bool operator!= (Sddl sddl0, Sddl sddl1)
+        public static bool operator !=(Sddl sddl0, Sddl sddl1)
         {
             return !(sddl0 == sddl1);
         }

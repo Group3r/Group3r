@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Sddl.Parser;
 
 namespace LibSnaffle.ActiveDirectory
 {
@@ -21,14 +20,14 @@ namespace LibSnaffle.ActiveDirectory
 
         public GPO(string uid)
         {
-            this.Attributes.Uid = uid;
+            Attributes.Uid = uid;
         }
 
         public GPO(string uid, string pathInSysvol, bool morphed)
         {
-            this.Attributes.Uid = uid;
-            this.Attributes.PathInSysvol = pathInSysvol;
-            this.Attributes.IsMorphedGPO = morphed;
+            Attributes.Uid = uid;
+            Attributes.PathInSysvol = pathInSysvol;
+            Attributes.IsMorphedGPO = morphed;
         }
     }
 
@@ -46,7 +45,7 @@ namespace LibSnaffle.ActiveDirectory
         public string DisplayName { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
-//        public byte[] NtSecurityDescriptor { get; set; }
+        //        public byte[] NtSecurityDescriptor { get; set; }
         public string NtSecurityDescriptor { get; set; }
         public Sddl.Parser.Sddl NtSecurityDescriptorSddl { get; set; }
         public string DistinguishedName { get; set; }

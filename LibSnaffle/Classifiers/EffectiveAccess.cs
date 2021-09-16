@@ -1,18 +1,18 @@
-﻿using System;
+﻿using LibSnaffle.Classifiers.Results;
+using Microsoft.Win32.SafeHandles;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using Microsoft.Win32.SafeHandles;
-using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text.RegularExpressions;
-using System.Collections;
-using System.Security;
-using System.Runtime.ConstrainedExecution;
-using System.Runtime.CompilerServices;
-using LibSnaffle.Classifiers.Results;
 
 // from Raimund Andree's NTFSSecurity PowerShell module https://www.powershellgallery.com/packages/NTFSSecurity/4.2.3
 
@@ -112,13 +112,13 @@ namespace LibSnaffle.EffectiveAccess
         private bool fromRemote;
         private Exception authzException;
 
-        public FileSystemAccessRule2 Ace => this.ace;
+        public FileSystemAccessRule2 Ace => ace;
 
-        public bool FromRemote => this.fromRemote;
+        public bool FromRemote => fromRemote;
 
-        public Exception AuthzException => this.authzException;
+        public Exception AuthzException => authzException;
 
-        public bool OperationFailed => this.authzException != null;
+        public bool OperationFailed => authzException != null;
 
         public EffectiveAccessInfo(
           FileSystemAccessRule2 ace,
@@ -138,31 +138,31 @@ namespace LibSnaffle.EffectiveAccess
         protected NTAccount ntAccount;
         protected string lastError;
 
-        public string Sid => this.sid.Value;
+        public string Sid => sid.Value;
 
-        public string AccountName => !(this.ntAccount != (NTAccount)null) ? string.Empty : this.ntAccount.Value;
+        public string AccountName => !(ntAccount != (NTAccount)null) ? string.Empty : ntAccount.Value;
 
-        public string LastError => this.lastError;
+        public string LastError => lastError;
 
         public IdentityReference2(IdentityReference ir)
         {
-            this.ntAccount = ir as NTAccount;
-            if (this.ntAccount != (NTAccount)null)
+            ntAccount = ir as NTAccount;
+            if (ntAccount != (NTAccount)null)
             {
-                this.sid = (SecurityIdentifier)this.ntAccount.Translate(typeof(SecurityIdentifier));
+                sid = (SecurityIdentifier)ntAccount.Translate(typeof(SecurityIdentifier));
             }
             else
             {
-                this.sid = ir as SecurityIdentifier;
-                if (!(this.sid != (SecurityIdentifier)null))
+                sid = ir as SecurityIdentifier;
+                if (!(sid != (SecurityIdentifier)null))
                     return;
                 try
                 {
-                    this.ntAccount = (NTAccount)this.sid.Translate(typeof(NTAccount));
+                    ntAccount = (NTAccount)sid.Translate(typeof(NTAccount));
                 }
                 catch (Exception ex)
                 {
-                    this.lastError = ex.Message;
+                    lastError = ex.Message;
                 }
             }
         }
@@ -174,7 +174,7 @@ namespace LibSnaffle.EffectiveAccess
             {
                 try
                 {
-                    this.sid = new SecurityIdentifier(match.Value);
+                    sid = new SecurityIdentifier(match.Value);
                 }
                 catch (Exception ex)
                 {
@@ -182,19 +182,19 @@ namespace LibSnaffle.EffectiveAccess
                 }
                 try
                 {
-                    this.ntAccount = (NTAccount)this.sid.Translate(typeof(NTAccount));
+                    ntAccount = (NTAccount)sid.Translate(typeof(NTAccount));
                 }
                 catch (Exception ex)
                 {
-                    this.lastError = ex.Message;
+                    lastError = ex.Message;
                 }
             }
             else
             {
                 try
                 {
-                    this.ntAccount = new NTAccount(value);
-                    this.sid = (SecurityIdentifier)this.ntAccount.Translate(typeof(SecurityIdentifier));
+                    ntAccount = new NTAccount(value);
+                    sid = (SecurityIdentifier)ntAccount.Translate(typeof(SecurityIdentifier));
                 }
                 catch (IdentityNotMappedException ex)
                 {
@@ -227,17 +227,17 @@ namespace LibSnaffle.EffectiveAccess
                 return true;
             SecurityIdentifier securityIdentifier = obj as SecurityIdentifier;
             if (securityIdentifier != (SecurityIdentifier)null)
-                return this.sid == securityIdentifier;
+                return sid == securityIdentifier;
             NTAccount ntAccount = obj as NTAccount;
             if (ntAccount != (NTAccount)null)
                 return this.ntAccount == ntAccount;
             IdentityReference2 identityReference2 = obj as IdentityReference2;
             if (identityReference2 != (IdentityReference2)null)
-                return this.sid == identityReference2.sid;
-            return obj is string str && (this.sid.Value == str || this.ntAccount != (NTAccount)null && this.ntAccount.Value.ToLower() == str.ToLower());
+                return sid == identityReference2.sid;
+            return obj is string str && (sid.Value == str || this.ntAccount != (NTAccount)null && this.ntAccount.Value.ToLower() == str.ToLower());
         }
 
-        public override int GetHashCode() => this.sid.GetHashCode();
+        public override int GetHashCode() => sid.GetHashCode();
 
         public static bool operator ==(IdentityReference2 ir1, IdentityReference2 ir2)
         {
@@ -255,12 +255,12 @@ namespace LibSnaffle.EffectiveAccess
 
         public byte[] GetBinaryForm()
         {
-            byte[] binaryForm = new byte[this.sid.BinaryLength];
-            this.sid.GetBinaryForm(binaryForm, 0);
+            byte[] binaryForm = new byte[sid.BinaryLength];
+            sid.GetBinaryForm(binaryForm, 0);
             return binaryForm;
         }
 
-        public override string ToString() => this.ntAccount == (NTAccount)null ? this.sid.ToString() : this.ntAccount.ToString();
+        public override string ToString() => ntAccount == (NTAccount)null ? sid.ToString() : ntAccount.ToString();
     }
 
     internal class Win32
@@ -410,11 +410,13 @@ namespace LibSnaffle.EffectiveAccess
         {
             List<string> stringList = new List<string>();
             path = Alphaleonis.Win32.Filesystem.Path.GetLongPath(path);
-            Win32.GENERIC_MAPPING pGenericMapping = new Win32.GENERIC_MAPPING();
-            pGenericMapping.GenericRead = 1179785U;
-            pGenericMapping.GenericWrite = 1179926U;
-            pGenericMapping.GenericExecute = 1179808U;
-            pGenericMapping.GenericAll = 2032127U;
+            Win32.GENERIC_MAPPING pGenericMapping = new Win32.GENERIC_MAPPING
+            {
+                GenericRead = 1179785U,
+                GenericWrite = 1179926U,
+                GenericExecute = 1179808U,
+                GenericAll = 2032127U
+            };
             IntPtr num1 = Marshal.AllocHGlobal(aceCount * Marshal.SizeOf(typeof(Win32.PINHERITED_FROM)));
             uint inheritanceSource = Win32.GetInheritanceSource(path, ResourceType.FileObject, aclType, isContainer, IntPtr.Zero, 0U, aclBytes, IntPtr.Zero, ref pGenericMapping, num1);
             if (inheritanceSource != 0U)
@@ -441,11 +443,11 @@ namespace LibSnaffle.EffectiveAccess
             authzException = (Exception)null;
             try
             {
-                this.GetEffectivePermissions_AuthzInitializeResourceManager(serverName, out remoteServerAvailable);
+                GetEffectivePermissions_AuthzInitializeResourceManager(serverName, out remoteServerAvailable);
                 try
                 {
-                    this.GetEffectivePermissions_AuthzInitializeContextFromSid(identity);
-                    num = this.GetEffectivePermissions_AuthzAccessCheck(sd);
+                    GetEffectivePermissions_AuthzInitializeContextFromSid(identity);
+                    num = GetEffectivePermissions_AuthzAccessCheck(sd);
                 }
                 catch (Exception ex)
                 {
@@ -457,7 +459,7 @@ namespace LibSnaffle.EffectiveAccess
             }
             finally
             {
-                this.GetEffectivePermissions_FreeResouces();
+                GetEffectivePermissions_FreeResouces();
             }
             return num;
         }
@@ -473,14 +475,14 @@ namespace LibSnaffle.EffectiveAccess
                 objectUuid = "9a81c2bd-a525-471d-a4ed-49907c0b23da",
                 protocol = "ncacn_ip_tcp",
                 server = serverName
-            }).ToIntPtr(), out this.authzRM))
+            }).ToIntPtr(), out authzRM))
             {
                 int lastWin32Error = Marshal.GetLastWin32Error();
                 if (lastWin32Error != 1753)
                     throw new Win32Exception(lastWin32Error);
                 if (serverName == "localhost")
                     remoteServerAvailable = true;
-                if (!Win32.AuthzInitializeResourceManager(AuthzResourceManagerFlags.NO_AUDIT, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, "EffectiveAccessCheck", out this.authzRM))
+                if (!Win32.AuthzInitializeResourceManager(AuthzResourceManagerFlags.NO_AUDIT, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, "EffectiveAccessCheck", out authzRM))
                     throw new Win32Exception(Marshal.GetLastWin32Error());
             }
             else
@@ -489,7 +491,7 @@ namespace LibSnaffle.EffectiveAccess
 
         private void GetEffectivePermissions_AuthzInitializeContextFromSid(IdentityReference2 id)
         {
-            if (Win32.AuthzInitializeContextFromSid(AuthzInitFlags.Default, id.GetBinaryForm(), this.authzRM, IntPtr.Zero, Win32.LUID.NullLuid, IntPtr.Zero, out this.userClientCtxt))
+            if (Win32.AuthzInitializeContextFromSid(AuthzInitFlags.Default, id.GetBinaryForm(), authzRM, IntPtr.Zero, Win32.LUID.NullLuid, IntPtr.Zero, out userClientCtxt))
                 return;
             Win32Exception win32Exception = new Win32Exception(Marshal.GetLastWin32Error());
             if (win32Exception.NativeErrorCode != 1722)
@@ -498,31 +500,35 @@ namespace LibSnaffle.EffectiveAccess
 
         private int GetEffectivePermissions_AuthzAccessCheck(ObjectSecurity sd)
         {
-            Win32.AUTHZ_ACCESS_REQUEST pRequest = new Win32.AUTHZ_ACCESS_REQUEST();
-            pRequest.DesiredAccess = StdAccess.MAXIMUM_ALLOWED;
-            pRequest.PrincipalSelfSid = (byte[])null;
-            pRequest.ObjectTypeList = IntPtr.Zero;
-            pRequest.ObjectTypeListLength = 0;
-            pRequest.OptionalArguments = IntPtr.Zero;
-            Win32.AUTHZ_ACCESS_REPLY pReply = new Win32.AUTHZ_ACCESS_REPLY();
-            pReply.ResultListLength = 1;
-            pReply.SaclEvaluationResults = IntPtr.Zero;
-            pReply.GrantedAccessMask = this.pGrantedAccess = Marshal.AllocHGlobal(4);
-            pReply.Error = this.pErrorSecObj = Marshal.AllocHGlobal(4);
+            Win32.AUTHZ_ACCESS_REQUEST pRequest = new Win32.AUTHZ_ACCESS_REQUEST
+            {
+                DesiredAccess = StdAccess.MAXIMUM_ALLOWED,
+                PrincipalSelfSid = (byte[])null,
+                ObjectTypeList = IntPtr.Zero,
+                ObjectTypeListLength = 0,
+                OptionalArguments = IntPtr.Zero
+            };
+            Win32.AUTHZ_ACCESS_REPLY pReply = new Win32.AUTHZ_ACCESS_REPLY
+            {
+                ResultListLength = 1,
+                SaclEvaluationResults = IntPtr.Zero,
+                GrantedAccessMask = pGrantedAccess = Marshal.AllocHGlobal(4),
+                Error = pErrorSecObj = Marshal.AllocHGlobal(4)
+            };
             byte[] descriptorBinaryForm = sd.GetSecurityDescriptorBinaryForm();
-            if (!Win32.AuthzAccessCheck(Win32.AuthzACFlags.None, this.userClientCtxt, ref pRequest, IntPtr.Zero, descriptorBinaryForm, (IntPtr[])null, 0U, ref pReply, IntPtr.Zero) && Marshal.GetLastWin32Error() != 0)
+            if (!Win32.AuthzAccessCheck(Win32.AuthzACFlags.None, userClientCtxt, ref pRequest, IntPtr.Zero, descriptorBinaryForm, (IntPtr[])null, 0U, ref pReply, IntPtr.Zero) && Marshal.GetLastWin32Error() != 0)
                 throw new Win32Exception();
-            return Marshal.ReadInt32(this.pGrantedAccess);
+            return Marshal.ReadInt32(pGrantedAccess);
         }
 
         private void GetEffectivePermissions_FreeResouces()
         {
-            Marshal.FreeHGlobal(this.pGrantedAccess);
-            Marshal.FreeHGlobal(this.pErrorSecObj);
-            if (!(this.userClientCtxt != IntPtr.Zero))
+            Marshal.FreeHGlobal(pGrantedAccess);
+            Marshal.FreeHGlobal(pErrorSecObj);
+            if (!(userClientCtxt != IntPtr.Zero))
                 return;
-            Win32.AuthzFreeContext(this.userClientCtxt);
-            this.userClientCtxt = IntPtr.Zero;
+            Win32.AuthzFreeContext(userClientCtxt);
+            userClientCtxt = IntPtr.Zero;
         }
 
         private static RawSecurityDescriptor GetRawSecurityDescriptor(
@@ -633,15 +639,15 @@ namespace LibSnaffle.EffectiveAccess
 
         public Alphaleonis.Win32.Filesystem.FileSystemInfo Item
         {
-            get => this.item;
-            set => this.item = value;
+            get => item;
+            set => item = value;
         }
 
-        public string FullName => this.item.FullName;
+        public string FullName => item.FullName;
 
-        public string Name => this.item.Name;
+        public string Name => item.Name;
 
-        public bool IsFile => this.isFile;
+        public bool IsFile => isFile;
 
         public FileSystemSecurity2(Alphaleonis.Win32.Filesystem.FileSystemInfo item, AccessControlSections sections)
         {
@@ -649,13 +655,13 @@ namespace LibSnaffle.EffectiveAccess
             if (item is Alphaleonis.Win32.Filesystem.FileInfo)
             {
                 this.item = item;
-                this.sd = (FileSystemSecurity)((Alphaleonis.Win32.Filesystem.FileInfo)this.item).GetAccessControl(sections);
-                this.isFile = true;
+                sd = (FileSystemSecurity)((Alphaleonis.Win32.Filesystem.FileInfo)this.item).GetAccessControl(sections);
+                isFile = true;
             }
             else
             {
                 this.item = item;
-                this.sd = (FileSystemSecurity)((Alphaleonis.Win32.Filesystem.DirectoryInfo)this.item).GetAccessControl(sections);
+                sd = (FileSystemSecurity)((Alphaleonis.Win32.Filesystem.DirectoryInfo)this.item).GetAccessControl(sections);
             }
         }
 
@@ -666,58 +672,58 @@ namespace LibSnaffle.EffectiveAccess
                 this.item = item;
                 try
                 {
-                    this.sd = (FileSystemSecurity)((Alphaleonis.Win32.Filesystem.FileInfo)this.item).GetAccessControl(AccessControlSections.All);
+                    sd = (FileSystemSecurity)((Alphaleonis.Win32.Filesystem.FileInfo)this.item).GetAccessControl(AccessControlSections.All);
                 }
                 catch
                 {
                     try
                     {
-                        this.sd = (FileSystemSecurity)((Alphaleonis.Win32.Filesystem.FileInfo)this.item).GetAccessControl(AccessControlSections.Access | AccessControlSections.Owner | AccessControlSections.Group);
+                        sd = (FileSystemSecurity)((Alphaleonis.Win32.Filesystem.FileInfo)this.item).GetAccessControl(AccessControlSections.Access | AccessControlSections.Owner | AccessControlSections.Group);
                     }
                     catch
                     {
-                        this.sd = (FileSystemSecurity)((Alphaleonis.Win32.Filesystem.FileInfo)this.item).GetAccessControl(AccessControlSections.Access);
+                        sd = (FileSystemSecurity)((Alphaleonis.Win32.Filesystem.FileInfo)this.item).GetAccessControl(AccessControlSections.Access);
                     }
                 }
-                this.isFile = true;
+                isFile = true;
             }
             else
             {
                 this.item = item;
                 try
                 {
-                    this.sd = (FileSystemSecurity)((Alphaleonis.Win32.Filesystem.DirectoryInfo)this.item).GetAccessControl(AccessControlSections.All);
+                    sd = (FileSystemSecurity)((Alphaleonis.Win32.Filesystem.DirectoryInfo)this.item).GetAccessControl(AccessControlSections.All);
                 }
                 catch
                 {
                     try
                     {
-                        this.sd = (FileSystemSecurity)((Alphaleonis.Win32.Filesystem.DirectoryInfo)this.item).GetAccessControl(AccessControlSections.Access | AccessControlSections.Owner | AccessControlSections.Group);
+                        sd = (FileSystemSecurity)((Alphaleonis.Win32.Filesystem.DirectoryInfo)this.item).GetAccessControl(AccessControlSections.Access | AccessControlSections.Owner | AccessControlSections.Group);
                     }
                     catch
                     {
-                        this.sd = (FileSystemSecurity)((Alphaleonis.Win32.Filesystem.DirectoryInfo)this.item).GetAccessControl(AccessControlSections.Access);
+                        sd = (FileSystemSecurity)((Alphaleonis.Win32.Filesystem.DirectoryInfo)this.item).GetAccessControl(AccessControlSections.Access);
                     }
                 }
             }
         }
 
-        public FileSystemSecurity SecurityDescriptor => this.sd;
+        public FileSystemSecurity SecurityDescriptor => sd;
 
         public void Write()
         {
-            if (this.isFile)
-                ((Alphaleonis.Win32.Filesystem.FileInfo)this.item).SetAccessControl((FileSecurity)this.sd);
+            if (isFile)
+                ((Alphaleonis.Win32.Filesystem.FileInfo)item).SetAccessControl((FileSecurity)sd);
             else
-                ((Alphaleonis.Win32.Filesystem.DirectoryInfo)this.item).SetAccessControl((DirectorySecurity)this.sd);
+                ((Alphaleonis.Win32.Filesystem.DirectoryInfo)item).SetAccessControl((DirectorySecurity)sd);
         }
 
         public void Write(Alphaleonis.Win32.Filesystem.FileSystemInfo item)
         {
             if (item is Alphaleonis.Win32.Filesystem.FileInfo)
-                ((Alphaleonis.Win32.Filesystem.FileInfo)item).SetAccessControl((FileSecurity)this.sd);
+                ((Alphaleonis.Win32.Filesystem.FileInfo)item).SetAccessControl((FileSecurity)sd);
             else
-                ((Alphaleonis.Win32.Filesystem.DirectoryInfo)item).SetAccessControl((DirectorySecurity)this.sd);
+                ((Alphaleonis.Win32.Filesystem.DirectoryInfo)item).SetAccessControl((DirectorySecurity)sd);
         }
 
         public void Write(string path)
@@ -727,7 +733,7 @@ namespace LibSnaffle.EffectiveAccess
                 fileSystemInfo = (Alphaleonis.Win32.Filesystem.FileSystemInfo)new Alphaleonis.Win32.Filesystem.FileInfo(path);
             else
                 fileSystemInfo = Alphaleonis.Win32.Filesystem.Directory.Exists(path) ? (Alphaleonis.Win32.Filesystem.FileSystemInfo)new Alphaleonis.Win32.Filesystem.DirectoryInfo(path) : throw new FileNotFoundException("File not found", path);
-            this.Write(fileSystemInfo);
+            Write(fileSystemInfo);
         }
 
         public static implicit operator FileSecurity(FileSystemSecurity2 fs2) => fs2.fileSecurityDescriptor;
@@ -738,9 +744,9 @@ namespace LibSnaffle.EffectiveAccess
 
         public static implicit operator FileSystemSecurity2(DirectorySecurity fs) => new FileSystemSecurity2((Alphaleonis.Win32.Filesystem.FileSystemInfo)new Alphaleonis.Win32.Filesystem.DirectoryInfo(""));
 
-        public override bool Equals(object obj) => this.fileSecurityDescriptor == (FileSecurity)obj;
+        public override bool Equals(object obj) => fileSecurityDescriptor == (FileSecurity)obj;
 
-        public override int GetHashCode() => this.fileSecurityDescriptor.GetHashCode();
+        public override int GetHashCode() => fileSecurityDescriptor.GetHashCode();
 
         public static void ConvertToFileSystemFlags(
           ApplyTo ApplyTo,
@@ -882,44 +888,44 @@ namespace LibSnaffle.EffectiveAccess
         private bool inheritanceEnabled;
         private string inheritedFrom;
 
-        public string Name => System.IO.Path.GetFileName(this.fullName);
+        public string Name => System.IO.Path.GetFileName(fullName);
 
         public string FullName
         {
-            get => this.fullName;
-            set => this.fullName = value;
+            get => fullName;
+            set => fullName = value;
         }
 
         public bool InheritanceEnabled
         {
-            get => this.inheritanceEnabled;
-            set => this.inheritanceEnabled = value;
+            get => inheritanceEnabled;
+            set => inheritanceEnabled = value;
         }
 
         public string InheritedFrom
         {
-            get => this.inheritedFrom;
-            set => this.inheritedFrom = value;
+            get => inheritedFrom;
+            set => inheritedFrom = value;
         }
 
-        public AccessControlType AccessControlType => this.fileSystemAccessRule.AccessControlType;
+        public AccessControlType AccessControlType => fileSystemAccessRule.AccessControlType;
 
-        public FileSystemRights2 AccessRights => (FileSystemRights2)this.fileSystemAccessRule.FileSystemRights;
+        public FileSystemRights2 AccessRights => (FileSystemRights2)fileSystemAccessRule.FileSystemRights;
 
-        public IdentityReference2 Account => (IdentityReference2)this.fileSystemAccessRule.IdentityReference;
+        public IdentityReference2 Account => (IdentityReference2)fileSystemAccessRule.IdentityReference;
 
-        public InheritanceFlags InheritanceFlags => this.fileSystemAccessRule.InheritanceFlags;
+        public InheritanceFlags InheritanceFlags => fileSystemAccessRule.InheritanceFlags;
 
-        public bool IsInherited => this.fileSystemAccessRule.IsInherited;
+        public bool IsInherited => fileSystemAccessRule.IsInherited;
 
-        public PropagationFlags PropagationFlags => this.fileSystemAccessRule.PropagationFlags;
+        public PropagationFlags PropagationFlags => fileSystemAccessRule.PropagationFlags;
 
         public FileSystemAccessRule2(FileSystemAccessRule fileSystemAccessRule) => this.fileSystemAccessRule = fileSystemAccessRule;
 
         public FileSystemAccessRule2(FileSystemAccessRule fileSystemAccessRule, Alphaleonis.Win32.Filesystem.FileSystemInfo item)
         {
             this.fileSystemAccessRule = fileSystemAccessRule;
-            this.fullName = item.FullName;
+            fullName = item.FullName;
         }
 
         public FileSystemAccessRule2(FileSystemAccessRule fileSystemAccessRule, string path) => this.fileSystemAccessRule = fileSystemAccessRule;
@@ -936,13 +942,13 @@ namespace LibSnaffle.EffectiveAccess
             return new FileSystemAccessRule2(ace);
         }
 
-        public override bool Equals(object obj) => this.fileSystemAccessRule == (FileSystemAccessRule)obj;
+        public override bool Equals(object obj) => fileSystemAccessRule == (FileSystemAccessRule)obj;
 
-        public override int GetHashCode() => this.fileSystemAccessRule.GetHashCode();
+        public override int GetHashCode() => fileSystemAccessRule.GetHashCode();
 
-        public override string ToString() => string.Format("{0} '{1}' ({2})", (object)this.AccessControlType.ToString()[0], (object)this.Account.AccountName, (object)this.AccessRights.ToString());
+        public override string ToString() => string.Format("{0} '{1}' ({2})", (object)AccessControlType.ToString()[0], (object)Account.AccountName, (object)AccessRights.ToString());
 
-        public SimpleFileSystemAccessRule ToSimpleFileSystemAccessRule2() => new SimpleFileSystemAccessRule(this.fullName, this.Account, this.AccessRights);
+        public SimpleFileSystemAccessRule ToSimpleFileSystemAccessRule2() => new SimpleFileSystemAccessRule(fullName, Account, AccessRights);
 
         public static void RemoveFileSystemAccessRuleAll(
           FileSystemSecurity2 sd,
@@ -1276,12 +1282,12 @@ namespace LibSnaffle.EffectiveAccess
         private SafeAuthzRMHandle(IntPtr handle)
           : base(true)
         {
-            this.SetHandle(handle);
+            SetHandle(handle);
         }
 
         public static SafeAuthzRMHandle InvalidHandle => new SafeAuthzRMHandle(IntPtr.Zero);
 
-        protected override bool ReleaseHandle() => SafeAuthzRMHandle.NativeMethods.AuthzFreeResourceManager(this.handle);
+        protected override bool ReleaseHandle() => SafeAuthzRMHandle.NativeMethods.AuthzFreeResourceManager(handle);
 
         private static class NativeMethods
         {
@@ -1321,58 +1327,58 @@ namespace LibSnaffle.EffectiveAccess
 
         public AccessControlType AccessControlType
         {
-            get => this.type;
-            set => this.type = value;
+            get => type;
+            set => type = value;
         }
 
-        public string FullName => this.fullName;
+        public string FullName => fullName;
 
-        public string Name => Alphaleonis.Win32.Filesystem.Path.GetFileName(this.fullName);
+        public string Name => Alphaleonis.Win32.Filesystem.Path.GetFileName(fullName);
 
-        public IdentityReference2 Identity => this.identity;
+        public IdentityReference2 Identity => identity;
 
         public SimpleFileSystemAccessRights AccessRights
         {
             get
             {
                 SimpleFileSystemAccessRights systemAccessRights = SimpleFileSystemAccessRights.None;
-                if ((this.accessRights & FileSystemRights2.Read) == FileSystemRights2.Read)
+                if ((accessRights & FileSystemRights2.Read) == FileSystemRights2.Read)
                     systemAccessRights |= SimpleFileSystemAccessRights.Read;
-                if ((this.accessRights & FileSystemRights2.CreateFiles) == FileSystemRights2.CreateFiles)
+                if ((accessRights & FileSystemRights2.CreateFiles) == FileSystemRights2.CreateFiles)
                     systemAccessRights |= SimpleFileSystemAccessRights.Write;
-                if ((this.accessRights & FileSystemRights2.CreateDirectories) == FileSystemRights2.CreateDirectories)
+                if ((accessRights & FileSystemRights2.CreateDirectories) == FileSystemRights2.CreateDirectories)
                     systemAccessRights |= SimpleFileSystemAccessRights.Write;
-                if ((this.accessRights & FileSystemRights2.ReadExtendedAttributes) == FileSystemRights2.ReadExtendedAttributes)
+                if ((accessRights & FileSystemRights2.ReadExtendedAttributes) == FileSystemRights2.ReadExtendedAttributes)
                     systemAccessRights |= SimpleFileSystemAccessRights.Read;
-                if ((this.accessRights & FileSystemRights2.WriteExtendedAttributes) == FileSystemRights2.WriteExtendedAttributes)
+                if ((accessRights & FileSystemRights2.WriteExtendedAttributes) == FileSystemRights2.WriteExtendedAttributes)
                     systemAccessRights |= SimpleFileSystemAccessRights.Write;
-                if ((this.accessRights & FileSystemRights2.ExecuteFile) == FileSystemRights2.ExecuteFile)
+                if ((accessRights & FileSystemRights2.ExecuteFile) == FileSystemRights2.ExecuteFile)
                     systemAccessRights |= SimpleFileSystemAccessRights.Read;
-                if ((this.accessRights & FileSystemRights2.DeleteSubdirectoriesAndFiles) == FileSystemRights2.DeleteSubdirectoriesAndFiles)
+                if ((accessRights & FileSystemRights2.DeleteSubdirectoriesAndFiles) == FileSystemRights2.DeleteSubdirectoriesAndFiles)
                     systemAccessRights |= SimpleFileSystemAccessRights.Delete;
-                if ((this.accessRights & FileSystemRights2.ReadAttributes) == FileSystemRights2.ReadAttributes)
+                if ((accessRights & FileSystemRights2.ReadAttributes) == FileSystemRights2.ReadAttributes)
                     systemAccessRights |= SimpleFileSystemAccessRights.Read;
-                if ((this.accessRights & FileSystemRights2.WriteAttributes) == FileSystemRights2.WriteAttributes)
+                if ((accessRights & FileSystemRights2.WriteAttributes) == FileSystemRights2.WriteAttributes)
                     systemAccessRights |= SimpleFileSystemAccessRights.Write;
-                if ((this.accessRights & FileSystemRights2.Delete) == FileSystemRights2.Delete)
+                if ((accessRights & FileSystemRights2.Delete) == FileSystemRights2.Delete)
                     systemAccessRights |= SimpleFileSystemAccessRights.Delete;
-                if ((this.accessRights & FileSystemRights2.ReadPermissions) == FileSystemRights2.ReadPermissions)
+                if ((accessRights & FileSystemRights2.ReadPermissions) == FileSystemRights2.ReadPermissions)
                     systemAccessRights |= SimpleFileSystemAccessRights.Read;
-                if ((this.accessRights & FileSystemRights2.ChangePermissions) == FileSystemRights2.ChangePermissions)
+                if ((accessRights & FileSystemRights2.ChangePermissions) == FileSystemRights2.ChangePermissions)
                     systemAccessRights |= SimpleFileSystemAccessRights.Write;
-                if ((this.accessRights & FileSystemRights2.TakeOwnership) == FileSystemRights2.TakeOwnership)
+                if ((accessRights & FileSystemRights2.TakeOwnership) == FileSystemRights2.TakeOwnership)
                     systemAccessRights |= SimpleFileSystemAccessRights.Write;
-                if ((this.accessRights & FileSystemRights2.Synchronize) == FileSystemRights2.Synchronize)
+                if ((accessRights & FileSystemRights2.Synchronize) == FileSystemRights2.Synchronize)
                     systemAccessRights |= SimpleFileSystemAccessRights.Read;
-                if ((this.accessRights & FileSystemRights2.FullControl) == FileSystemRights2.FullControl)
+                if ((accessRights & FileSystemRights2.FullControl) == FileSystemRights2.FullControl)
                     systemAccessRights = SimpleFileSystemAccessRights.Read | SimpleFileSystemAccessRights.Write | SimpleFileSystemAccessRights.Delete;
-                if ((this.accessRights & FileSystemRights2.GenericRead) == FileSystemRights2.GenericRead)
+                if ((accessRights & FileSystemRights2.GenericRead) == FileSystemRights2.GenericRead)
                     systemAccessRights |= SimpleFileSystemAccessRights.Read;
-                if ((this.accessRights & FileSystemRights2.GenericWrite) == FileSystemRights2.GenericWrite)
+                if ((accessRights & FileSystemRights2.GenericWrite) == FileSystemRights2.GenericWrite)
                     systemAccessRights |= SimpleFileSystemAccessRights.Write;
-                if ((this.accessRights & FileSystemRights2.GenericExecute) == FileSystemRights2.GenericExecute)
+                if ((accessRights & FileSystemRights2.GenericExecute) == FileSystemRights2.GenericExecute)
                     systemAccessRights |= SimpleFileSystemAccessRights.Read;
-                if ((this.accessRights & FileSystemRights2.GenericAll) == FileSystemRights2.GenericAll)
+                if ((accessRights & FileSystemRights2.GenericAll) == FileSystemRights2.GenericAll)
                     systemAccessRights = SimpleFileSystemAccessRights.Read | SimpleFileSystemAccessRights.Write | SimpleFileSystemAccessRights.Delete;
                 return systemAccessRights;
             }
@@ -1383,14 +1389,14 @@ namespace LibSnaffle.EffectiveAccess
           IdentityReference2 account,
           FileSystemRights2 access)
         {
-            this.fullName = Path;
-            this.accessRights = access;
-            this.identity = account;
+            fullName = Path;
+            accessRights = access;
+            identity = account;
         }
 
-        public override bool Equals(object obj) => obj is SimpleFileSystemAccessRule systemAccessRule && this.AccessRights == systemAccessRule.AccessRights && this.Identity == systemAccessRule.Identity && this.AccessControlType == systemAccessRule.AccessControlType;
+        public override bool Equals(object obj) => obj is SimpleFileSystemAccessRule systemAccessRule && AccessRights == systemAccessRule.AccessRights && Identity == systemAccessRule.Identity && AccessControlType == systemAccessRule.AccessControlType;
 
-        public override int GetHashCode() => this.Identity.GetHashCode() | this.AccessRights.GetHashCode() | this.AccessControlType.GetHashCode();
+        public override int GetHashCode() => Identity.GetHashCode() | AccessRights.GetHashCode() | AccessControlType.GetHashCode();
     }
 
     [Flags]
@@ -1505,19 +1511,19 @@ namespace LibSnaffle.EffectiveAccess
         private List<SafeHGlobalHandle> references;
         private IntPtr pointer;
 
-        private SafeHGlobalHandle() => this.pointer = IntPtr.Zero;
+        private SafeHGlobalHandle() => pointer = IntPtr.Zero;
 
-        private SafeHGlobalHandle(IntPtr handle) => this.pointer = handle;
+        private SafeHGlobalHandle(IntPtr handle) => pointer = handle;
 
-        ~SafeHGlobalHandle() => this.Dispose();
+        ~SafeHGlobalHandle() => Dispose();
 
         public static SafeHGlobalHandle InvalidHandle => new SafeHGlobalHandle(IntPtr.Zero);
 
         public void AddSubReference(IEnumerable<SafeHGlobalHandle> children)
         {
-            if (this.references == null)
-                this.references = new List<SafeHGlobalHandle>();
-            this.references.AddRange(children);
+            if (references == null)
+                references = new List<SafeHGlobalHandle>();
+            references.AddRange(children);
         }
 
         public static SafeHGlobalHandle AllocHGlobal(IntPtr[] values)
@@ -1554,14 +1560,14 @@ namespace LibSnaffle.EffectiveAccess
 
         public static SafeHGlobalHandle AllocHGlobal(string s) => new SafeHGlobalHandle(Marshal.StringToHGlobalUni(s));
 
-        public IntPtr ToIntPtr() => this.pointer;
+        public IntPtr ToIntPtr() => pointer;
 
         public void Dispose()
         {
-            if (this.pointer != IntPtr.Zero)
+            if (pointer != IntPtr.Zero)
             {
-                Marshal.FreeHGlobal(this.pointer);
-                this.pointer = IntPtr.Zero;
+                Marshal.FreeHGlobal(pointer);
+                pointer = IntPtr.Zero;
             }
             GC.SuppressFinalize((object)this);
         }

@@ -1,7 +1,6 @@
 ﻿using LibSnaffle.Concurrency;
 using LibSnaffle.Errors;
 using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace LibSnaffle.ActiveDirectory
@@ -21,7 +20,7 @@ namespace LibSnaffle.ActiveDirectory
         {
             Logger = mq;
         }
-    
+
         /**
          * Summary: Loads the sysvol from disk.
          * Imports: string sysvolPath, BlockingMq mq

@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
-using Group3r.Options.AssessmentOptions;
+﻿using Group3r.Options.AssessmentOptions;
 using LibSnaffle.ActiveDirectory;
 using LibSnaffle.Classifiers.Rules;
 using Sddl.Parser;
+using System;
+using System.Collections.Generic;
+using System.Text;
 using Trustee = Group3r.Options.AssessmentOptions.TrusteeOption;
 
 namespace Group3r.Assessment.Analysers
@@ -26,13 +24,15 @@ namespace Group3r.Assessment.Analysers
                 List<SimpleAce> simpleAcl = sddlAnalyser.AnalyseSddl(setting.ParsedKeySddl);
                 if (simpleAcl.Count > 0)
                 {
-                    if ((int)this.MinTriage < 2)
+                    if ((int)MinTriage < 2)
                     {
-                        GpoFinding gpoFinding = new GpoFinding();
-                        gpoFinding.AclResult = simpleAcl;
-                        gpoFinding.FindingReason = "Found some interesting ACEs on a registry key, probably because someone was being given control of it.";
-                        gpoFinding.FindingDetail = "You'll need to take a closer look at this key to know if this has any value at all. Good luck.";
-                        gpoFinding.Triage = Constants.Triage.Green;
+                        GpoFinding gpoFinding = new GpoFinding
+                        {
+                            AclResult = simpleAcl,
+                            FindingReason = "Found some interesting ACEs on a registry key, probably because someone was being given control of it.",
+                            FindingDetail = "You'll need to take a closer look at this key to know if this has any value at all. Good luck.",
+                            Triage = Constants.Triage.Green
+                        };
                         findings.Add(gpoFinding);
                     }
                 }
@@ -44,7 +44,7 @@ namespace Group3r.Assessment.Analysers
                         if ((setting.ParsedKeySddl.Owner.Alias.Equals(trustee.DisplayName)) && (!trustee.HighPriv))
                         {
                             // TODO do proper sid comparisons or something fuck
-                            if ((int)this.MinTriage < 3)
+                            if ((int)MinTriage < 3)
                             {
                                 findings.Add(new GpoFinding()
                                 {
@@ -83,9 +83,23 @@ namespace Group3r.Assessment.Analysers
                                     // we don't care if a high priv user has a privilege, that's boring.
                                     break;
                                 }
+
+                                if (trustee.LowPriv && keyWritable)
+                                {
+                                    if ((int) MinTriage < 3)
+                                    {
+                                        findings.Add(new GpoFinding()
+                                        {
+                                            FindingReason =
+                                                "The " + trustee.DisplayName + " trustee has been granted rights to modify this registry key.",
+                                            FindingDetail = "You'll need to take a closer look at this key to know if this has any value at all. Good luck.",
+                                            Triage = Constants.Triage.Yellow
+                                        });
+                                    }
+                                }
                                 if (trustee.LowPriv)
                                 {
-                                    if ((int)this.MinTriage < 2)
+                                    if ((int)MinTriage < 2)
                                     {
                                         findings.Add(new GpoFinding()
                                         {
@@ -119,7 +133,7 @@ namespace Group3r.Assessment.Analysers
                                 // That's fine, sometimes we're just looking for the presence of a key and the subkeys don't even matter.
                                 if ((ruleKey.ValueName == null) || (regValue.ValueName.IndexOf(ruleKey.ValueName, StringComparison.OrdinalIgnoreCase) >= 0))
                                 {
-                                    if ((int)this.MinTriage < (int)ruleKey.Triage)
+                                    if ((int)MinTriage < (int)ruleKey.Triage)
                                     {
                                         findings.Add(new GpoFinding()
                                         {
@@ -141,7 +155,7 @@ namespace Group3r.Assessment.Analysers
                                         case RegKeyValType.REG_DWORD:
                                             int dword;
                                             Int32.TryParse(Encoding.UTF8.GetString(regValue.ValueBytes, 0,
-                                                regValue.ValueBytes.Length), out dword); 
+                                                regValue.ValueBytes.Length), out dword);
                                             interesting = IsInterestingBecauseBad(ruleKey.BadDword, dword);
                                             break;
                                         case RegKeyValType.REG_BINARY:
@@ -159,7 +173,7 @@ namespace Group3r.Assessment.Analysers
 
                                     if (interesting)
                                     {
-                                        if ((int)this.MinTriage < (int)ruleKey.Triage)
+                                        if ((int)MinTriage < (int)ruleKey.Triage)
                                         {
                                             findings.Add(new GpoFinding()
                                             {
@@ -197,7 +211,7 @@ namespace Group3r.Assessment.Analysers
                                     }
                                     if (interesting)
                                     {
-                                        if ((int)this.MinTriage < (int)ruleKey.Triage)
+                                        if ((int)MinTriage < (int)ruleKey.Triage)
                                         {
                                             findings.Add(new GpoFinding()
                                             {
@@ -233,7 +247,7 @@ namespace Group3r.Assessment.Analysers
                                     }
                                     if (interesting)
                                     {
-                                        if ((int)this.MinTriage < (int)ruleKey.Triage)
+                                        if ((int)MinTriage < (int)ruleKey.Triage)
                                         {
                                             findings.Add(new GpoFinding()
                                             {
@@ -262,9 +276,10 @@ namespace Group3r.Assessment.Analysers
 
         public RegistrySetting CleanupSetting(RegistrySetting setting)
         {
-            RegistrySetting cleanSetting = new RegistrySetting();
-
-            cleanSetting.PolicyType = setting.PolicyType;
+            RegistrySetting cleanSetting = new RegistrySetting
+            {
+                PolicyType = setting.PolicyType
+            };
 
             if (!String.IsNullOrWhiteSpace(setting.Name))
             {
@@ -395,5 +410,5 @@ namespace Group3r.Assessment.Analysers
             return false;
         }
     }
-    
+
 }

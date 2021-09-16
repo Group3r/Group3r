@@ -1,12 +1,12 @@
 ﻿using LibSnaffle.Concurrency;
 using LibSnaffle.Errors;
+using Sddl.Parser;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Sddl.Parser;
 
 namespace LibSnaffle.ActiveDirectory
 {
@@ -29,7 +29,7 @@ namespace LibSnaffle.ActiveDirectory
             //define what a heading looks like
             Regex headingRegex = new Regex(@"^\[(\w+\s?)+\]$");
 
-            string[] infContentArray = this.GetContentLines();
+            string[] infContentArray = GetContentLines();
 
             string infContentString = GetContentString(infContentArray);
 
@@ -120,9 +120,11 @@ namespace LibSnaffle.ActiveDirectory
                     switch (sectionHeading)
                     {
                         case "Privilege Rights":
-                            PrivRightSetting privRightSetting = new PrivRightSetting();
-                            privRightSetting.Source = FilePath;
-                            privRightSetting.Privilege = lineKey;
+                            PrivRightSetting privRightSetting = new PrivRightSetting
+                            {
+                                Source = FilePath,
+                                Privilege = lineKey
+                            };
                             foreach (string trusteeSid in splitValues)
                             {
                                 string sidString = trusteeSid.Trim('*');
@@ -138,8 +140,10 @@ namespace LibSnaffle.ActiveDirectory
                             Settings.Add(privRightSetting);
                             break;
                         case "Registry Values":
-                            RegistrySetting regValSetting = new RegistrySetting();
-                            regValSetting.Source = FilePath;
+                            RegistrySetting regValSetting = new RegistrySetting
+                            {
+                                Source = FilePath
+                            };
                             // turn the key into properties on the setting obj
                             string[] regPathArray = lineKey.Split('\\');
                             // get the hive
@@ -147,8 +151,10 @@ namespace LibSnaffle.ActiveDirectory
                             // get the key
                             string[] keyArray = regPathArray.Skip(1).Take(regPathArray.Length - 2).ToArray();
                             regValSetting.Key = String.Join("\\", keyArray);
-                            RegistryValue regVal = new RegistryValue();
-                            regVal.ValueName = regPathArray[regPathArray.Length - 1];
+                            RegistryValue regVal = new RegistryValue
+                            {
+                                ValueName = regPathArray[regPathArray.Length - 1]
+                            };
 
                             // figure out the value type
                             int valType;
@@ -157,7 +163,7 @@ namespace LibSnaffle.ActiveDirectory
                                 // create value objects for each of them
                                 foreach (string value in splitValues.Skip(1))
                                 {
-                                    regVal.RegKeyValType = (RegKeyValType) valType;
+                                    regVal.RegKeyValType = (RegKeyValType)valType;
                                     regVal.ValueBytes = Encoding.Unicode.GetBytes(value);
                                     regVal.ValueString = value;
                                     // add them to the setting
@@ -168,13 +174,15 @@ namespace LibSnaffle.ActiveDirectory
                             Settings.Add(regValSetting);
                             break;
                         case "Registry Keys":
-                            RegistrySetting regKeySetting = new RegistrySetting();
-                            regKeySetting.Source = FilePath;
+                            RegistrySetting regKeySetting = new RegistrySetting
+                            {
+                                Source = FilePath
+                            };
                             string[] regKeyArray = lineKey.Split('\\');
                             // get the hive
                             regKeySetting.RegHiveFromString(regKeyArray[0].Trim('"'));
                             // get the key
-                            regKeySetting.Key = (String.Join("\\",regKeyArray.Skip(1)).Trim('"'));
+                            regKeySetting.Key = (String.Join("\\", regKeyArray.Skip(1)).Trim('"'));
                             regKeySetting.Inheritance = splitLine[1];
                             if (!String.IsNullOrWhiteSpace(splitLine[2].Trim('"')))
                             {
@@ -185,16 +193,20 @@ namespace LibSnaffle.ActiveDirectory
                             Settings.Add(regKeySetting);
                             break;
                         case "Kerberos Policy":
-                            KerbPolicySetting kerbpolSetting = new KerbPolicySetting();
-                            kerbpolSetting.Source = FilePath;
-                            kerbpolSetting.Key = splitLine[0].Trim();
-                            kerbpolSetting.Value = splitLine[1].Trim();
+                            KerbPolicySetting kerbpolSetting = new KerbPolicySetting
+                            {
+                                Source = FilePath,
+                                Key = splitLine[0].Trim(),
+                                Value = splitLine[1].Trim()
+                            };
                             Settings.Add(kerbpolSetting);
                             break;
                         case "Event Audit":
-                            EventAuditSetting eventAuditSetting = new EventAuditSetting();
-                            eventAuditSetting.Source = FilePath;
-                            eventAuditSetting.AuditType = lineKey;
+                            EventAuditSetting eventAuditSetting = new EventAuditSetting
+                            {
+                                Source = FilePath,
+                                AuditType = lineKey
+                            };
                             int auditLevel;
                             if (int.TryParse(lineValues[0].ToString(), out auditLevel))
                             {
@@ -330,10 +342,12 @@ namespace LibSnaffle.ActiveDirectory
                             }
                             break;
                         case "Service General Setting":
-                            NtServiceSetting serviceSetting = new NtServiceSetting();
-                            serviceSetting.Source = FilePath;
-                            serviceSetting.ServiceName = lineKey;
-                            serviceSetting.StartupType = splitLine[1];
+                            NtServiceSetting serviceSetting = new NtServiceSetting
+                            {
+                                Source = FilePath,
+                                ServiceName = lineKey,
+                                StartupType = splitLine[1]
+                            };
                             if (!String.IsNullOrWhiteSpace(splitLine[2].Trim('"')))
                             {
                                 serviceSetting.Sddl = splitLine[2].Trim('"');
@@ -343,10 +357,12 @@ namespace LibSnaffle.ActiveDirectory
                             Settings.Add(serviceSetting);
                             break;
                         case "System Access":
-                            SystemAccessSetting sysAccSetting = new SystemAccessSetting();
-                            sysAccSetting.Source = FilePath;
-                            sysAccSetting.SettingName = lineKey;
-                            sysAccSetting.ValueString = splitLine[1].Trim();
+                            SystemAccessSetting sysAccSetting = new SystemAccessSetting
+                            {
+                                Source = FilePath,
+                                SettingName = lineKey,
+                                ValueString = splitLine[1].Trim()
+                            };
                             Settings.Add(sysAccSetting);
                             break;
                         case "Unicode":

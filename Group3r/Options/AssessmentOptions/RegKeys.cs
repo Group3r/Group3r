@@ -1,8 +1,6 @@
 ﻿using LibSnaffle.ActiveDirectory;
-using System.Text.RegularExpressions;
-using System.Collections.Generic;
-using System;
 using LibSnaffle.Classifiers.Rules;
+using System.Collections.Generic;
 
 namespace Group3r.Options.AssessmentOptions
 {
@@ -10,7 +8,7 @@ namespace Group3r.Options.AssessmentOptions
     {
         public void LoadRegKeys()
         {
-            this.RegKeys = new List<RegKey>()
+            RegKeys = new List<RegKey>()
             {
                 new RegKey()
                 {
@@ -29,7 +27,7 @@ namespace Group3r.Options.AssessmentOptions
                     InterestingIf = InterestingIf.Present,
                     Triage = Constants.Triage.Green
                 },
-                
+
                 new RegKey()
                 {
                     MsDesc = " ",
@@ -58,7 +56,7 @@ namespace Group3r.Options.AssessmentOptions
                     InterestingIf = InterestingIf.Present,
                     Triage = Constants.Triage.Green
                 },
-                
+
                 new RegKey()
                 {
                     MsDesc = "",
@@ -78,7 +76,7 @@ namespace Group3r.Options.AssessmentOptions
                     InterestingIf = InterestingIf.Present,
                     Triage = Constants.Triage.Green
                 },
-                
+
                 new RegKey()
                 {
                     MsDesc = " ",
@@ -88,7 +86,7 @@ namespace Group3r.Options.AssessmentOptions
                     InterestingIf = InterestingIf.Present,
                     Triage = Constants.Triage.Green
                 },
-                
+
                 new RegKey()
                 {
                     MsDesc = " ",
@@ -98,7 +96,7 @@ namespace Group3r.Options.AssessmentOptions
                     InterestingIf = InterestingIf.Present,
                     Triage = Constants.Triage.Green
                 },
-                
+
                 new RegKey()
                 {
                     MsDesc = "",
@@ -108,7 +106,7 @@ namespace Group3r.Options.AssessmentOptions
                     InterestingIf = InterestingIf.Present,
                     Triage = Constants.Triage.Green
                 },
-                
+
                 new RegKey()
                 {
                     MsDesc = "",
@@ -118,7 +116,7 @@ namespace Group3r.Options.AssessmentOptions
                     InterestingIf = InterestingIf.Present,
                     Triage = Constants.Triage.Green
                 },
-                
+
                 new RegKey()
                 {
                     MsDesc = "",

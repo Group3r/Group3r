@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Group3r.Options.AssessmentOptions;
+﻿using Group3r.Options.AssessmentOptions;
 using LibSnaffle.ActiveDirectory;
 
 namespace Group3r.Assessment.Analysers
@@ -14,7 +12,7 @@ namespace Group3r.Assessment.Analysers
             // No 'finding' level issues in this area.
 
             SettingResult.Setting = setting;
-            
+
             return SettingResult;
         }
     }

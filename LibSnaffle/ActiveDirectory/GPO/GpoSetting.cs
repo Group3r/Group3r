@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
-using LibSnaffle.Concurrency;
 
 namespace LibSnaffle.ActiveDirectory
 {
@@ -32,7 +30,7 @@ namespace LibSnaffle.ActiveDirectory
     {
         public string Source { get; set; }
         public PolicyType PolicyType { get; set; }
-
+        public bool IsMorphed { get; set; } = false;
         public SettingAction ParseSettingAction(string actionString)
         {
             switch (actionString)

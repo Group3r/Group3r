@@ -1,7 +1,4 @@
-﻿using LibSnaffle.FileDiscovery;
-using System;
-using System.IO;
-using System.Security.AccessControl;
+﻿using System.IO;
 using static LibSnaffle.Classifiers.Rules.Constants;
 
 namespace LibSnaffle.Classifiers.Results
@@ -17,8 +14,8 @@ namespace LibSnaffle.Classifiers.Results
         {
             ResultFileInfo = fileInfo;
 
-            this.RwStatus = EffectiveAccess.EffectivePermissions.CanRw(fileInfo);
-            
+            RwStatus = EffectiveAccess.EffectivePermissions.CanRw(fileInfo);
+
             if (snaffle)
             {
                 if ((maxSizeToSnaffle >= fileInfo.Length) && RwStatus.CanRead)

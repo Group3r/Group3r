@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using LibSnaffle.Classifiers.Rules;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using LibSnaffle.Classifiers.Rules;
 
 namespace LibSnaffle.Classifiers
 {

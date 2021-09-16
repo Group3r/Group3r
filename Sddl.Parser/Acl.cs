@@ -7,7 +7,7 @@ namespace Sddl.Parser
     public class Acl : Acm
     {
         public string Raw { get; }
-        
+
         public string[] Flags { get; }
         public Ace[] Aces { get; }
 
@@ -41,7 +41,7 @@ namespace Sddl.Parser
                     {
                         if (balance == 0)
                             begin = end;
-                            
+
                         balance += 1;
                     }
                     else if (acl[end] == Ace.EndToken)
@@ -64,7 +64,7 @@ namespace Sddl.Parser
                         balance = 0;
                     }
                 }
-                
+
                 Aces = aces.ToArray();
             }
         }
@@ -81,7 +81,7 @@ namespace Sddl.Parser
         {
             bool anyFlags = Flags != null && Flags.Any();
             bool anyAces = Aces != null && Aces.Any();
-            
+
             StringBuilder sb = new StringBuilder();
 
             if (anyFlags)
@@ -106,7 +106,7 @@ namespace Sddl.Parser
                    ((Aces is null && acl.Aces is null) || (!(Aces is null) && !(acl.Aces is null) && Aces.SequenceEqual(acl.Aces)));
         }
 
-        public static bool operator== (Acl acl0, Acl acl1)
+        public static bool operator ==(Acl acl0, Acl acl1)
         {
             if (acl0 is null && acl1 is null)
                 return true;
@@ -116,7 +116,7 @@ namespace Sddl.Parser
                 return acl0.Equals(acl1);
         }
 
-        public static bool operator!= (Acl acl0, Acl acl1)
+        public static bool operator !=(Acl acl0, Acl acl1)
         {
             return !(acl0 == acl1);
         }
