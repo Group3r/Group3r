@@ -1,5 +1,4 @@
 ﻿using Group3r.Options;
-using Grouper;
 using LibSnaffle.Concurrency;
 using NLog;
 using System;

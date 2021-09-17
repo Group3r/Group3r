@@ -1,7 +1,7 @@
 ﻿using LibSnaffle.Classifiers.Results;
 using LibSnaffle.Concurrency;
 
-namespace Grouper
+namespace Group3r
 {
     public class FileResultMessage : QueueMessage
     {

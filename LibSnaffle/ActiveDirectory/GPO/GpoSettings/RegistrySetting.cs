@@ -40,7 +40,6 @@ namespace LibSnaffle.ActiveDirectory
                     break;
                 default:
                     throw new NotImplementedException("Found a registry hive short name I don't recognise in RegHiveFromString");
-                    break;
             }
         }
     }

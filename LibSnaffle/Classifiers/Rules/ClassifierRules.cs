@@ -9,13 +9,13 @@ namespace LibSnaffle.Classifiers
     {
         // Classifiers
         public List<ClassifierRule> AllClassifierRules { get; set; } = new List<ClassifierRule>();
-        [Nett.TomlIgnore]
+        //[Nett.TomlIgnore]
         public List<ClassifierRule> ShareClassifierRules { get; set; } = new List<ClassifierRule>();
-        [Nett.TomlIgnore]
+        //[Nett.TomlIgnore]
         public List<ClassifierRule> DirClassifierRules { get; set; } = new List<ClassifierRule>();
-        [Nett.TomlIgnore]
+        //[Nett.TomlIgnore]
         public List<ClassifierRule> FileClassifierRules { get; set; } = new List<ClassifierRule>();
-        [Nett.TomlIgnore]
+        //[Nett.TomlIgnore]
         public List<ClassifierRule> ContentsClassifierRules { get; set; } = new List<ClassifierRule>();
 
         public void PrepareClassifiers()

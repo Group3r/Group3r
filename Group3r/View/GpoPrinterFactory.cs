@@ -16,18 +16,20 @@ namespace Group3r.View
         {
             IGpoPrinter processor;
             // Currently only JSON exists which is the default.
-            switch (setting)
-            {
-                case "json":
-                    processor = new JsonGpoPrinter(options);
-                    break;
-                case "nice":
-                    processor = new NiceGpoPrinter(options);
-                    break;
-                default:
-                    processor = new NiceGpoPrinter(options);
-                    break;
-            }
+            //switch (setting)
+            //{
+            //   case "json":
+            //       processor = new JsonGpoPrinter(options);
+            //       break;
+            //   case "nice":
+            //       processor = new NiceGpoPrinter(options);
+            //       break;
+            //   default:
+            //       processor = new NiceGpoPrinter(options);
+            //       break;
+            //}
+            processor = new NiceGpoPrinter(options);
+
             return processor;
         }
     }

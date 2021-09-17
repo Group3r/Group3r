@@ -1,7 +1,7 @@
 ﻿using CommandLineParser.Arguments;
 using CommandLineParser.Exceptions;
 using Group3r.Concurrency;
-using Nett;
+//using Nett;
 using NLog;
 using System;
 using System.Linq;
@@ -24,7 +24,7 @@ namespace Group3r.Options
             CommandLineParser.CommandLineParser parser = new CommandLineParser.CommandLineParser();
 
             // letters i haven't used abegijklmnw
-            parser.Arguments.Add(new ValueArgument<string>('z', "config", "Path to a .toml config file. Run with \'generate\' to puke a sample config file into the working directory."));
+            //parser.Arguments.Add(new ValueArgument<string>('z', "config", "Path to a .toml config file. Run with \'generate\' to puke a sample config file into the working directory."));
             parser.Arguments.Add(new ValueArgument<string>('c', "dc", "Target Domain controller"));
             parser.Arguments.Add(new ValueArgument<string>('d', "domain", "Domain to query."));
             parser.Arguments.Add(new SwitchArgument('h', "help", "Displays this help.", false));
@@ -63,11 +63,11 @@ namespace Group3r.Options
                 Environment.Exit(0);
             }
 
-            TomlSettings settings = TomlSettings.Create(cfg => cfg
-                .ConfigureType<LogLevel>(tc => tc
-                    .WithConversionFor<TomlString>(conv => conv
-                        .FromToml(s => (LogLevel)Enum.Parse(typeof(LogLevel), s.Value, ignoreCase: true))
-                        .ToToml(e => e.ToString()))));
+        //   TomlSettings settings = TomlSettings.Create(cfg => cfg
+        //       .ConfigureType<LogLevel>(tc => tc
+        //           .WithConversionFor<TomlString>(conv => conv
+        //               .FromToml(s => (LogLevel)Enum.Parse(typeof(LogLevel), s.Value, ignoreCase: true))
+        //               .ToToml(e => e.ToString()))));
 
             parser.ParseCommandLine(args);
 
@@ -87,21 +87,21 @@ namespace Group3r.Options
 
                 switch (arg.LongName)
                 {
-                    case "config":
-                        if (value.Equals("generate"))
-                        {
-                            // Generate a default config and return.
-                            Toml.WriteFile(options, ".\\default.toml", settings);
-                            mq.Info("Wrote default config values to .\\default.toml");
-                            mq.Terminate();
-                        }
-                        else
-                        {
-                            // Read the specified config file and return.
-                            options = Toml.ReadFile<GrouperOptions>(value, settings);
-                            mq.Info("Read config file from " + value);
-                        }
-                        return options;
+                    //case "config":
+                    //    if (value.Equals("generate"))
+                    //    {
+                    //        // Generate a default config and return.
+                    //        Toml.WriteFile(options, ".\\default.toml", settings);
+                    //        mq.Info("Wrote default config values to .\\default.toml");
+                    //        mq.Terminate();
+                    //    }
+                    //    else
+                    //    {
+                    //        // Read the specified config file and return.
+                    //        options = Toml.ReadFile<GrouperOptions>(value, settings);
+                    //        mq.Info("Read config file from " + value);
+                    //    }
+                    //    return options;
                     case "offline":
                         options.OfflineMode = true;
                         break;

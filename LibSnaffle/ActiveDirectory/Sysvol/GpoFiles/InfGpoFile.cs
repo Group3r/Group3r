@@ -44,7 +44,7 @@ namespace LibSnaffle.ActiveDirectory
             int i = 0;
             foreach (string infLine in infContentArray)
             {
-                Match headingMatch = headingRegex.Match(infLine);
+                System.Text.RegularExpressions.Match headingMatch = headingRegex.Match(infLine);
                 if (headingMatch.Success)
                 {
                     headingLines.Add(i);

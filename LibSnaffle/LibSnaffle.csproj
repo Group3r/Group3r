@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6C743A7F-17AC-4B25-80ED-A6E1F5164197}</ProjectGuid>
+    <ProjectGuid>{CAA7AB97-F83B-432C-8F9C-C5F1530F59F7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LibSnaffle</RootNamespace>
@@ -12,7 +12,6 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,8 +21,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>
-    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,14 +31,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AlphaFS">
+    <Reference Include="AlphaFS, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>Classifiers\EffectiveAccess\AlphaFS.dll</HintPath>
-    </Reference>
-    <Reference Include="Nett, Version=0.15.0.0, Culture=neutral, PublicKeyToken=605dcfe7a1d3365b, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nett.0.15.0\lib\net40\Nett.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.7.6\lib\net40-client\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="Portable.System.ValueTuple, Version=1.0.1.1, Culture=neutral, PublicKeyToken=0007e0f1797b6946, processorArchitecture=MSIL">
+      <HintPath>..\packages\Portable.System.ValueTuple.1.0.1\lib\net40\Portable.System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -52,9 +50,6 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\portable-net40+sl4+win8+wp8\System.ValueTuple.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -87,6 +82,9 @@
     <Compile Include="ActiveDirectory\GPO\GpoSettings\ShortCutSetting.cs" />
     <Compile Include="ActiveDirectory\GPO\GpoSettings\SystemAccessSetting.cs" />
     <Compile Include="ActiveDirectory\GPO\GpoSettings\UserSetting.cs" />
+    <Compile Include="ActiveDirectory\Sysvol\GpoFiles\GpoFile.cs" />
+    <Compile Include="ActiveDirectory\Sysvol\GpoFiles\GpoFileFactory.cs" />
+    <Compile Include="ActiveDirectory\Sysvol\GpoFiles\InfGpoFile.cs" />
     <Compile Include="ActiveDirectory\Sysvol\GpoFiles\IniGpoFile.cs" />
     <Compile Include="ActiveDirectory\Sysvol\GpoFiles\Parsers\SchedTaskParser.cs" />
     <Compile Include="ActiveDirectory\Sysvol\GpoFiles\Parsers\SchedTaskV2Parser.cs" />
@@ -98,16 +96,18 @@
     <Compile Include="Classifiers\ArchiveClassifier.cs" />
     <Compile Include="Classifiers\ClassifierBase.cs" />
     <Compile Include="Classifiers\ClassifierOptions.cs" />
-    <Compile Include="Classifiers\EffectiveAccess.cs" />
-    <Compile Include="Classifiers\Results\Result.cs" />
-    <Compile Include="Classifiers\Results\TextResult.cs" />
-    <Compile Include="Classifiers\Rules\ClassifierRules.cs" />
-    <Compile Include="Classifiers\Rules\ClassifierRule.cs" />
     <Compile Include="Classifiers\ContentClassifier.cs" />
     <Compile Include="Classifiers\DirClassifier.cs" />
-    <Compile Include="Classifiers\Results\DirResult.cs" />
+    <Compile Include="Classifiers\EffectiveAccess.cs" />
+    <Compile Include="Classifiers\EffectiveAccess\EffectiveAccess.cs" />
     <Compile Include="Classifiers\FileClassifier.cs" />
+    <Compile Include="Classifiers\Results\DirResult.cs" />
     <Compile Include="Classifiers\Results\FileResult.cs" />
+    <Compile Include="Classifiers\Results\Result.cs" />
+    <Compile Include="Classifiers\Results\ShareResult.cs" />
+    <Compile Include="Classifiers\Results\TextResult.cs" />
+    <Compile Include="Classifiers\Rules\ClassifierRule.cs" />
+    <Compile Include="Classifiers\Rules\ClassifierRules.cs" />
     <Compile Include="Classifiers\Rules\Constants.cs" />
     <Compile Include="Classifiers\Rules\FileContentRules.cs" />
     <Compile Include="Classifiers\Rules\FileDiscardRules.cs" />
@@ -115,39 +115,44 @@
     <Compile Include="Classifiers\Rules\PathRules.cs" />
     <Compile Include="Classifiers\Rules\ShareRules.cs" />
     <Compile Include="Classifiers\ShareClassifier.cs" />
-    <Compile Include="Classifiers\Results\ShareResult.cs" />
     <Compile Include="Classifiers\TextClassifier.cs" />
     <Compile Include="Concurrency\BlockingMq.cs" />
     <Compile Include="Concurrency\BlockingStaticTaskScheduler.cs" />
     <Compile Include="Concurrency\MessageTypes\DebugMessage.cs" />
+    <Compile Include="Concurrency\MessageTypes\ErrorMessage.cs" />
     <Compile Include="Concurrency\MessageTypes\FatalMessage.cs" />
     <Compile Include="Concurrency\MessageTypes\FinishMessage.cs" />
-    <Compile Include="Concurrency\MessageTypes\ErrorMessage.cs" />
-    <Compile Include="Concurrency\MessageTypes\TraceMessage.cs" />
     <Compile Include="Concurrency\MessageTypes\InfoMessage.cs" />
     <Compile Include="Concurrency\MessageTypes\QueueMessage.cs" />
-    <Compile Include="Errors\GpoException.cs" />
-    <Compile Include="Errors\UserException.cs" />
+    <Compile Include="Concurrency\MessageTypes\TraceMessage.cs" />
     <Compile Include="Errors\ActiveDirectoryException.cs" />
     <Compile Include="Errors\FileFactoryException.cs" />
+    <Compile Include="Errors\GpoException.cs" />
     <Compile Include="Errors\SysvolException.cs" />
-    <Compile Include="ActiveDirectory\Sysvol\GpoFiles\InfGpoFile.cs" />
-    <Compile Include="ActiveDirectory\Sysvol\GpoFiles\GpoFileFactory.cs" />
-    <Compile Include="ActiveDirectory\Sysvol\GpoFiles\GpoFile.cs" />
+    <Compile Include="Errors\UserException.cs" />
     <Compile Include="FileDiscovery\CurrentUserSecurity.cs" />
-    <Compile Include="FileDiscovery\QueueAndPath.cs" />
     <Compile Include="FileDiscovery\FileSystemEnumerator.cs" />
+    <Compile Include="FileDiscovery\QueueAndPath.cs" />
     <Compile Include="Logging\Logging.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sddl.Parser\Ace.cs" />
+    <Compile Include="Sddl.Parser\Acl.cs" />
+    <Compile Include="Sddl.Parser\Acm.cs" />
+    <Compile Include="Sddl.Parser\Errors.cs" />
+    <Compile Include="Sddl.Parser\Format.cs" />
+    <Compile Include="Sddl.Parser\Match.cs" />
+    <Compile Include="Sddl.Parser\Sddl.cs" />
+    <Compile Include="Sddl.Parser\SecurableObjectType.cs" />
+    <Compile Include="Sddl.Parser\Sid.cs" />
+    <Compile Include="Sddl.Parser\StringBuilderExtensions.cs" />
+    <Compile Include="Sddl.Parser\StringLengthComparer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Classifiers\EffectiveAccess\AlphaFS.dll" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Sddl.Parser\Sddl.Parser.csproj">
-      <Project>{28f840b5-4ec3-4737-a097-199e845908cc}</Project>
-      <Name>Sddl.Parser</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

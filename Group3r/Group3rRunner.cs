@@ -13,7 +13,7 @@ namespace Group3r
     /**
      * Summary: Responsible for setting up and running GroupCore.
      */
-    class Group3rRunner
+    public class Group3rRunner
     {
         /**
          * Summary: This method is the main controller of the program.
@@ -23,6 +23,7 @@ namespace Group3r
          */
         public void Run(string[] args)
         {
+            Console.WriteLine("Debug 3");
             Banner.PrintBanner();
             GrouperMq mq = new GrouperMq();
 
@@ -39,7 +40,8 @@ namespace Group3r
                 Console.WriteLine("Unhandled exception in Group3rRunner. Please report the following error directly to l0ss or file an issue in GitHub:");
                 Console.WriteLine(e.ToString());
                 DumpQueue(mq);
-                Environment.Exit(1);
+                Console.ReadLine();
+                
             }
         }
 

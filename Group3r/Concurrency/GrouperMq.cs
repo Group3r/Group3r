@@ -1,5 +1,4 @@
 ﻿using Group3r.Assessment;
-using Grouper;
 using LibSnaffle.Classifiers.Results;
 using LibSnaffle.Concurrency;
 using System;

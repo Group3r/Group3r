@@ -22,7 +22,7 @@ namespace Group3r
     {
         private GrouperMq Mq { get; set; }
         private static BlockingStaticTaskScheduler GpoTaskScheduler;
-        private static BlockingStaticTaskScheduler SnafflerTaskScheduler;
+        //private static BlockingStaticTaskScheduler SnafflerTaskScheduler;
         private GrouperOptions Options { get; set; }
 
         public GroupCon(GrouperOptions options, GrouperMq mq)
@@ -32,7 +32,7 @@ namespace Group3r
 
             GpoTaskScheduler = new BlockingStaticTaskScheduler(Options.MaxSysvolThreads, Options.MaxSysvolQueue);
             // TODO is this task scheduler still needed?
-            SnafflerTaskScheduler = new BlockingStaticTaskScheduler(50, 0);
+            //SnafflerTaskScheduler = new BlockingStaticTaskScheduler(50, 0);
         }
 
         /**

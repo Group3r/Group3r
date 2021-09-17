@@ -119,39 +119,64 @@ namespace LibSnaffle.ActiveDirectory
                 // target dc set, no target domain set
                 if ((!string.IsNullOrEmpty(TargetDC)) && (string.IsNullOrEmpty(TargetDomain)))
                 {
-                    Mq.Trace("Target DC specified: " + TargetDC + ", using it for DirectoryContext.");
-                    Context = new DirectoryContext(DirectoryContextType.Domain, TargetDC);
-                    PContext = new PrincipalContext(ContextType.Domain, TargetDC);
-                    Mq.Trace("Adding " + TargetDC + " to ActiveDirectory.DomainControllerNames.");
-                    DomainControllerNames.Add(TargetDC);
-                    Mq.Trace("Testing domain connectivity...");
-                    CurrentDomain = Domain.GetDomain(Context);
-                    CurrentForest = CurrentDomain.Forest;
-                    Mq.Trace("Successfully queried the " + CurrentDomain.Name + " domain. Hope that's what you had in mind...");
+                    Mq.Error("I need you to specify the FQDN of the target domain with -d as well as the target Domain Controller.");
+                    while (true)
+                    {
+                        Mq.Terminate();
+                    }
+                    //Mq.Trace("Target DC specified: " + TargetDC + ", using it for DirectoryContext.");
+                    //Context = new DirectoryContext(DirectoryContextType.Domain, TargetDC);
+                    //PContext = new PrincipalContext(ContextType.Domain, TargetDC);
+                    //Mq.Trace("Adding " + TargetDC + " to ActiveDirectory.DomainControllerNames.");
+                    //DomainControllerNames.Add(TargetDC);
+                    //Mq.Trace("Testing domain connectivity...");
+
+                    //CurrentDomain = Domain.GetDomain(Context);
+                    //Mq.Trace("Successfully queried the " + CurrentDomain.Name + " domain. Hope that's what you had in mind...");
                 }
                 // target domain set, no target dc set
                 else if ((!string.IsNullOrEmpty(TargetDomain)) && (string.IsNullOrEmpty(TargetDC)))
                 {
                     Mq.Trace("Target domain specified: " + TargetDomain + ", using it for DirectoryContext.");
-                    Context = new DirectoryContext(DirectoryContextType.Domain, TargetDomain);
-                    PContext = new PrincipalContext(ContextType.Domain, TargetDomain);
-                    Mq.Trace("Testing domain connectivity...");
-                    CurrentDomain = Domain.GetDomain(Context);
-                    CurrentForest = CurrentDomain.Forest;
-                    Mq.Trace("Successfully queried the " + CurrentDomain.Name + " domain. Hope that's what you had in mind...");
+                    //Context = new DirectoryContext(DirectoryContextType.Domain, TargetDomain);
+                    //PContext = new PrincipalContext(ContextType.Domain, TargetDomain);
+                    try
+                    {
+                        Mq.Trace("Testing domain connectivity...");
+                        CurrentDomain =
+                            Domain.GetDomain(new DirectoryContext(DirectoryContextType.Domain, TargetDomain));
+                        Mq.Trace("Successfully queried the " + CurrentDomain.Name +
+                                 " domain. Hope that's what you had in mind...");
+                        TargetDC = CurrentDomain.Name;
+                    }
+                    catch (Exception e)
+                    {
+                        Mq.Error("Couldn't find " + TargetDomain + " on its own. Try fixing up your DNS to point at a DC, or specify a DC target with -c");
+                        while (true)
+                        {
+                            Mq.Terminate();
+                        }
+                    }
                 }
                 // target domain and dc set
                 else if ((!string.IsNullOrEmpty(TargetDomain)) && (!string.IsNullOrEmpty(TargetDC)))
                 {
                     Mq.Trace("Target DC and Domain specified: " + TargetDC + ", using DC for DirectoryContext.");
-                    Context = new DirectoryContext(DirectoryContextType.Domain, TargetDC);
-                    PContext = new PrincipalContext(ContextType.Domain, TargetDC);
+                    //Context = new DirectoryContext(DirectoryContextType.Domain, TargetDomain);
+                    //PContext = new PrincipalContext(ContextType.Domain, TargetDomain);
                     Mq.Trace("Adding " + TargetDC + " to ActiveDirectory.DomainControllerNames.");
                     DomainControllerNames.Add(TargetDC);
-                    Mq.Trace("Testing domain connectivity...");
-                    CurrentDomain = Domain.GetDomain(Context);
-                    CurrentForest = CurrentDomain.Forest;
-                    Mq.Trace("Successfully queried the " + CurrentDomain.Name + " domain. Hope that's what you had in mind...");
+                    //Mq.Trace("Testing domain connectivity...");
+                    //CurrentDomain = Domain.GetDomain(Context);
+                    //Mq.Trace("Successfully queried the " + CurrentDomain.Name + " domain. Hope that's what you had in mind...");
+                    try
+                    {
+                        CurrentDomain = Domain.GetDomain(new DirectoryContext(DirectoryContextType.Domain, TargetDomain));
+                    }
+                    catch (Exception e)
+                    {
+                        Mq.Degub("CurrentDomain couldn't be populated, hopefully the Target DC will be enough.");
+                    }
                 }
                 // no target DC or domain set
                 else
@@ -159,16 +184,17 @@ namespace LibSnaffle.ActiveDirectory
                     Mq.Trace("Getting current domain from user context.");
                     CurrentDomain = Domain.GetCurrentDomain();
                     TargetDomain = CurrentDomain.Name;
-                    Mq.Trace("Current domain is " + CurrentDomain.Name + " using it for DirectoryContext.");
-                    Context = new DirectoryContext(DirectoryContextType.Domain, CurrentDomain.Name);
-                    PContext = new PrincipalContext(ContextType.Domain, CurrentDomain.Name);
-                    Mq.Trace("Using domain name as DC name for future operations.");
+                    //Mq.Trace("Current domain is " + CurrentDomain.Name + " using it for DirectoryContext.");
+                    //Context = new DirectoryContext(DirectoryContextType.Domain, CurrentDomain.Name);
+                    //PContext = new PrincipalContext(ContextType.Domain, CurrentDomain.Name);
+                    //Mq.Trace("Using domain name as DC name for future operations.");
                     DomainControllerNames.Add(TargetDomain);
                     TargetDC = TargetDomain;
-                    CurrentDomain = Domain.GetDomain(Context);
-                    CurrentForest = CurrentDomain.Forest;
-                    Mq.Trace("Successfully queried the " + CurrentDomain.Name + " domain. Hope that's what you had in mind...");
+                    //CurrentDomain = Domain.GetDomain(Context);
+                    //Mq.Trace("Successfully queried the " + CurrentDomain.Name + " domain. Hope that's what you had in mind...");
                 }
+
+
             }
             // TODO: tidy up generic exception.
             catch (Exception e)
@@ -188,13 +214,13 @@ namespace LibSnaffle.ActiveDirectory
         {
             try
             {
-                Mq.Trace("Loading SYSVOL by domain " + CurrentDomain.Name);
-                Sysvol = helper.LoadSysvolOnlineByDomain(CurrentDomain.Name);
+                Mq.Trace("Loading SYSVOL by domain " + TargetDomain);
+                Sysvol = helper.LoadSysvolOnlineByDomain(TargetDomain);
             }
             catch (Exception e)
             {
-                Mq.Trace("Loading SYSVOL by DC " + DomainControllerIPs[0]);
-                Sysvol = helper.LoadSysvolOnlineByDc(CurrentDomain.Name, DomainControllerIPs[0]);
+                Mq.Trace("Loading SYSVOL by DC " + TargetDC);
+                Sysvol = helper.LoadSysvolOnlineByDc(TargetDomain, TargetDC);
             }
         }
 
@@ -369,8 +395,6 @@ namespace LibSnaffle.ActiveDirectory
                                 case "3":
                                     gpoLinkResult.LinkEnforced = "Enabled, Enforced";
                                     break;
-                                default:
-                                    break;
                             }
 
                             //string linkedpolicy = distinguishedName.Split('{', '}')[1];
@@ -529,26 +553,6 @@ namespace LibSnaffle.ActiveDirectory
             Computers = ComputerNames;
         }
 
-        public void EnumerateUsers()
-        {
-            List<string> users = new List<string>();
-
-            using (var searcher = new PrincipalSearcher(new UserPrincipal(PContext)))
-            {
-                foreach (var result in searcher.FindAll())
-                {
-                    try
-                    {
-                        DirectoryEntry de = result.GetUnderlyingObject() as DirectoryEntry;
-                        users.Add(de.Properties["samAccountName"].Value.ToString());
-                    }
-                    catch { }
-                }
-            }
-
-            Users = users;
-        }
-
         /// <summary>
         /// Consolidates GPOs enumerated from a DC and SYSVOL.
         /// </summary>
@@ -704,85 +708,126 @@ namespace LibSnaffle.ActiveDirectory
             }
         }
 
-        public List<string> GetUsersGroupsAllDomains(string username)
+        public List<string> GetUsersGroupsAllDomains(string domainUser)
         {
-            UserPrincipal foundUser = UserPrincipal.FindByIdentity(PContext, IdentityType.SamAccountName, username);
-
-            if (foundUser != null)
+            string username = domainUser.Split('\\').Last();
+            using (DirectorySearcher userSearcher =
+                new DirectorySearcher("LDAP://" + TargetDC))
             {
-                try
+                userSearcher.Filter = "(&(objectClass=user)(sAMAccountName=" + username + "))";
+                userSearcher.PropertiesToLoad.Add("canonicalName");
+                userSearcher.PropertiesToLoad.Add("objectSid");
+                userSearcher.PropertiesToLoad.Add("distinguishedName");
+
+                SearchResultCollection foundUsers = userSearcher.FindAll();
+
+                if (foundUsers.Count > 0)
                 {
-                    DirectoryEntry de = foundUser.GetUnderlyingObject() as DirectoryEntry;
-
-                    var groups = new List<string>();
-
-                    de.RefreshCache(new[] { "canonicalName", "objectSid", "distinguishedName" });
-
-                    var userCn = (string)de.Properties["canonicalName"].Value;
-
-                    // we may have to get the domain etc again in case we're running from a foreign domain?
-                    var domainDns = userCn.Substring(0, userCn.IndexOf("/", StringComparison.Ordinal));
-
-                    var d = Domain.GetDomain(new DirectoryContext(DirectoryContextType.Domain, domainDns));
-                    var searchedDomains = new List<string>();
-
-                    //search domains in the same forest (this will include the user's domain)
-                    var userDn = (string)de.Properties["distinguishedName"].Value;
-                    foreach (Domain domain in d.Forest.Domains)
+                    try
                     {
-                        searchedDomains.Add(domain.Name);
-                        var ds = new DirectorySearcher
+                        SearchResult de = foundUsers[0];
+
+                        var groups = new List<string>();
+
+                        //de.RefreshCache(new[] {"canonicalName", "objectSid", "distinguishedName"});
+
+                        var userCn = (string) de.Properties["canonicalName"][0];
+                        var userDn = (string)de.Properties["distinguishedName"][0];
+
+                        // we may have to get the domain etc again in case we're running from a foreign domain?
+                        var domainDns = userCn.Substring(0, userCn.IndexOf("/", StringComparison.Ordinal));
+
+                        try
                         {
-                            SearchRoot = new DirectoryEntry($"LDAP://{domain.Name}"),
-                            Filter = $"(&(objectclass=group)(member={userDn}))"
-                        };
-                        ds.PropertiesToLoad.Add("msDS-PrincipalName");
-                        using (var results = ds.FindAll())
-                        {
-                            foreach (SearchResult result in results)
+                            Domain d;
+                            if (CurrentDomain != null)
                             {
-                                groups.Add((string)result.Properties["msDS-PrincipalName"][0]);
+                                d = CurrentDomain;
+                            }
+                            else
+                            {
+                                d = Domain.GetDomain(new DirectoryContext(DirectoryContextType.Domain, domainDns));
+                            }
+
+                            var searchedDomains = new List<string>();
+                            //search domains in the same forest (this will include the user's domain)
+
+                            foreach (Domain domain in d.Forest.Domains)
+                            {
+                                searchedDomains.Add(domain.Name);
+
+                                var ds = new DirectorySearcher
+                                {
+                                    SearchRoot = new DirectoryEntry($"LDAP://{domain.Name}"),
+                                    Filter = $"(&(objectclass=group)(member={userDn}))"
+                                };
+                                ds.PropertiesToLoad.Add("msDS-PrincipalName");
+                                using (var results = ds.FindAll())
+                                {
+                                    foreach (SearchResult result in results)
+                                    {
+                                        groups.Add((string)result.Properties["msDS-PrincipalName"][0]);
+                                    }
+                                }
+                            }
+
+                            //search any externally trusted domains
+                            var trusts = d.GetAllTrustRelationships();
+                            if (trusts.Count == 0) return groups;
+
+                            var userSid = new SecurityIdentifier((byte[])de.Properties["objectSid"][0], 0).ToString();
+                            foreach (TrustRelationshipInformation trust in trusts)
+                            {
+                                //ignore domains in the same forest that we already searched, or outbound trusts
+                                if (searchedDomains.Contains(trust.TargetName)
+                                    || trust.TrustDirection == TrustDirection.Outbound) continue;
+                                var domain = new DirectoryEntry($"LDAP://{trust.TargetName}");
+                                domain.RefreshCache(new[] { "distinguishedName" });
+                                var domainDn = (string)domain.Properties["distinguishedName"].Value;
+
+                                //construct the DN of what the foreign security principal object would be
+                                var fsp = $"CN={userSid},CN=ForeignSecurityPrincipals,{domainDn}";
+
+                                var ds = new DirectorySearcher
+                                {
+                                    SearchRoot = domain,
+                                    Filter = $"(&(objectclass=group)(member={fsp}))"
+                                };
+                                ds.PropertiesToLoad.Add("msDS-PrincipalName");
+                                using (var results = ds.FindAll())
+                                {
+                                    foreach (SearchResult result in results)
+                                    {
+                                        groups.Add((string)result.Properties["msDS-PrincipalName"][0]);
+                                    }
+                                }
                             }
                         }
-                    }
-
-                    //search any externally trusted domains
-                    var trusts = d.GetAllTrustRelationships();
-                    if (trusts.Count == 0) return groups;
-
-                    var userSid = new SecurityIdentifier((byte[])de.Properties["objectSid"].Value, 0).ToString();
-                    foreach (TrustRelationshipInformation trust in trusts)
-                    {
-                        //ignore domains in the same forest that we already searched, or outbound trusts
-                        if (searchedDomains.Contains(trust.TargetName)
-                            || trust.TrustDirection == TrustDirection.Outbound) continue;
-                        var domain = new DirectoryEntry($"LDAP://{trust.TargetName}");
-                        domain.RefreshCache(new[] { "distinguishedName" });
-                        var domainDn = (string)domain.Properties["distinguishedName"].Value;
-
-                        //construct the DN of what the foreign security principal object would be
-                        var fsp = $"CN={userSid},CN=ForeignSecurityPrincipals,{domainDn}";
-
-                        var ds = new DirectorySearcher
+                        // if that fails, fall back to just asking the current DC
+                        catch (Exception e)
                         {
-                            SearchRoot = domain,
-                            Filter = $"(&(objectclass=group)(member={fsp}))"
-                        };
-                        ds.PropertiesToLoad.Add("msDS-PrincipalName");
-                        using (var results = ds.FindAll())
-                        {
-                            foreach (SearchResult result in results)
+                            Mq.Error("Full enumeration of current user's groups failed. Falling back to enumeration from target DC only.");
+                            var ds = new DirectorySearcher
                             {
-                                groups.Add((string)result.Properties["msDS-PrincipalName"][0]);
+                                SearchRoot = new DirectoryEntry($"LDAP://{TargetDC}"),
+                                Filter = $"(&(objectclass=group)(member={userDn}))"
+                            };
+                            ds.PropertiesToLoad.Add("msDS-PrincipalName");
+                            using (var results = ds.FindAll())
+                            {
+                                foreach (SearchResult result in results)
+                                {
+                                    groups.Add((string)result.Properties["msDS-PrincipalName"][0]);
+                                }
                             }
                         }
-                    }
-                    return groups;
-                }
 
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
+                        return groups;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
                 }
             }
             return new List<string>();
