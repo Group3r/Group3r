@@ -86,28 +86,21 @@ namespace Group3r.View
                 sb.AppendLine();
             }
             sb.AppendLine("-------------------------------");
+            sb.AppendLine("Findings for GPO Attributes will go here.");
             if (gpoResult.GpoAttributeFindings.Count >= 1)
             {
-                sb.AppendLine("Findings for GPO Attributes will go here.");
                 foreach (GpoFinding finding in gpoResult.GpoAttributeFindings)
                 {
                     sb.Append(PrintNiceFinding(finding));
                 }
             }
             sb.AppendLine("-------------------------------");
+            sb.AppendLine("ACL Findings for GPO will go here.");
             if (gpoResult.GpoAclResult.Count >= 1)
             {
-                sb.AppendLine("ACL Findings for GPO will go here.");
                 sb.AppendLine(PrintNiceAces(gpoResult.GpoAclResult));
             }
             sb.AppendLine("-------------------------------");
-
-            /*___________________
-            $SettingType
-            ~~~~~~~~~~~~~~~~~~~
-            Setting Prop1:
-            Setting Prop2:
-            */
 
             foreach (SettingResult sr in gpoResult.SettingResults)
             {
@@ -118,13 +111,16 @@ namespace Group3r.View
                 
                 if (sr.Findings.Count >= 1)
                 {
-                    sb.AppendLine("-------------------------------");
-                    sb.AppendLine("Findings");
-                    sb.AppendLine("-------------------------------");
+                    sb.Append("Findings:");
+
                     foreach (GpoFinding finding in sr.Findings)
                     {
                         sb.Append(PrintNiceFinding(finding));
                     }
+                }
+                else if (sr.Findings.Count == 0)
+                {
+                    sb.AppendLine("-------------------------------");
                 }
 
                 if (sr.Setting.GetType() == typeof(DataSourceSetting))
@@ -342,7 +338,14 @@ namespace Group3r.View
                     sb.AppendLine("Trustees: ");
                     foreach (Trustee trustee in cs.Trustees)
                     {
-                        sb.AppendLine("  " + trustee.DisplayName + " " + trustee.Sid);
+                        if (trustee.DisplayName == "Failed to resolve SID.")
+                        {
+                            sb.AppendLine("  " + trustee.Sid);
+                        }
+                        else
+                        {
+                            sb.AppendLine("  " + trustee.DisplayName + " " + trustee.Sid);
+                        }
                     }
                 }
                 else if (sr.Setting.GetType() == typeof(RegistrySetting))
@@ -358,8 +361,8 @@ namespace Group3r.View
                         sb.AppendLine("UserPolicy");
                     }
                     sb.AppendLine("Name: " + cs.Name);
-                    sb.AppendLine("Action:" + cs.Action.ToString());
-                    sb.AppendLine("Key:" + cs.Hive.ToString() + cs.Key);
+                    sb.AppendLine("Action: " + cs.Action.ToString());
+                    sb.AppendLine("Key: " + cs.Hive.ToString() + cs.Key);
                     if (cs.Values.Count == 1)
                     {
                         sb.AppendLine("Value Name: " + cs.Values[0].ValueName);
@@ -575,9 +578,8 @@ namespace Group3r.View
 
             foreach (SimpleAce ace in aces)
             {
-
+                sb.AppendLine("COMING SOON - ACLS!");
             }
-            sb.AppendLine("COMING SOON - ACLS!");
             return sb.ToString();
         }
 
