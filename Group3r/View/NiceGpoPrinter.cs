@@ -108,20 +108,6 @@ namespace Group3r.View
                 {
                     continue;
                 }
-                
-                if (sr.Findings.Count >= 1)
-                {
-                    sb.Append("Findings:");
-
-                    foreach (GpoFinding finding in sr.Findings)
-                    {
-                        sb.Append(PrintNiceFinding(finding));
-                    }
-                }
-                else if (sr.Findings.Count == 0)
-                {
-                    sb.AppendLine("-------------------------------");
-                }
 
                 if (sr.Setting.GetType() == typeof(DataSourceSetting))
                 {
@@ -537,6 +523,16 @@ namespace Group3r.View
 
                 }
 
+                if (sr.Findings.Count >= 1)
+                {
+                    sb.AppendLine("Findings:");
+
+                    foreach (GpoFinding finding in sr.Findings)
+                    {
+                        sb.Append(PrintNiceFinding(finding));
+                    }
+                }
+
                 sb.AppendLine();
             }
 
@@ -549,8 +545,8 @@ namespace Group3r.View
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            sb.AppendLine("Triage Rating: " + finding.Triage.ToString());
             sb.AppendLine("Reason: " + finding.FindingReason);
+            sb.AppendLine("Triage Rating: " + finding.Triage.ToString());
             sb.AppendLine("Detail: " + finding.FindingDetail);
 
             if (finding.AclResult.Count >= 1)
@@ -558,7 +554,6 @@ namespace Group3r.View
                 sb.AppendLine("...ACL.Finding.Details...");
                 sb.AppendLine(PrintNiceAces(finding.AclResult));
                 sb.AppendLine("......");
-
             }
 
             if (finding.PathFindings.Count >= 1)
