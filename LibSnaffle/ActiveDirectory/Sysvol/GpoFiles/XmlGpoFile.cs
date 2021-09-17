@@ -222,7 +222,7 @@ namespace LibSnaffle.ActiveDirectory
                         }
                         if (Logger != null)
                         {
-                            Logger.Error("LibSnaffle doesn't properly parse NetworkOptions.xml files. ");
+                            Logger.Degub("LibSnaffle doesn't properly parse NetworkOptions.xml files. ");
                         }
                         break;
                     case "NetworkShareSettings":
@@ -425,6 +425,13 @@ namespace LibSnaffle.ActiveDirectory
                                 folderSetting.ParseSettingAction(folderPropAtts?["action"]?.Value);
                             folderSetting.Path = folderPropAtts?["path"]?.Value;
                             Settings.Add(folderSetting);
+                        }
+                        break;
+                    case "InternetSettings":
+                        XmlNodeList inetNodeList = root.SelectNodes("InternetSettings");
+                        foreach (XmlNode inet in inetNodeList)
+                        {
+                            Logger.Degub("LibSnaffle still doesn't parse InternetSettings xml.");
                         }
                         break;
                     default:

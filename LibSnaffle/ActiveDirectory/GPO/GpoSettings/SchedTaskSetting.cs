@@ -43,6 +43,7 @@ namespace LibSnaffle.ActiveDirectory
         public string Id { get; set; }
         public string UserId { get; set; }
         public string Cpassword { get; set; }
+        public string Password { get; set; }
         public string LogonType { get; set; }
         public string RunLevel { get; set; }
     }
@@ -65,7 +66,7 @@ namespace LibSnaffle.ActiveDirectory
         public string Subject { get; set; }
         public string Body { get; set; }
         public string HeaderFields { get; set; }
-        public List<string> Attachments { get; set; }
+        public List<string> Attachments { get; set; } = new List<string>();
         public string Server { get; set; }
     }
 

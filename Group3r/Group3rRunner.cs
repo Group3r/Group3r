@@ -23,7 +23,6 @@ namespace Group3r
          */
         public void Run(string[] args)
         {
-            Console.WriteLine("Debug 3");
             Banner.PrintBanner();
             GrouperMq mq = new GrouperMq();
 

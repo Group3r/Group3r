@@ -12,9 +12,8 @@ namespace Group3r.Assessment
         public string FindingReason { get; set; }
         public string FindingDetail { get; set; }
         public Constants.Triage Triage { get; set; }
-        public List<PathFinding> PathFindings { get; set; }
-        public List<SimpleAce> AclResult { get; set; }
-        public GpoSetting GpoSetting { get; set; }
+        public List<PathFinding> PathFindings { get; set; } = new List<PathFinding>();
+        public List<SimpleAce> AclResult { get; set; } = new List<SimpleAce>();
     }
 
     public abstract class PathFinding

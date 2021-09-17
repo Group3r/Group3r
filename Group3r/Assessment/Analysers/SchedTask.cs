@@ -36,8 +36,8 @@ namespace Group3r.Assessment.Analysers
                     {
                         if (!String.IsNullOrWhiteSpace(principal.Cpassword))
                         {
-
                             string password = setting.DecryptCpassword(principal.Cpassword);
+                            principal.Password = password;
                             findings.Add(new GpoFinding()
                             {
                                 FindingReason = "Group Policy Preferences password found:" + password,
