@@ -4,6 +4,7 @@ using System.Linq;
 using Group3r.Assessment;
 using LibSnaffle.ActiveDirectory;
 using System.Text;
+using System.Xml;
 using Group3r.Options;
 using ConsoleTables;
 
@@ -63,9 +64,9 @@ namespace Group3r.View
             }
             string columntwo = String.Format("{0} {1} {2}", gpoDisplayName, gpoResult.Attributes.Uid, morphed);
             ConsoleTable gpoTable = new ConsoleTable("GPO",columntwo);
-            gpoTable.AddRow("Date Created:", gpoResult.Attributes.CreatedDate);
-            gpoTable.AddRow("Date Modified:", gpoResult.Attributes.ModifiedDate);
-            gpoTable.AddRow("Path in SYSVOL:", gpoResult.Attributes.PathInSysvol);
+            gpoTable.AddRow("Date Created", gpoResult.Attributes.CreatedDate);
+            gpoTable.AddRow("Date Modified", gpoResult.Attributes.ModifiedDate);
+            gpoTable.AddRow("Path in SYSVOL", gpoResult.Attributes.PathInSysvol);
            
             string computerPolicy = "Disabled";
             string userPolicy = "Disabled";
@@ -78,13 +79,13 @@ namespace Group3r.View
                 userPolicy = "Enabled";
             }
 
-            gpoTable.AddRow("Computer Policy:", computerPolicy);
-            gpoTable.AddRow("User Policy:", userPolicy);
+            gpoTable.AddRow("Computer Policy", computerPolicy);
+            gpoTable.AddRow("User Policy", userPolicy);
             
             foreach (GPOLink gpoLink in gpoResult.Attributes.GpoLinks)
             {
                 string linkPath = String.Format("{0} ({1})", gpoLink.LinkPath, gpoLink.LinkEnforced);
-                gpoTable.AddRow("Link:", linkPath);
+                gpoTable.AddRow("Link", linkPath);
             }
             sb.AppendLine(gpoTable.ToMarkDownString());
             /*
@@ -133,7 +134,7 @@ namespace Group3r.View
 /*
                     ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Data Source");
 
-                    sTable = TableAdd(sTable, "Name:", cs.Name);
+                    sTable = TableAdd(sTable, "Name", cs.Name);
 
                     sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
 */
@@ -143,13 +144,13 @@ namespace Group3r.View
 
                     ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Data Source");
 
-                    sTable = TableAdd(sTable, "Name:", cs.Name);
-                    sTable = TableAdd(sTable, "Action:", cs.Action.ToString());
-                    sTable = TableAdd(sTable, "Description:", cs.Description);
-                    sTable = TableAdd(sTable, "Driver:", cs.Driver);
-                    sTable = TableAdd(sTable, "UserName:", cs.UserName);
-                    sTable = TableAdd(sTable, "Cpassword:", cs.Cpassword);
-                    sTable = TableAdd(sTable, "Password:", cs.DSN);
+                    sTable = TableAdd(sTable, "Name", cs.Name);
+                    sTable = TableAdd(sTable, "Action", cs.Action.ToString());
+                    sTable = TableAdd(sTable, "Description", cs.Description);
+                    sTable = TableAdd(sTable, "Driver", cs.Driver);
+                    sTable = TableAdd(sTable, "UserName", cs.UserName);
+                    sTable = TableAdd(sTable, "Cpassword", cs.Cpassword);
+                    sTable = TableAdd(sTable, "Password", cs.DSN);
 
                     sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
                 }
@@ -163,13 +164,13 @@ namespace Group3r.View
 
                     ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Drive");
 
-                    sTable = TableAdd(sTable, "Name:", cs.Name);
-                    sTable = TableAdd(sTable, "Action:", cs.Action);
-                    sTable = TableAdd(sTable, "Path:", cs.Path);
-                    sTable = TableAdd(sTable, "Label:", cs.Label);
-                    sTable = TableAdd(sTable, "UserName:", cs.UserName);
-                    sTable = TableAdd(sTable, "Cpassword:", cs.Cpassword);
-                    sTable = TableAdd(sTable, "Password:", cs.Password);
+                    sTable = TableAdd(sTable, "Name", cs.Name);
+                    sTable = TableAdd(sTable, "Action", cs.Action.ToString());
+                    sTable = TableAdd(sTable, "Path", cs.Path);
+                    sTable = TableAdd(sTable, "Label", cs.Label);
+                    sTable = TableAdd(sTable, "UserName", cs.UserName);
+                    sTable = TableAdd(sTable, "Cpassword", cs.Cpassword);
+                    sTable = TableAdd(sTable, "Password", cs.Password);
 
                     sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
 
@@ -190,10 +191,10 @@ namespace Group3r.View
 
                     ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "File");
 
-                    sTable = TableAdd(sTable, "Action:", cs.FileAction);
-                    sTable = TableAdd(sTable, "FileName:", cs.FileName);
-                    sTable = TableAdd(sTable, "FromPath:", cs.FromPath);
-                    sTable = TableAdd(sTable, "TargetPath:", cs.TargetPath);
+                    sTable = TableAdd(sTable, "Action", cs.FileAction);
+                    sTable = TableAdd(sTable, "FileName", cs.FileName);
+                    sTable = TableAdd(sTable, "FromPath", cs.FromPath);
+                    sTable = TableAdd(sTable, "TargetPath", cs.TargetPath);
 
                     sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
                 }
@@ -207,16 +208,18 @@ namespace Group3r.View
 
                     ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Group");
 
-                    sTable = TableAdd(sTable, "Name:", cs.Name);
-                    sTable = TableAdd(sTable, "Action:", cs.Action);
-                    sTable = TableAdd(sTable, "NewName:", cs.NewName);
-                    sTable = TableAdd(sTable, "TargetPath:", cs.TargetPath);
-
+                    sTable = TableAdd(sTable, "Name", cs.Name);
+                    sTable = TableAdd(sTable, "Action", cs.Action.ToString());
+                    sTable = TableAdd(sTable, "NewName", cs.NewName);
+                    sTable = TableAdd(sTable, "Delete All Groups", cs.DeleteAllGroups.ToString());
+                    sTable = TableAdd(sTable, "Delete All Users", cs.DeleteAllUsers.ToString());
+                    sTable = TableAdd(sTable, "Remove Accounts", cs.RemoveAccounts.ToString());
+                    
                     foreach (GroupSettingMember member in cs.Members)
                     {
                         string memberstring = member.Action + " " + member.Name + " " + member.ResolvedName + " " + member.Sid;
                                       
-                        sTable = TableAdd("Member", memberstring);
+                        sTable = TableAdd(sTable, "Member", memberstring);
                     }
 
                     sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
@@ -249,8 +252,8 @@ namespace Group3r.View
 
                     ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Service");
 
-                    sTable = TableAdd(sTable, "Name:", cs.Name);
-                    sTable = TableAdd(sTable, "Service Name:", cs.ServiceName);
+                    sTable = TableAdd(sTable, "Name", cs.Name);
+                    sTable = TableAdd(sTable, "Service Name", cs.ServiceName);
                     if (cs.StartupType != null)
                     {
                         string startupType = "";
@@ -272,15 +275,16 @@ namespace Group3r.View
                                 startupType = "Disabled";
                                 break;
                         }
-                        sTable = TableAdd(sTable, "Startup Type:", startupType)
+
+                        sTable = TableAdd(sTable, "Startup Type", startupType);
                     }
 
-                    sTable = TableAdd(sTable, "Sddl:", cs.Sddl);
-                    sTable = TableAdd(sTable, "Program:", cs.Program);
-                    sTable = TableAdd(sTable, "Args:", cs.Args);
-                    sTable = TableAdd(sTable, "UserName:", cs.UserName);
-                    sTable = TableAdd(sTable, "Cpassword:", cs.Cpassword);
-                    sTable = TableAdd(sTable, "Password:", cs.Password);
+                    sTable = TableAdd(sTable, "Sddl", cs.Sddl);
+                    sTable = TableAdd(sTable, "Program", cs.Program);
+                    sTable = TableAdd(sTable, "Args", cs.Args);
+                    sTable = TableAdd(sTable, "UserName", cs.UserName);
+                    sTable = TableAdd(sTable, "Cpassword", cs.Cpassword);
+                    sTable = TableAdd(sTable, "Password", cs.Password);
 
                     sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
                 }
@@ -290,17 +294,16 @@ namespace Group3r.View
 
                     ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Package");
 
-                    sTable = TableAdd(sTable, "Name:", cs.Name);
-                    sTable = TableAdd(sTable, "Display Name:", cs.DisplayName);
-                    sTable = TableAdd(sTable, "CreatedDate:", cs.CreatedDate.ToString());
-                    sTable = TableAdd(sTable, "Action:", cs.PackageAction);
+                    sTable = TableAdd(sTable, "Display Name", cs.DisplayName);
+                    sTable = TableAdd(sTable, "CreatedDate", cs.CreatedDate.ToString());
+                    sTable = TableAdd(sTable, "Action", cs.PackageAction);
 
                     foreach (string file in cs.MsiFileList)
                     {
-                        sb.AppendLine("File:", file);
+                        sTable = TableAdd(sTable, "File", file);
                     }
-                    sTable = TableAdd(sTable, "Product Code:", cs.ProductCode);
-                    sTable = TableAdd(sTable, "Upgrade Product Code:", cs.UpgradeProductCode);
+                    sTable = TableAdd(sTable, "Product Code", cs.ProductCode.ToString());
+                    sTable = TableAdd(sTable, "Upgrade Product Code", cs.UpgradeProductCode.ToString());
 
                     sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
                 }
@@ -310,13 +313,13 @@ namespace Group3r.View
 
                     ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Printer");
 
-                    sTable = TableAdd(sTable, "Name:", cs.Name);
-                    sTable = TableAdd(sTable, "Action:", cs.Action);
-                    sTable = TableAdd(sTable, "Comment:", cs.Comment);
-                    sTable = TableAdd(sTable, "Path:", cs.Path);
-                    sTable = TableAdd(sTable, "UserName:", cs.UserName);
-                    sTable = TableAdd(sTable, "Cpassword:", cs.Cpassword);
-                    sTable = TableAdd(sTable, "Password:", cs.Password);
+                    sTable = TableAdd(sTable, "Name", cs.Name);
+                    sTable = TableAdd(sTable, "Action", cs.Action.ToString());
+                    sTable = TableAdd(sTable, "Comment", cs.Comment);
+                    sTable = TableAdd(sTable, "Path", cs.Path);
+                    sTable = TableAdd(sTable, "UserName", cs.UserName);
+                    sTable = TableAdd(sTable, "Cpassword", cs.Cpassword);
+                    sTable = TableAdd(sTable, "Password", cs.Password);
 
                     sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
                 }
@@ -326,7 +329,7 @@ namespace Group3r.View
 
                     ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "User Rights Assignment");
 
-                    sTable = TableAdd(sTable, " Privilege Name:", cs.Privilege);
+                    sTable = TableAdd(sTable, " Privilege Name", cs.Privilege);
 
                     foreach (Trustee trustee in cs.Trustees)
                     {
@@ -338,7 +341,7 @@ namespace Group3r.View
                         {
                             sb.AppendLine("  " + trustee.DisplayName + " " + trustee.Sid);
                         }
-
+                    }
                     sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(RegistrySetting))
@@ -347,17 +350,18 @@ namespace Group3r.View
 
                     ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Registry");
 
-                    sTable = TableAdd(sTable, "Name:", cs.Name);
-                    sTable = TableAdd(sTable, "Action:", cs.Action);
-                    sTable = TableAdd(sTable, "Key:", cs.Hive.ToString() + cs.Key);
+                    sTable = TableAdd(sTable, "Name", cs.Name);
+                    sTable = TableAdd(sTable, "Action", cs.Action.ToString());
+                    sTable = TableAdd(sTable, "Key", cs.Hive.ToString() + cs.Key);
 
                     foreach (RegistryValue value in cs.Values)
                     {
-                        sTable = TableAdd(sTable, "Value Name:", value.ValueName);
-                        sTable = TableAdd(sTable, "Value Type:", value.ValueType);
-                        sTable = TableAdd(sTable, "Value String:", value.ValueString);
+                        sTable = TableAdd(sTable, "Value Name", value.ValueName);
+                        sTable = TableAdd(sTable, "Value Type", value.RegKeyValType.ToString());
+                        sTable = TableAdd(sTable, "Value String", value.ValueString);
                     }
 
+                    Console.WriteLine(sTable.ToMarkDownString());
                     sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(SchedTaskSetting))
@@ -366,11 +370,11 @@ namespace Group3r.View
 
                     ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Scheduled Task");
 
-                    sTable = TableAdd(sTable, "Name:", cs.Name);
-                    sTable = TableAdd(sTable, "Task Type:", cs.TaskType.ToString());
-                    sTable = TableAdd(sTable, "Description:", cs.Description1);
-                    sTable = TableAdd(sTable, "Enabled:", cs.Enabled.ToString());
-                    sTable = TableAdd(sTable, "Name:", cs.Name);
+                    sTable = TableAdd(sTable, "Name", cs.Name);
+                    sTable = TableAdd(sTable, "Task Type", cs.TaskType.ToString());
+                    sTable = TableAdd(sTable, "Description", cs.Description1);
+                    sTable = TableAdd(sTable, "Enabled", cs.Enabled.ToString());
+                    sTable = TableAdd(sTable, "Name", cs.Name);
                     
                     sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
 
@@ -380,14 +384,14 @@ namespace Group3r.View
                         foreach (SchedTaskPrincipal principal in cs.Principals)
                         {
                             ConsoleTable pTable = new ConsoleTable("Principal", i.ToString());
-                            pTable = TableAdd(pTable, "Id:" + principal.Id);
+                            pTable = TableAdd(pTable, "Id", principal.Id);
                             pTable = TableAdd(pTable, "UserID", principal.UserId);
                             pTable = TableAdd(pTable, "Cpassword", principal.Cpassword);
                             pTable = TableAdd(pTable, "Password", principal.Password);
                             pTable = TableAdd(pTable, "LogonType", principal.LogonType);
                             pTable = TableAdd(pTable, "RunLevel", principal.RunLevel);
                             sb.AppendLine(IndentPara(pTable.ToMarkDownString(), 2));
-                            i++
+                            i++;
                         }
                     }
 
@@ -400,7 +404,7 @@ namespace Group3r.View
                                 SchedTaskEmailAction ca = (SchedTaskEmailAction) action;
 
                                 ConsoleTable aTable = new ConsoleTable("Email Action", "");
-                                aTable = TableAdd(aTable, "From:" + ca.From);
+                                aTable = TableAdd(aTable, "From", ca.From);
                                 aTable = TableAdd(aTable, "To", ca.To);
                                 aTable = TableAdd(aTable, "Subject", ca.Subject);
                                 aTable = TableAdd(aTable, "Body", ca.Body);
@@ -421,15 +425,10 @@ namespace Group3r.View
                                 SchedTaskExecAction ca = (SchedTaskExecAction) action;
 
                                 ConsoleTable aTable = new ConsoleTable("Execute Action", "");
-                                //TODO MAKE THIS ACTUALLY BE CORRECT
-                                sTable = TableAdd(sTable, "From:" + ca.From);
-                                sTable = TableAdd(sTable, "To", ca.To);
-                                sTable = TableAdd(sTable, "Subject", ca.Subject);
-                                sTable = TableAdd(sTable, "Body", ca.Body);
-                                sTable = TableAdd(sTable, "Server", ca.Server);
-                                sTable = TableAdd(sTable, "Header Fields", ca.HeaderFields);
-                                sTable = TableAdd(sTable, "Server", ca.Server);
-
+                                sTable = TableAdd(sTable, "Command", ca.Command);
+                                sTable = TableAdd(sTable, "Args", ca.Args);
+                                sTable = TableAdd(sTable, "Working Directory", ca.WorkingDir);
+                              
                                 sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 2));
                             }
                             else if (action.GetType() == typeof(SchedTaskShowMessageAction))
@@ -438,7 +437,7 @@ namespace Group3r.View
 
                                 ConsoleTable aTable = new ConsoleTable("Message Action", "");
 
-                                sTable = TableAdd(sTable, "Title:" + ca.Title);
+                                sTable = TableAdd(sTable, "Title", ca.Title);
                                 sTable = TableAdd(sTable, "Body", ca.Body);
                                 sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 2));
                             }
@@ -447,7 +446,10 @@ namespace Group3r.View
 
                     // TODO this sucks ass
                     sb.AppendLine("Triggers: ");
-                    sb.AppendLine(cs.Triggers.InnerXml.ToString());
+                    foreach (XmlNode node in cs.Triggers)
+                    {
+                        sb.AppendLine(node.InnerXml.ToString());
+                    }
                 }
                 else if (sr.Setting.GetType() == typeof(ScriptSetting))
                 {
@@ -455,9 +457,9 @@ namespace Group3r.View
 
                     ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Script");
 
-                    sTable = TableAdd(sTable, "Script Type:", cs.ScriptType);
-                    sTable = TableAdd(sTable, "CmdLine:", cs.CmdLine);
-                    sTable = TableAdd(sTable, "Args:", cs.Parameters);
+                    sTable = TableAdd(sTable, "Script Type", cs.ScriptType.ToString());
+                    sTable = TableAdd(sTable, "CmdLine", cs.CmdLine);
+                    sTable = TableAdd(sTable, "Args", cs.Parameters);
 
                     sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
                 }
@@ -467,16 +469,16 @@ namespace Group3r.View
 
                     ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Shortcut");
 
-                    sTable = TableAdd(sTable, "Name:", cs.Name);
-                    sTable = TableAdd(sTable, "Action:", cs.Action);
-                    sTable = TableAdd(sTable, "Comment:", cs.Comment);
-                    sTable = TableAdd(sTable, "Shortcut Path:", cs.ShortcutPath);
-                    sTable = TableAdd(sTable, "Target Type:", cs.TargetType);
-                    sTable = TableAdd(sTable, "Target Path:", cs.TargetPath);
-                    sTable = TableAdd(sTable, "Arguments:", cs.Arguments);
-                    sTable = TableAdd(sTable, "IconPath:", cs.IconPath);
-                    sTable = TableAdd(sTable, "IconIndex:", cs.IconIndex);
-                    sTable = TableAdd(sTable, "Status:", cs.Status);
+                    sTable = TableAdd(sTable, "Name", cs.Name);
+                    sTable = TableAdd(sTable, "Action", cs.Action.ToString());
+                    sTable = TableAdd(sTable, "Comment", cs.Comment);
+                    sTable = TableAdd(sTable, "Shortcut Path", cs.ShortcutPath);
+                    sTable = TableAdd(sTable, "Target Type", cs.TargetType);
+                    sTable = TableAdd(sTable, "Target Path", cs.TargetPath);
+                    sTable = TableAdd(sTable, "Arguments", cs.Arguments);
+                    sTable = TableAdd(sTable, "IconPath", cs.IconPath);
+                    sTable = TableAdd(sTable, "IconIndex", cs.IconIndex);
+                    sTable = TableAdd(sTable, "Status", cs.Status);
 
                     sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
                 }
@@ -495,16 +497,15 @@ namespace Group3r.View
 
                     ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "User");
 
-                    sTable = TableAdd(sTable, "Name:", cs.Name);
-                    sTable = TableAdd(sTable, "Action:", cs.Action);
-                    sTable = TableAdd(sTable, "Comment:", cs.Comment);
-                    sTable = TableAdd(sTable, "UserName:", cs.UserName);
-                    sTable = TableAdd(sTable, "NewName:", cs.NewName);
-                    sTable = TableAdd(sTable, "FullName:", cs.FullName);
-                    sTable = TableAdd(sTable, "Description:", cs.Description);
-                    sTable = TableAdd(sTable, "Cpassword:", cs.Cpassword);
-                    sTable = TableAdd(sTable, "Password:", cs.Password);
-                    sTable = TableAdd(sTable, "PwNeverExpires:", cs.PwNeverExpires.ToString());
+                    sTable = TableAdd(sTable, "Name", cs.Name);
+                    sTable = TableAdd(sTable, "Action", cs.Action.ToString());
+                    sTable = TableAdd(sTable, "UserName", cs.UserName);
+                    sTable = TableAdd(sTable, "NewName", cs.NewName);
+                    sTable = TableAdd(sTable, "FullName", cs.FullName);
+                    sTable = TableAdd(sTable, "Description", cs.Description);
+                    sTable = TableAdd(sTable, "Cpassword", cs.Cpassword);
+                    sTable = TableAdd(sTable, "Password", cs.Password);
+                    sTable = TableAdd(sTable, "PwNeverExpires", cs.PwNeverExpires.ToString());
 
                     sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
                 }
@@ -543,13 +544,14 @@ namespace Group3r.View
                 sb.AppendLine("......");
             }
 
+            /*
             if (finding.PathFindings.Count >= 1)
             {
                 sb.AppendLine("...Path.Finding.Details...");
                 sb.AppendLine(PrintNicePathFindings(finding.PathFindings));
                 sb.AppendLine("......");
             }
-            sb.AppendLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            */
 
             return sb.ToString();
         }
@@ -560,8 +562,29 @@ namespace Group3r.View
             {
                 return table;
             }
+            if (v2.Length > 80)
+            {
+                IEnumerable<string> strchunks = Enumerable.Range(0, v2.Length / 80)
+                    .Select(i => v2.Substring(i * 80, 80));
+                bool first = true;
+                foreach (string chunk in strchunks)
+                {
+                    if (first)
+                    {
+                        table.AddRow(v1, chunk);
+                        first = false;
+                    }
+                    else
+                    {
+                        table.AddRow("", chunk);
+                    }
+                }
+            }
+            else
+            {
+                table.AddRow(v1, v2);
+            }
 
-            table.AddRow(v1, v2);
             return table;
         }
 
@@ -581,16 +604,6 @@ namespace Group3r.View
             string istring = String.Concat(Enumerable.Repeat(" ", (indent * indentfactor)));
             string result = istring + inString.Replace("\n", "\n" + istring);
             return result;
-        }
-
-        string PrintNicePathFindings(List<PathFinding> pathFindings)
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (PathFinding pathFinding in pathFindings)
-            {
-                sb.AppendLine("IS DISPLAYING PATHFINDING MAYBE NOT NECESSARY?");
-            }
-            return sb.ToString();
         }
     }
 }
