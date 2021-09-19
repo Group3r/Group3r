@@ -5,6 +5,7 @@ using Group3r.Assessment;
 using LibSnaffle.ActiveDirectory;
 using System.Text;
 using Group3r.Options;
+using ConsoleTables;
 
 namespace Group3r.View
 {
@@ -14,6 +15,7 @@ namespace Group3r.View
     class NiceGpoPrinter : IGpoPrinter
     {
         private GrouperOptions grouperOptions;
+        private int indent = 4;
         /**
          * Summary: constructor
          * Arguments: none
@@ -24,7 +26,6 @@ namespace Group3r.View
             this.grouperOptions = options;
             // set up the printer
         }
-
 
         /**
          * Summary: Implementation of OutputGPO which returns the GPO as a nice string.
@@ -44,9 +45,12 @@ namespace Group3r.View
                 return "";
             }
 
+            /*
+             * GPO NAME AND ATTRIBUTES
+             */
+
             StringBuilder sb = new StringBuilder();
             sb.AppendLine();
-            sb.AppendLine("-------------------------------");
             string morphed = "Current";
             if (gpoResult.Attributes.IsMorphedGPO)
             {
@@ -57,15 +61,12 @@ namespace Group3r.View
             {
                 gpoDisplayName = "(No Display Name)";
             }
-            sb.AppendFormat("{0} - {1} - {2}", gpoDisplayName, gpoResult.Attributes.Uid, morphed);
-            sb.AppendLine();
-            sb.AppendLine("-------------------------------");
-            sb.AppendFormat("Date Created: {0}", gpoResult.Attributes.CreatedDate);
-            sb.AppendLine();
-            sb.AppendFormat("Date Modified: {0}", gpoResult.Attributes.ModifiedDate);
-            sb.AppendLine();
-            sb.AppendFormat("Path in SYSVOL: {0}", gpoResult.Attributes.PathInSysvol);
-            sb.AppendLine();
+            string columntwo = String.Format("{0} {1} {2}", gpoDisplayName, gpoResult.Attributes.Uid, morphed);
+            ConsoleTable gpoTable = new ConsoleTable("GPO",columntwo);
+            gpoTable.AddRow("Date Created:", gpoResult.Attributes.CreatedDate);
+            gpoTable.AddRow("Date Modified:", gpoResult.Attributes.ModifiedDate);
+            gpoTable.AddRow("Path in SYSVOL:", gpoResult.Attributes.PathInSysvol);
+           
             string computerPolicy = "Disabled";
             string userPolicy = "Disabled";
             if (gpoResult.Attributes.ComputerPolicyEnabled)
@@ -76,17 +77,25 @@ namespace Group3r.View
             {
                 userPolicy = "Enabled";
             }
-            sb.AppendFormat("Computer Policy: {0}", computerPolicy);
-            sb.AppendLine();
-            sb.AppendFormat("User Policy: {0}", userPolicy);
-            sb.AppendLine();
+
+            gpoTable.AddRow("Computer Policy:", computerPolicy);
+            gpoTable.AddRow("User Policy:", userPolicy);
+            
             foreach (GPOLink gpoLink in gpoResult.Attributes.GpoLinks)
             {
-                sb.AppendFormat("Link: {0} ({1})", gpoLink.LinkPath, gpoLink.LinkEnforced);
-                sb.AppendLine();
+                string linkPath = String.Format("{0} ({1})", gpoLink.LinkPath, gpoLink.LinkEnforced);
+                gpoTable.AddRow("Link:" + linkPath);
             }
-            sb.AppendLine("-------------------------------");
-            sb.AppendLine("Findings for GPO Attributes will go here.");
+            sb.AppendLine(gpoTable.ToMarkDownString());
+            /*
+            * Findings for GPO Attributes
+            */
+
+            ConsoleTable gpoFindingTable = new ConsoleTable("Finding", "Placeholder");
+            gpoFindingTable.AddRow("Placeholder", "Placeholder");
+            sb.AppendLine(IndentPara(gpoFindingTable.ToMarkDownString()));
+            //sb.AppendLine("Findings for GPO Attributes will go here.");
+            /*
             if (gpoResult.GpoAttributeFindings.Count >= 1)
             {
                 foreach (GpoFinding finding in gpoResult.GpoAttributeFindings)
@@ -94,6 +103,7 @@ namespace Group3r.View
                     sb.Append(PrintNiceFinding(finding));
                 }
             }
+            
             sb.AppendLine("-------------------------------");
             sb.AppendLine("ACL Findings for GPO will go here.");
             if (gpoResult.GpoAclResult.Count >= 1)
@@ -101,7 +111,7 @@ namespace Group3r.View
                 sb.AppendLine(PrintNiceAces(gpoResult.GpoAclResult));
             }
             sb.AppendLine("-------------------------------");
-
+            */
             foreach (SettingResult sr in gpoResult.SettingResults)
             {
                 if ((sr.Findings.Count == 0) && grouperOptions.FindingsOnly)
@@ -109,26 +119,33 @@ namespace Group3r.View
                     continue;
                 }
 
+                string poltype = "";
+
+                if (sr.Setting.PolicyType == PolicyType.Computer)
+                {
+                    poltype = "Computer Policy";
+                }
+                else if (sr.Setting.PolicyType == PolicyType.User)
+                {
+                    poltype = "User Policy";
+                
+
                 if (sr.Setting.GetType() == typeof(DataSourceSetting))
                 {
                     DataSourceSetting cs = (DataSourceSetting)sr.Setting;
-                    sb.AppendLine("____Data_Source_Setting____");
-                    if (cs.PolicyType == PolicyType.Computer)
-                    {
-                        sb.AppendLine("Computer Policy");
-                    }
-                    else if (cs.PolicyType == PolicyType.User)
-                    {
-                        sb.AppendLine("UserPolicy");
-                    }
-                    sb.AppendLine("Name: " + cs.Name);
-                    sb.AppendLine("Action: " + cs.Action.ToString());
-                    sb.AppendLine("Description: " + cs.Description);
-                    sb.AppendLine("Driver: " + cs.Driver);
-                    sb.AppendLine("UserName: " + cs.UserName);
-                    sb.AppendLine("Cpassword: " + cs.Cpassword);
-                    sb.AppendLine("Password:" + cs.Password);
-                    sb.AppendLine("DSN: " + cs.DSN);
+
+                    ConsoleTable sTable = new ConsoleTable("Setting", "Data Source" + poltype);
+
+                    sTable = TableAdd(sTable, "Name:", cs.Name);
+                    sTable = TableAdd(sTable, "Action:", cs.Action.ToString());
+                    sTable = TableAdd(sTable, "Description:", cs.Description);
+                    sTable = TableAdd(sTable, "Driver:", cs.Driver);
+                    sTable = TableAdd(sTable, "UserName:", cs.UserName);
+                    sTable = TableAdd(sTable, "Cpassword:", cs.Cpassword);
+                    sTable = TableAdd(sTable, "Password:", cs.DSN);
+
+                    sb.AppendLine(IndentPara(sTable.ToMarkDownString()));
+                    Console.WriteLine(gpoTable);
                 }
                 else if (sr.Setting.GetType() == typeof(DeviceSetting))
                 {
@@ -567,6 +584,17 @@ namespace Group3r.View
             return sb.ToString();
         }
 
+        ConsoleTable TableAdd(ConsoleTable table, string v1, string v2)
+        {
+            if (String.IsNullOrWhiteSpace(v2))
+            {
+                return table;
+            }
+
+            table.AddRow(v1, v2);
+            return table;
+        }
+
         string PrintNiceAces(List<SimpleAce> aces)
         {
             StringBuilder sb = new StringBuilder();
@@ -576,6 +604,13 @@ namespace Group3r.View
                 sb.AppendLine("COMING SOON - ACLS!");
             }
             return sb.ToString();
+        }
+
+        string IndentPara(string inString)
+        {
+            string istring = String.Concat(Enumerable.Repeat(" ", indent));
+            string result = istring + inString.Replace("\n", "\n" + istring);
+            return result;
         }
 
         string PrintNicePathFindings(List<PathFinding> pathFindings)

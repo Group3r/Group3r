@@ -437,7 +437,7 @@ namespace LibSnaffle.ActiveDirectory
                     default:
                         if (Logger != null)
                         {
-                            Logger.Error(root.Name + " didn't seem to have a handler in the XmlParser switch case thing.");
+                            Logger.Degub(root.Name + " didn't seem to have a handler in the XmlParser switch case thing.");
                         }
                         return;
                 }

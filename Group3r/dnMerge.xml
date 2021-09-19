@@ -1,0 +1,4 @@
+<dnMergeConfig>
+    <GeneratePDB>false</GeneratePDB>
+    <OverwriteAssembly>true</OverwriteAssembly>
+</dnMergeConfig>

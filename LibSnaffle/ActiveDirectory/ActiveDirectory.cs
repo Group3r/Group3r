@@ -214,13 +214,15 @@ namespace LibSnaffle.ActiveDirectory
         {
             try
             {
-                Mq.Trace("Loading SYSVOL by domain " + TargetDomain);
+                Mq.Degub("Loading SYSVOL by domain " + TargetDomain);
                 Sysvol = helper.LoadSysvolOnlineByDomain(TargetDomain);
+                Mq.Degub("Finished loading SYSVOL");
             }
             catch (Exception e)
             {
-                Mq.Trace("Loading SYSVOL by DC " + TargetDC);
+                Mq.Degub("Loading SYSVOL by DC " + TargetDC);
                 Sysvol = helper.LoadSysvolOnlineByDc(TargetDomain, TargetDC);
+                Mq.Degub("Finished loading SYSVOL");
             }
         }
 
@@ -400,7 +402,7 @@ namespace LibSnaffle.ActiveDirectory
                             //string linkedpolicy = distinguishedName.Split('{', '}')[1];
 
                             gpoLinkResult.LinkPath = adspath;
-
+                            
                             GPO gpo = Gpos.Where(g => g.Attributes.DistinguishedName.Equals(distinguishedName, StringComparison.OrdinalIgnoreCase)).First();
                             gpo.Attributes.GpoLinks.Add(gpoLinkResult);
                         }
