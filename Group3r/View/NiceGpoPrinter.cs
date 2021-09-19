@@ -84,7 +84,7 @@ namespace Group3r.View
             foreach (GPOLink gpoLink in gpoResult.Attributes.GpoLinks)
             {
                 string linkPath = String.Format("{0} ({1})", gpoLink.LinkPath, gpoLink.LinkEnforced);
-                gpoTable.AddRow("Link:" + linkPath);
+                gpoTable.AddRow("Link:", linkPath);
             }
             sb.AppendLine(gpoTable.ToMarkDownString());
             /*
@@ -93,7 +93,7 @@ namespace Group3r.View
 
             ConsoleTable gpoFindingTable = new ConsoleTable("Finding", "Placeholder");
             gpoFindingTable.AddRow("Placeholder", "Placeholder");
-            sb.AppendLine(IndentPara(gpoFindingTable.ToMarkDownString()));
+            sb.AppendLine(IndentPara(gpoFindingTable.ToMarkDownString(), 1));
             //sb.AppendLine("Findings for GPO Attributes will go here.");
             /*
             if (gpoResult.GpoAttributeFindings.Count >= 1)
@@ -135,7 +135,7 @@ namespace Group3r.View
                 {
                     DataSourceSetting cs = (DataSourceSetting)sr.Setting;
 
-                    ConsoleTable sTable = new ConsoleTable("Setting", "Data Source" + poltype);
+                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Data Source");
 
                     sTable = TableAdd(sTable, "Name:", cs.Name);
                     sTable = TableAdd(sTable, "Action:", cs.Action.ToString());
@@ -145,9 +145,8 @@ namespace Group3r.View
                     sTable = TableAdd(sTable, "Cpassword:", cs.Cpassword);
                     sTable = TableAdd(sTable, "Password:", cs.DSN);
 
-                    sb.AppendLine(IndentPara(sTable.ToMarkDownString()));
-                    Console.WriteLine(gpoTable.ToMarkDownString());
-                    Console.WriteLine(sTable.ToMarkDownString());
+                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
+
                 }
                 else if (sr.Setting.GetType() == typeof(DeviceSetting))
                 {
@@ -608,9 +607,9 @@ namespace Group3r.View
             return sb.ToString();
         }
 
-        string IndentPara(string inString)
+        string IndentPara(string inString, int indentfactor)
         {
-            string istring = String.Concat(Enumerable.Repeat(" ", indent));
+            string istring = String.Concat(Enumerable.Repeat(" ", (indent * indentfactor)));
             string result = istring + inString.Replace("\n", "\n" + istring);
             return result;
         }
