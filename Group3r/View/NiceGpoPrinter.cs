@@ -128,7 +128,8 @@ namespace Group3r.View
                 else if (sr.Setting.PolicyType == PolicyType.User)
                 {
                     poltype = "User Policy";
-                
+
+                }
 
                 if (sr.Setting.GetType() == typeof(DataSourceSetting))
                 {
@@ -145,7 +146,8 @@ namespace Group3r.View
                     sTable = TableAdd(sTable, "Password:", cs.DSN);
 
                     sb.AppendLine(IndentPara(sTable.ToMarkDownString()));
-                    Console.WriteLine(gpoTable);
+                    Console.WriteLine(gpoTable.ToMarkDownString());
+                    Console.WriteLine(sTable.ToMarkDownString());
                 }
                 else if (sr.Setting.GetType() == typeof(DeviceSetting))
                 {
