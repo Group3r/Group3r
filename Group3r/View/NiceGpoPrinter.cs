@@ -130,7 +130,13 @@ namespace Group3r.View
                     poltype = "User Policy";
 
                 }
+/*
+                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Data Source");
 
+                    sTable = TableAdd(sTable, "Name:", cs.Name);
+
+                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
+*/
                 if (sr.Setting.GetType() == typeof(DataSourceSetting))
                 {
                     DataSourceSetting cs = (DataSourceSetting)sr.Setting;
@@ -146,7 +152,6 @@ namespace Group3r.View
                     sTable = TableAdd(sTable, "Password:", cs.DSN);
 
                     sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
-
                 }
                 else if (sr.Setting.GetType() == typeof(DeviceSetting))
                 {
@@ -155,15 +160,19 @@ namespace Group3r.View
                 else if (sr.Setting.GetType() == typeof(DriveSetting))
                 {
                     DriveSetting cs = (DriveSetting)sr.Setting;
-                    sb.AppendLine("____Drive_Setting____");
-                    sb.AppendLine("Name: " + cs.Name);
-                    sb.AppendLine("Action: " + cs.Action);
-                    sb.AppendLine("Path: " + cs.Path);
-                    sb.AppendLine("Label: " + cs.Label);
-                    sb.AppendLine("Letter: " + cs.Letter);
-                    sb.AppendLine("UserName: " + cs.UserName);
-                    sb.AppendLine("Cpassword: " + cs.Cpassword);
-                    sb.AppendLine("Password: " + cs.Password);
+
+                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Drive");
+
+                    sTable = TableAdd(sTable, "Name:", cs.Name);
+                    sTable = TableAdd(sTable, "Action:", cs.Action);
+                    sTable = TableAdd(sTable, "Path:", cs.Path);
+                    sTable = TableAdd(sTable, "Label:", cs.Label);
+                    sTable = TableAdd(sTable, "UserName:", cs.UserName);
+                    sTable = TableAdd(sTable, "Cpassword:", cs.Cpassword);
+                    sTable = TableAdd(sTable, "Password:", cs.Password);
+
+                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
+
                 }
                 else if (sr.Setting.GetType() == typeof(EnvVarSetting))
                 {
@@ -178,45 +187,40 @@ namespace Group3r.View
                 else if (sr.Setting.GetType() == typeof(FileSetting))
                 {
                     FileSetting cs = (FileSetting)sr.Setting;
-                    sb.AppendLine("____File_Setting____");
-                    if (cs.PolicyType == PolicyType.Computer)
-                    {
-                        sb.AppendLine("Computer Policy");
-                    }
-                    else if (cs.PolicyType == PolicyType.User)
-                    {
-                        sb.AppendLine("UserPolicy");
-                    }
-                    sb.AppendLine("Action: " + cs.FileAction);
-                    sb.AppendLine("FileName: " + cs.FileName);
-                    sb.AppendLine("FromPath: " + cs.FromPath);
-                    sb.AppendLine("TargetPath: " + cs.TargetPath);
+
+                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "File");
+
+                    sTable = TableAdd(sTable, "Action:", cs.FileAction);
+                    sTable = TableAdd(sTable, "FileName:", cs.FileName);
+                    sTable = TableAdd(sTable, "FromPath:", cs.FromPath);
+                    sTable = TableAdd(sTable, "TargetPath:", cs.TargetPath);
+
+                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(FolderSetting))
                 {
                     FolderSetting cs = (FolderSetting)sr.Setting;
-
                 }
                 else if (sr.Setting.GetType() == typeof(GroupSetting))
                 {
                     GroupSetting cs = (GroupSetting)sr.Setting;
-                    sb.AppendLine("____Group_Setting____");
-                    if (cs.PolicyType == PolicyType.Computer)
-                    {
-                        sb.AppendLine("Computer Policy");
-                    }
-                    else if (cs.PolicyType == PolicyType.User)
-                    {
-                        sb.AppendLine("UserPolicy");
-                    }
-                    sb.AppendLine("Name:" + cs.Name);
-                    sb.AppendLine("Action: " + cs.Action);
-                    sb.AppendLine("NewName: " + cs.NewName);
+
+                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Group");
+
+                    sTable = TableAdd(sTable, "Name:", cs.Name);
+                    sTable = TableAdd(sTable, "Action:", cs.Action);
+                    sTable = TableAdd(sTable, "NewName:", cs.NewName);
+                    sTable = TableAdd(sTable, "TargetPath:", cs.TargetPath);
+
                     foreach (GroupSettingMember member in cs.Members)
                     {
-                        sb.AppendLine("  " + member.Action + " " + member.Name + " " + member.ResolvedName + " " +
-                                      member.Sid);
+                        string memberstring = member.Action + " " + member.Name + " " + member.ResolvedName + " " + member.Sid;
+                                      
+                        sTable = TableAdd("Member", memberstring);
                     }
+
+                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
+
                 }
                 else if (sr.Setting.GetType() == typeof(IniFileSetting))
                 {
@@ -241,105 +245,89 @@ namespace Group3r.View
                 else if (sr.Setting.GetType() == typeof(NtServiceSetting))
                 {
                     NtServiceSetting cs = (NtServiceSetting)sr.Setting;
-                    sb.AppendLine("____Service_Setting____");
-                    if (cs.PolicyType == PolicyType.Computer)
-                    {
-                        sb.AppendLine("Computer Policy");
-                    }
-                    else if (cs.PolicyType == PolicyType.User)
-                    {
-                        sb.AppendLine("UserPolicy");
-                    }
-                    sb.AppendLine("Name: " + cs.Name);
-                    sb.AppendLine("Service Name: " + cs.ServiceName);
+
+
+                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Service");
+
+                    sTable = TableAdd(sTable, "Name:", cs.Name);
+                    sTable = TableAdd(sTable, "Service Name:", cs.ServiceName);
                     if (cs.StartupType != null)
                     {
-                        sb.Append("Startup Type: ");
+                        string startupType = "";
                         switch (cs.StartupType)
                         {
                             case "0":
-                                sb.AppendLine("Boot");
+                                startupType = "Boot";
                                 break;
                             case "1":
-                                sb.AppendLine("System");
+                                startupType = "System";
                                 break;
                             case "2":
-                                sb.AppendLine("Automatic");
+                                startupType = "Automatic";
                                 break;
                             case "3":
-                                sb.AppendLine("Manual");
+                                startupType = "Manual";
                                 break;
                             case "4":
-                                sb.AppendLine("Disabled");
+                                startupType = "Disabled";
                                 break;
                         }
+                        sTable = TableAdd(sTable, "Startup Type:", startupType)
                     }
 
-                    sb.AppendLine("Sddl: " + cs.Sddl);
-                    sb.AppendLine("Program: " + cs.Program);
-                    sb.AppendLine("Args: " + cs.Args);
-                    sb.AppendLine("UserName" + cs.UserName);
-                    sb.AppendLine("Cpassword" + cs.Cpassword);
-                    sb.AppendLine("Password: " + cs.Password);
+                    sTable = TableAdd(sTable, "Sddl:", cs.Sddl);
+                    sTable = TableAdd(sTable, "Program:", cs.Program);
+                    sTable = TableAdd(sTable, "Args:", cs.Args);
+                    sTable = TableAdd(sTable, "UserName:", cs.UserName);
+                    sTable = TableAdd(sTable, "Cpassword:", cs.Cpassword);
+                    sTable = TableAdd(sTable, "Password:", cs.Password);
 
+                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(PackageSetting))
                 {
                     PackageSetting cs = (PackageSetting)sr.Setting;
-                    sb.AppendLine("____Package_Setting____");
-                    if (cs.PolicyType == PolicyType.Computer)
-                    {
-                        sb.AppendLine("Computer Policy");
-                    }
-                    else if (cs.PolicyType == PolicyType.User)
-                    {
-                        sb.AppendLine("UserPolicy");
-                    }
-                    sb.AppendLine("Display Name: " + cs.DisplayName);
-                    sb.AppendLine("CreatedDate: " + cs.CreatedDate.ToString());
-                    sb.AppendLine("Action: " + cs.PackageAction);
-                    sb.AppendLine("Files:");
+
+                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Package");
+
+                    sTable = TableAdd(sTable, "Name:", cs.Name);
+                    sTable = TableAdd(sTable, "Display Name:", cs.DisplayName);
+                    sTable = TableAdd(sTable, "CreatedDate:", cs.CreatedDate.ToString());
+                    sTable = TableAdd(sTable, "Action:", cs.PackageAction);
+
                     foreach (string file in cs.MsiFileList)
                     {
-                        sb.AppendLine("  " + file);
+                        sb.AppendLine("File:", file);
                     }
-                    sb.AppendLine("Product Code: " + cs.ProductCode);
-                    sb.AppendLine("Upgrade Product Code: " + cs.UpgradeProductCode);
+                    sTable = TableAdd(sTable, "Product Code:", cs.ProductCode);
+                    sTable = TableAdd(sTable, "Upgrade Product Code:", cs.UpgradeProductCode);
+
+                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(PrinterSetting))
                 {
                     PrinterSetting cs = (PrinterSetting)sr.Setting;
-                    sb.AppendLine("____Printer_Setting____");
-                    if (cs.PolicyType == PolicyType.Computer)
-                    {
-                        sb.AppendLine("Computer Policy");
-                    }
-                    else if (cs.PolicyType == PolicyType.User)
-                    {
-                        sb.AppendLine("UserPolicy");
-                    }
-                    sb.AppendLine("Name: " + cs.Name);
-                    sb.AppendLine("Action: " + cs.Action);
-                    sb.AppendLine("Comment: " + cs.Comment);
-                    sb.AppendLine("Path: " + cs.Path + cs.Port);
-                    sb.AppendLine("UserName: " + cs.UserName);
-                    sb.AppendLine("Cpassword: " + cs.Cpassword);
-                    sb.AppendLine("Password: " + cs.Password);
+
+                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Printer");
+
+                    sTable = TableAdd(sTable, "Name:", cs.Name);
+                    sTable = TableAdd(sTable, "Action:", cs.Action);
+                    sTable = TableAdd(sTable, "Comment:", cs.Comment);
+                    sTable = TableAdd(sTable, "Path:", cs.Path);
+                    sTable = TableAdd(sTable, "UserName:", cs.UserName);
+                    sTable = TableAdd(sTable, "Cpassword:", cs.Cpassword);
+                    sTable = TableAdd(sTable, "Password:", cs.Password);
+
+                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(PrivRightSetting))
                 {
                     PrivRightSetting cs = (PrivRightSetting)sr.Setting;
-                    sb.AppendLine("____User_Rights_Assignment_Setting____");
-                    if (cs.PolicyType == PolicyType.Computer)
-                    {
-                        sb.AppendLine("Computer Policy");
-                    }
-                    else if (cs.PolicyType == PolicyType.User)
-                    {
-                        sb.AppendLine("UserPolicy");
-                    }
-                    sb.AppendLine("Privilege Name: " + cs.Privilege);
-                    sb.AppendLine("Trustees: ");
+
+                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "User Rights Assignment");
+
+                    sTable = TableAdd(sTable, " Privilege Name:", cs.Privilege);
+
                     foreach (Trustee trustee in cs.Trustees)
                     {
                         if (trustee.DisplayName == "Failed to resolve SID.")
@@ -350,191 +338,175 @@ namespace Group3r.View
                         {
                             sb.AppendLine("  " + trustee.DisplayName + " " + trustee.Sid);
                         }
-                    }
+
+                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(RegistrySetting))
                 {
                     RegistrySetting cs = (RegistrySetting)sr.Setting;
-                    sb.AppendLine("____Registry_Setting____");
-                    if (cs.PolicyType == PolicyType.Computer)
+
+                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Registry");
+
+                    sTable = TableAdd(sTable, "Name:", cs.Name);
+                    sTable = TableAdd(sTable, "Action:", cs.Action);
+                    sTable = TableAdd(sTable, "Key:", cs.Hive.ToString() + cs.Key);
+
+                    foreach (RegistryValue value in cs.Values)
                     {
-                        sb.AppendLine("Computer Policy");
-                    }
-                    else if (cs.PolicyType == PolicyType.User)
-                    {
-                        sb.AppendLine("UserPolicy");
-                    }
-                    sb.AppendLine("Name: " + cs.Name);
-                    sb.AppendLine("Action: " + cs.Action.ToString());
-                    sb.AppendLine("Key: " + cs.Hive.ToString() + cs.Key);
-                    if (cs.Values.Count == 1)
-                    {
-                        sb.AppendLine("Value Name: " + cs.Values[0].ValueName);
-                        sb.AppendLine("Value Name: " + cs.Values[0].ValueName);
-                        sb.AppendLine("Value Type: " + cs.Values[0].RegKeyValType);
-                        sb.AppendLine("Value: " + cs.Values[0].ValueString);
+                        sTable = TableAdd(sTable, "Value Name:", value.ValueName);
+                        sTable = TableAdd(sTable, "Value Type:", value.ValueType);
+                        sTable = TableAdd(sTable, "Value String:", value.ValueString);
                     }
 
-                    if (cs.Values.Count > 1)
-                    {
-                        sb.AppendLine("Values:");
-                        foreach (RegistryValue value in cs.Values)
-                        {
-                            sb.AppendLine("Value Name: " + value.ValueName);
-                            sb.AppendLine("Value Type: " + value.RegKeyValType);
-                            sb.AppendLine("Value: " + value.ValueString);
-                        }
-                    }
+                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(SchedTaskSetting))
                 {
                     SchedTaskSetting cs = (SchedTaskSetting)sr.Setting;
-                    if (cs.PolicyType == PolicyType.Computer)
-                    {
-                        sb.AppendLine("Computer Policy");
-                    }
-                    else if (cs.PolicyType == PolicyType.User)
-                    {
-                        sb.AppendLine("UserPolicy");
-                    }
-                    sb.AppendLine("Name: " + cs.Name);
-                    sb.AppendLine("Task Type: " + cs.TaskType.ToString());
-                    sb.AppendLine("Description: " + cs.Description1);
-                    sb.AppendLine("Enabled: " + cs.Enabled.ToString());
+
+                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Scheduled Task");
+
+                    sTable = TableAdd(sTable, "Name:", cs.Name);
+                    sTable = TableAdd(sTable, "Task Type:", cs.TaskType.ToString());
+                    sTable = TableAdd(sTable, "Description:", cs.Description1);
+                    sTable = TableAdd(sTable, "Enabled:", cs.Enabled.ToString());
+                    sTable = TableAdd(sTable, "Name:", cs.Name);
+                    
+                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
+
                     if (cs.Principals.Count >= 1)
                     {
-                        sb.AppendLine("Principals:");
                         int i = 1;
                         foreach (SchedTaskPrincipal principal in cs.Principals)
                         {
-                            sb.AppendLine("  Principal " + i.ToString() + ": ");
-                            sb.AppendLine("    Id: " + principal.Id);
-                            sb.AppendLine("    UserId: " + principal.UserId);
-                            sb.AppendLine("    Cpassword: " + principal.Cpassword);
-                            sb.AppendLine("    Password: " + principal.Password);
-                            sb.AppendLine("    LogonType: " + principal.LogonType);
-                            sb.AppendLine("    RunLevel: " + principal.RunLevel);
+                            ConsoleTable pTable = new ConsoleTable("Principal", i.ToString());
+                            pTable = TableAdd(pTable, "Id:" + principal.Id);
+                            pTable = TableAdd(pTable, "UserID", principal.UserId);
+                            pTable = TableAdd(pTable, "Cpassword", principal.Cpassword);
+                            pTable = TableAdd(pTable, "Password", principal.Password);
+                            pTable = TableAdd(pTable, "LogonType", principal.LogonType);
+                            pTable = TableAdd(pTable, "RunLevel", principal.RunLevel);
+                            sb.AppendLine(IndentPara(pTable.ToMarkDownString(), 2));
+                            i++
                         }
                     }
+
                     if (cs.Actions.Count >= 1)
                     {
-                        sb.AppendLine("Actions:");
                         foreach (SchedTaskAction action in cs.Actions)
                         {
                             if (action.GetType() == typeof(SchedTaskEmailAction))
                             {
                                 SchedTaskEmailAction ca = (SchedTaskEmailAction) action;
-                                sb.AppendLine("  Email Action:");
-                                sb.AppendLine("    From: " + ca.From);
-                                sb.AppendLine("    To: " + ca.To);
-                                sb.AppendLine("    Subject: " + ca.Subject);
-                                sb.AppendLine("    Body: " + ca.Body);
-                                sb.AppendLine("    Server: " + ca.Server);
-                                sb.AppendLine("    Header Fields: " + ca.HeaderFields);
+
+                                ConsoleTable aTable = new ConsoleTable("Email Action", "");
+                                aTable = TableAdd(aTable, "From:" + ca.From);
+                                aTable = TableAdd(aTable, "To", ca.To);
+                                aTable = TableAdd(aTable, "Subject", ca.Subject);
+                                aTable = TableAdd(aTable, "Body", ca.Body);
+                                aTable = TableAdd(aTable, "Server", ca.Server);
+                                aTable = TableAdd(aTable, "Header Fields", ca.HeaderFields);
+                                aTable = TableAdd(aTable, "Server", ca.Server);
                                 if (ca.Attachments.Count >= 1)
                                 {
-                                    sb.AppendLine("    Attachments: " + ca.HeaderFields);
                                     foreach (string attachment in ca.Attachments)
                                     {
-                                        sb.AppendLine("      " + attachment);
-                                    }
+                                        aTable = TableAdd(aTable, "Attachment", attachment);
+                                    }                                    
                                 }
+                                sb.AppendLine(IndentPara(aTable.ToMarkDownString(), 2));
                             }
                             else if (action.GetType() == typeof(SchedTaskExecAction))
                             {
                                 SchedTaskExecAction ca = (SchedTaskExecAction) action;
-                                sb.AppendLine("  Exec Action:");
-                                sb.AppendLine("    ");
 
+                                ConsoleTable aTable = new ConsoleTable("Execute Action", "");
+                                //TODO MAKE THIS ACTUALLY BE CORRECT
+                                sTable = TableAdd(sTable, "From:" + ca.From);
+                                sTable = TableAdd(sTable, "To", ca.To);
+                                sTable = TableAdd(sTable, "Subject", ca.Subject);
+                                sTable = TableAdd(sTable, "Body", ca.Body);
+                                sTable = TableAdd(sTable, "Server", ca.Server);
+                                sTable = TableAdd(sTable, "Header Fields", ca.HeaderFields);
+                                sTable = TableAdd(sTable, "Server", ca.Server);
+
+                                sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 2));
                             }
                             else if (action.GetType() == typeof(SchedTaskShowMessageAction))
                             {
                                 SchedTaskShowMessageAction ca = (SchedTaskShowMessageAction) action;
-                                sb.AppendLine("  Show Message Action:");
-                                sb.AppendLine("    Title: " + ca.Title);
-                                sb.AppendLine("    Body: " + ca.Body);
+
+                                ConsoleTable aTable = new ConsoleTable("Message Action", "");
+
+                                sTable = TableAdd(sTable, "Title:" + ca.Title);
+                                sTable = TableAdd(sTable, "Body", ca.Body);
+                                sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 2));
                             }
                         }
                     }
 
+                    // TODO this sucks ass
                     sb.AppendLine("Triggers: ");
-                    sb.AppendLine(cs.Triggers.ToString());
+                    sb.AppendLine(cs.Triggers.InnerXml.ToString());
                 }
                 else if (sr.Setting.GetType() == typeof(ScriptSetting))
                 {
                     ScriptSetting cs = (ScriptSetting)sr.Setting;
-                    sb.AppendLine("____Script_Setting____");
-                    if (cs.PolicyType == PolicyType.Computer)
-                    {
-                        sb.AppendLine("Computer Policy");
-                    }
-                    else if (cs.PolicyType == PolicyType.User)
-                    {
-                        sb.AppendLine("UserPolicy");
-                    }
-                    sb.AppendLine("Script Type: " + cs.ScriptType);
-                    sb.AppendLine("CmdLine: " + cs.CmdLine);
-                    sb.AppendLine("Args: " + cs.Parameters);
+
+                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Script");
+
+                    sTable = TableAdd(sTable, "Script Type:", cs.ScriptType);
+                    sTable = TableAdd(sTable, "CmdLine:", cs.CmdLine);
+                    sTable = TableAdd(sTable, "Args:", cs.Parameters);
+
+                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(ShortcutSetting))
                 {
                     ShortcutSetting cs = (ShortcutSetting)sr.Setting;
-                    sb.AppendLine("____Shortcut_Setting____");
-                    if (cs.PolicyType == PolicyType.Computer)
-                    {
-                        sb.AppendLine("Computer Policy");
-                    }
-                    else if (cs.PolicyType == PolicyType.User)
-                    {
-                        sb.AppendLine("UserPolicy");
-                    }
-                    sb.AppendLine("Name: " + cs.Name);
-                    sb.AppendLine("Action: " + cs.Action.ToString());
-                    sb.AppendLine("Comment: " + cs.Comment);
-                    sb.AppendLine("Shortcut Path: " + cs.ShortcutPath);
-                    sb.AppendLine("Target Type: " + cs.TargetType);
-                    sb.AppendLine("Target Path: " + cs.TargetPath);
-                    sb.AppendLine("Arguments: " + cs.Arguments);
-                    sb.AppendLine("IconPath: " + cs.IconPath);
-                    sb.AppendLine("IconIndex: " + cs.IconIndex);
-                    sb.AppendLine("Status: " + cs.Status);
+
+                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Shortcut");
+
+                    sTable = TableAdd(sTable, "Name:", cs.Name);
+                    sTable = TableAdd(sTable, "Action:", cs.Action);
+                    sTable = TableAdd(sTable, "Comment:", cs.Comment);
+                    sTable = TableAdd(sTable, "Shortcut Path:", cs.ShortcutPath);
+                    sTable = TableAdd(sTable, "Target Type:", cs.TargetType);
+                    sTable = TableAdd(sTable, "Target Path:", cs.TargetPath);
+                    sTable = TableAdd(sTable, "Arguments:", cs.Arguments);
+                    sTable = TableAdd(sTable, "IconPath:", cs.IconPath);
+                    sTable = TableAdd(sTable, "IconIndex:", cs.IconIndex);
+                    sTable = TableAdd(sTable, "Status:", cs.Status);
+
+                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(SystemAccessSetting))
                 {
                     SystemAccessSetting cs = (SystemAccessSetting)sr.Setting;
-                    sb.AppendLine("____System_Access_Setting____");
-                    if (cs.PolicyType == PolicyType.Computer)
-                    {
-                        sb.AppendLine("Computer Policy");
-                    }
-                    else if (cs.PolicyType == PolicyType.User)
-                    {
-                        sb.AppendLine("UserPolicy");
-                    }
-                    sb.AppendLine(cs.SettingName + ": " + cs.ValueString);
+
+                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "System Access");
+                    sTable = TableAdd(sTable, cs.SettingName, cs.ValueString);
+                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
 
                 }
                 else if (sr.Setting.GetType() == typeof(UserSetting))
                 {
                     UserSetting cs = (UserSetting)sr.Setting;
-                    sb.AppendLine("____User_Setting____");
-                    if (cs.PolicyType == PolicyType.Computer)
-                    {
-                        sb.AppendLine("Computer Policy");
-                    }
-                    else if (cs.PolicyType == PolicyType.User)
-                    {
-                        sb.AppendLine("UserPolicy");
-                    }
-                    sb.AppendLine("Name: " + cs.Name);
-                    sb.AppendLine("Action: " + cs.Action.ToString());
-                    sb.AppendLine("UserName: " + cs.UserName);
-                    sb.AppendLine("NewName: " + cs.NewName);
-                    sb.AppendLine("FullName: " + cs.FullName);
-                    sb.AppendLine("Description: " + cs.Description);
-                    sb.AppendLine("Cpassword: " + cs.Cpassword);
-                    sb.AppendLine("Password:" + cs.Password);
-                    sb.AppendLine("PwNeverExpires: " + cs.PwNeverExpires.ToString());
+
+                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "User");
+
+                    sTable = TableAdd(sTable, "Name:", cs.Name);
+                    sTable = TableAdd(sTable, "Action:", cs.Action);
+                    sTable = TableAdd(sTable, "Comment:", cs.Comment);
+                    sTable = TableAdd(sTable, "UserName:", cs.UserName);
+                    sTable = TableAdd(sTable, "NewName:", cs.NewName);
+                    sTable = TableAdd(sTable, "FullName:", cs.FullName);
+                    sTable = TableAdd(sTable, "Description:", cs.Description);
+                    sTable = TableAdd(sTable, "Cpassword:", cs.Cpassword);
+                    sTable = TableAdd(sTable, "Password:", cs.Password);
+                    sTable = TableAdd(sTable, "PwNeverExpires:", cs.PwNeverExpires.ToString());
+
+                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else
                 {
@@ -543,8 +515,6 @@ namespace Group3r.View
 
                 if (sr.Findings.Count >= 1)
                 {
-                    sb.AppendLine("Findings:");
-
                     foreach (GpoFinding finding in sr.Findings)
                     {
                         sb.Append(PrintNiceFinding(finding));
@@ -553,19 +523,18 @@ namespace Group3r.View
 
                 sb.AppendLine();
             }
-
-
-
             return sb.ToString();
         }
         string PrintNiceFinding(GpoFinding finding)
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            sb.AppendLine("Reason: " + finding.FindingReason);
-            sb.AppendLine("Triage Rating: " + finding.Triage.ToString());
-            sb.AppendLine("Detail: " + finding.FindingDetail);
+            ConsoleTable fTable = new ConsoleTable("Finding", finding.Triage.ToString());
+
+            fTable = TableAdd(fTable, "Reason", finding.FindingReason);
+            fTable = TableAdd(fTable, "Detail", finding.FindingDetail);
+
+                    sb.AppendLine(IndentPara(fTable.ToMarkDownString(), 1));
 
             if (finding.AclResult.Count >= 1)
             {
