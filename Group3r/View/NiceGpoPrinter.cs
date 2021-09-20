@@ -331,15 +331,25 @@ namespace Group3r.View
 
                     sTable = TableAdd(sTable, " Privilege Name", cs.Privilege);
 
+                    bool first = true;
+                    string t = "Trustee";
                     foreach (Trustee trustee in cs.Trustees)
                     {
-                        if (trustee.DisplayName == "Failed to resolve SID.")
+                        if (first)
                         {
-                            sb.AppendLine("  " + trustee.Sid);
+                            first = false;
                         }
                         else
                         {
-                            sb.AppendLine("  " + trustee.DisplayName + " " + trustee.Sid);
+                            t = "";
+                        }
+                        if (trustee.DisplayName == "Failed to resolve SID.")
+                        { 
+                            sTable = TableAdd(sTable, t, trustee.Sid);
+                        }
+                        else
+                        {
+                            sTable = TableAdd(sTable, t, trustee.DisplayName + " " + trustee.Sid);
                         }
                     }
                     sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
@@ -535,7 +545,7 @@ namespace Group3r.View
             fTable = TableAdd(fTable, "Reason", finding.FindingReason);
             fTable = TableAdd(fTable, "Detail", finding.FindingDetail);
 
-                    sb.AppendLine(IndentPara(fTable.ToMarkDownString(), 1));
+            sb.AppendLine(IndentPara(fTable.ToMarkDownString(), 1));
 
             if (finding.AclResult.Count >= 1)
             {
