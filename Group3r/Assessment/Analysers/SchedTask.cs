@@ -95,7 +95,6 @@ namespace Group3r.Assessment.Analysers
                             }
                         }
 
-
                         if (!String.IsNullOrWhiteSpace(schedTaskExecAction.Args))
                         {
                             if (schedTaskExecAction.Args.Contains("pass") || schedTaskExecAction.Args.Contains("-p") || schedTaskExecAction.Args.Contains("/p"))

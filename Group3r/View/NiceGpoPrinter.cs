@@ -462,7 +462,7 @@ namespace Group3r.View
                             tTable = TableAdd(tTable, "", node.InnerXml);
                         }
 
-                        sb.AppendLine(IndentPara(tTable.ToMarkDownString(), 1));
+                        sb.AppendLine(IndentPara(tTable.ToMarkDownString(), 2));
                     }
                 }
                 else if (sr.Setting.GetType() == typeof(ScriptSetting))
