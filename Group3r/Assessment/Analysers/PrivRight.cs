@@ -41,7 +41,9 @@ namespace Group3r.Assessment.Analysers
                                 else if (trusteeOption.LowPriv)
                                 {
                                     if (trusteeOption.DisplayName.ToLower().Contains("network service") ||
-                                        trusteeOption.DisplayName.ToLower().Contains("local service"))
+                                        trusteeOption.DisplayName.ToLower().Contains("local service") ||
+                                        trusteeOption.DisplayName.ToLower().Equals("service") ||
+                                        trusteeOption.DisplayName.ToLower().Equals("nt authority\\service"))
                                     {
                                         if (setting.Privilege == "SeAssignPrimaryTokenPrivilege")
                                         {

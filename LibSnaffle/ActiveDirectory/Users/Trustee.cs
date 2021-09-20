@@ -27,7 +27,7 @@ namespace LibSnaffle.ActiveDirectory
                 }
                 catch (Exception e)
                 {
-                    DisplayName = "Failed SID resolution.";
+                    DisplayName = "Failed SID resolution";
                     //throw new UserException("Failed to resolve SID: " + input, e);
                 }
                 // try to see if it's a well-known high or low privileged group/user
