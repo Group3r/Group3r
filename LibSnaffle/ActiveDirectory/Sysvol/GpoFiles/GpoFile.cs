@@ -21,7 +21,23 @@ namespace LibSnaffle.ActiveDirectory
 
         protected string[] GetContentLines()
         {
-            return System.IO.File.ReadAllLines(FilePath);
+            string[] lines = System.IO.File.ReadAllLines(FilePath);
+
+            List<String> lineList = new List<string>();
+
+            foreach (string line in lines)
+            {
+                if (line.StartsWith(";"))
+                {
+                    continue;
+                }
+                else
+                {
+                    lineList.Add(line);
+                }
+            }
+
+            return lineList.ToArray();
         }
 
         protected string GetContentString()
