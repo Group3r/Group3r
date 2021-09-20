@@ -40,6 +40,15 @@ namespace Group3r.Assessment.Analysers
                                 }
                                 else if (trusteeOption.LowPriv)
                                 {
+                                    if (trusteeOption.DisplayName.ToLower().Contains("network service") ||
+                                        trusteeOption.DisplayName.ToLower().Contains("local service"))
+                                    {
+                                        if (setting.Privilege == "SeAssignPrimaryTokenPrivilege")
+                                        {
+                                            break;
+                                        }
+                                    }
+
                                     // finding
                                     GpoFinding gpoFinding = new GpoFinding
                                     {

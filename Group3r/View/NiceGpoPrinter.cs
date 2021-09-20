@@ -454,11 +454,15 @@ namespace Group3r.View
                         }
                     }
 
-                    // TODO this sucks ass
-                    sb.AppendLine("Triggers: ");
-                    foreach (XmlNode node in cs.Triggers)
+                    if (cs.Triggers.Count >= 1)
                     {
-                        sb.AppendLine(IndentPara(node.InnerXml, 1));
+                        ConsoleTable tTable = new ConsoleTable("Triggers", "");
+                        foreach (XmlNode node in cs.Triggers)
+                        {
+                            tTable = TableAdd(tTable, "", node.InnerXml);
+                        }
+
+                        sb.AppendLine(IndentPara(tTable.ToMarkDownString(), 1));
                     }
                 }
                 else if (sr.Setting.GetType() == typeof(ScriptSetting))
@@ -545,7 +549,7 @@ namespace Group3r.View
             fTable = TableAdd(fTable, "Reason", finding.FindingReason);
             fTable = TableAdd(fTable, "Detail", finding.FindingDetail);
 
-            sb.AppendLine(IndentPara(fTable.ToMarkDownString(), 1));
+            sb.AppendLine(IndentPara(fTable.ToMarkDownString(), 2));
 
             if (finding.AclResult.Count >= 1)
             {
@@ -566,6 +570,12 @@ namespace Group3r.View
             return sb.ToString();
         }
 
+        static IEnumerable<string> ChunksUpto(string str, int maxChunkSize)
+        {
+            for (int i = 0; i < str.Length; i += maxChunkSize)
+                yield return str.Substring(i, Math.Min(maxChunkSize, str.Length - i));
+        }
+
         ConsoleTable TableAdd(ConsoleTable table, string v1, string v2)
         {
             if (String.IsNullOrWhiteSpace(v2))
@@ -574,8 +584,8 @@ namespace Group3r.View
             }
             if (v2.Length > 80)
             {
-                IEnumerable<string> strchunks = Enumerable.Range(0, v2.Length / 80)
-                    .Select(i => v2.Substring(i * 80, 80));
+                IEnumerable<String> strchunks = ChunksUpto(v2, 80);
+                
                 bool first = true;
                 foreach (string chunk in strchunks)
                 {
