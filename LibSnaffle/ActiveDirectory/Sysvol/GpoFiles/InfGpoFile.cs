@@ -131,6 +131,10 @@ namespace LibSnaffle.ActiveDirectory
                                 };
                                 foreach (string trusteeSid in splitValues)
                                 {
+                                    if (String.IsNullOrWhiteSpace(trusteeSid))
+                                    {
+                                        continue;
+                                    }
                                     string sidString = trusteeSid.Trim('*');
                                     if (sidString.StartsWith("S-"))
                                     {
@@ -142,7 +146,10 @@ namespace LibSnaffle.ActiveDirectory
                                     }
                                 }
 
-                                Settings.Add(privRightSetting);
+                                if (privRightSetting.Trustees.Count >= 1)
+                                {
+                                    Settings.Add(privRightSetting);
+                                }
                                 break;
                             case "Registry Values":
                                 RegistrySetting regValSetting = new RegistrySetting

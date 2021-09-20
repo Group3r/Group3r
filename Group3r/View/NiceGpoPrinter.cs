@@ -448,7 +448,7 @@ namespace Group3r.View
                     sb.AppendLine("Triggers: ");
                     foreach (XmlNode node in cs.Triggers)
                     {
-                        sb.AppendLine(node.InnerXml.ToString());
+                        sb.AppendLine(IndentPara(node.InnerXml, 1));
                     }
                 }
                 else if (sr.Setting.GetType() == typeof(ScriptSetting))
