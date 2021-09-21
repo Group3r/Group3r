@@ -3,6 +3,7 @@ using LibSnaffle.ActiveDirectory;
 using LibSnaffle.Classifiers.Rules;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Group3r.Assessment.Analysers
 {
@@ -171,10 +172,25 @@ namespace Group3r.Assessment.Analysers
                         {
                             if (schedTaskEmailAction.Attachments.Count >= 1)
                             {
+                                string attachments = "";
+                                if (schedTaskEmailAction.Attachments.Count == 1)
+                                {
+                                    attachments = schedTaskEmailAction.Attachments[0];
+                                }
+                                else
+                                {
+                                    foreach (string attachment in schedTaskEmailAction.Attachments)
+                                    {
+                                        attachments = attachments + ", " + attachment;
+                                    }
+                                }
+
                                 findings.Add(new GpoFinding()
                                 {
                                     FindingReason = "Scheduled Task is emailing attachments. Could be interesting.",
-                                    FindingDetail = "Check out " + schedTaskEmailAction.Attachments,
+                                    
+
+                                    FindingDetail = "Check out " + attachments,
                                     Triage = Constants.Triage.Green
                                 });
                             }

@@ -52,7 +52,7 @@ namespace Group3r.Assessment.Analysers
 
             PathFinding pathFinding = pathAnalyser.AnalysePath(path);
 
-            if (pathFinding != null)
+            if (pathFinding != null && pathFinding.AssessedPath.StartsWith("\\\\"))
             {
                 // if the path points to a file and we can write to it, that's a finding
                 if (pathFinding.FileExists && pathFinding.FileWritable)
