@@ -15,6 +15,28 @@ namespace Group3r.Assessment.Analysers
         {
             List<GpoFinding> findings = new List<GpoFinding>();
 
+
+            // if the script is being run with args that look like creds, that's a finding.
+            if (!String.IsNullOrWhiteSpace(setting.Parameters))
+            {
+                if (setting.Parameters.ToLower().Contains("pass") || 
+                    setting.Parameters.ToLower().Contains("pw") || 
+                    setting.Parameters.ToLower().Contains("cred") || 
+                    setting.Parameters.ToLower().Contains("-p") || 
+                    setting.Parameters.ToLower().Contains("/p"))
+                {
+                    if ((int)MinTriage < 3)
+                    {
+                        findings.Add(new GpoFinding()
+                        {
+                            FindingReason = "Scheduled Task exec action has an arguments setting that looks like it might have a password in it?",
+                            FindingDetail = "Arguments were: " + setting.Parameters,
+                            Triage = Constants.Triage.Yellow
+                        });
+                    }
+                }
+            }
+
             PathAnalyser pathAnalyser = new PathAnalyser(assessmentOptions);
 
             string path = setting.CmdLine;

@@ -318,9 +318,12 @@ namespace LibSnaffle.ActiveDirectory
                         mySearcher.PageSize = 250;
 
                         SearchResultCollection searchResultCollection = mySearcher.FindAll();
-                        foreach (SearchResult searchResult in searchResultCollection)
+                        if (searchResultCollection.Count >= 1)
                         {
-                            searchResults.Add(searchResult);
+                            foreach (SearchResult searchResult in searchResultCollection)
+                            {
+                                searchResults.Add(searchResult);
+                            }
                         }
                     }
                 }
@@ -335,12 +338,10 @@ namespace LibSnaffle.ActiveDirectory
                 // then we're gonna get links to OUs, so we need to go back to our existing naming context
                 using (DirectoryEntry entry = new DirectoryEntry("LDAP://" + TargetDC))
                 {
-
                     using (DirectorySearcher mySearcher = new DirectorySearcher(entry))
                     {
                         mySearcher.Filter = "(objectClass=organizationalUnit)";
                         mySearcher.PropertiesToLoad.Add("gplink");
-
 
                         // No size limit, reads all objects
                         mySearcher.SizeLimit = 0;
@@ -349,9 +350,12 @@ namespace LibSnaffle.ActiveDirectory
                         mySearcher.PageSize = 250;
 
                         SearchResultCollection searchResultCollection = mySearcher.FindAll();
-                        foreach (SearchResult searchResult in searchResultCollection)
+                        if (searchResultCollection.Count >= 1)
                         {
-                            searchResults.Add(searchResult);
+                            foreach (SearchResult searchResult in searchResultCollection)
+                            {
+                                searchResults.Add(searchResult);
+                            }
                         }
                     }
                 }
@@ -361,63 +365,79 @@ namespace LibSnaffle.ActiveDirectory
                 Mq.Error("Something went wrong enumerating links between GPOs and OUs in the domain." + e.ToString());
             }
 
-            foreach (SearchResult searchResult in searchResults)
+            if (searchResults.Count >= 1)
             {
-                try
+                foreach (SearchResult searchResult in searchResults)
                 {
-                    string adspath = (string)searchResult.Properties["adspath"][0];
-                    string linkedGpos = (string)searchResult.Properties["gplink"][0];
-
-                    var splitGpos = linkedGpos.Split(']', '[');
-
-                    foreach (string gpolink in splitGpos)
+                    try
                     {
-                        if (gpolink.StartsWith("LDAP"))
+                        Mq.Degub("This is where the horrible GPO link bug happens...");
+                        string adspath = searchResult.Path;
+                        Mq.Degub("adspath went ok... - " + adspath);
+                        string linkedGpos = (string) searchResult.Properties["gplink"][0];
+                        Mq.Degub("gplink went ok too... " + linkedGpos);
+
+                        var splitGpos = linkedGpos.Split(']', '[');
+
+                        foreach (string gpolink in splitGpos)
                         {
-                            GPOLink gpoLinkResult = new GPOLink();
-                            //Split the GPLink value. The distinguishedname will be in the first part, and the status of the gplink in the second
-                            var splitLink = gpolink.Split(';');
-                            var distinguishedName = splitLink[0];
-                            distinguishedName =
-                                distinguishedName.Substring(distinguishedName.IndexOf("CN=", StringComparison.OrdinalIgnoreCase));
-
-                            var status = splitLink[1];
-
-                            switch (status)
+                            if (gpolink.StartsWith("LDAP"))
                             {
-                                case "0":
-                                    gpoLinkResult.LinkEnforced = "Enabled, Unenforced";
-                                    break;
-                                case "1":
-                                    gpoLinkResult.LinkEnforced = "Disabled, Unenforced";
-                                    break;
-                                case "2":
-                                    gpoLinkResult.LinkEnforced = "Disabled, Enforced";
-                                    break;
-                                case "3":
-                                    gpoLinkResult.LinkEnforced = "Enabled, Enforced";
-                                    break;
+                                GPOLink gpoLinkResult = new GPOLink();
+                                //Split the GPLink value. The distinguishedname will be in the first part, and the status of the gplink in the second
+                                var splitLink = gpolink.Split(';');
+                                var distinguishedName = splitLink[0];
+                                distinguishedName =
+                                    distinguishedName.Substring(distinguishedName.IndexOf("CN=",
+                                        StringComparison.OrdinalIgnoreCase));
+
+                                var status = splitLink[1];
+
+                                switch (status)
+                                {
+                                    case "0":
+                                        gpoLinkResult.LinkEnforced = "Enabled, Unenforced";
+                                        break;
+                                    case "1":
+                                        gpoLinkResult.LinkEnforced = "Disabled, Unenforced";
+                                        break;
+                                    case "2":
+                                        gpoLinkResult.LinkEnforced = "Disabled, Enforced";
+                                        break;
+                                    case "3":
+                                        gpoLinkResult.LinkEnforced = "Enabled, Enforced";
+                                        break;
+                                }
+
+                                gpoLinkResult.LinkPath = adspath;
+
+                                Mq.Degub("Or maybe this is where it went wrong...");
+                                try
+                                {
+                                    GPO gpo = Gpos.Where(g =>
+                                        g.Attributes.DistinguishedName.Equals(distinguishedName,
+                                            StringComparison.OrdinalIgnoreCase)).First();
+                                    gpo.Attributes.GpoLinks.Add(gpoLinkResult);
+                                    Mq.Degub("gpo selection went ok...");
+                                }
+                                catch (Exception e)
+                                {
+                                    Mq.Error("Error looking up GPO " + distinguishedName + " to insert links in it.");
+                                }
                             }
-
-                            //string linkedpolicy = distinguishedName.Split('{', '}')[1];
-
-                            gpoLinkResult.LinkPath = adspath;
-                            
-                            GPO gpo = Gpos.Where(g => g.Attributes.DistinguishedName.Equals(distinguishedName, StringComparison.OrdinalIgnoreCase)).First();
-                            gpo.Attributes.GpoLinks.Add(gpoLinkResult);
-                        }
-                        else
-                        {
-                            if (!String.IsNullOrWhiteSpace(gpolink))
+                            else
                             {
-                                Mq.Error("Unparsed GPO Link:" + gpolink);
+                                if (!String.IsNullOrWhiteSpace(gpolink))
+                                {
+                                    Mq.Error("Unparsed GPO Link:" + gpolink);
+                                }
                             }
                         }
                     }
-                }
-                catch (Exception e)
-                {
-                    Mq.Error("Something went wrong inserting GPO links into the GPO objects." + e.ToString());
+                    catch (Exception e)
+                    {
+                        Mq.Error("Something went wrong inserting GPO links into the GPO objects." + e.ToString());
+                    }
                 }
             }
         }

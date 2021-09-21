@@ -97,20 +97,26 @@ namespace Group3r.Assessment.Analysers
 
                         if (!String.IsNullOrWhiteSpace(schedTaskExecAction.Args))
                         {
-                            if (schedTaskExecAction.Args.Contains("pass") || schedTaskExecAction.Args.Contains("-p") || schedTaskExecAction.Args.Contains("/p"))
+                            if (schedTaskExecAction.Args.ToLower().Contains("pass") ||
+                                schedTaskExecAction.Args.ToLower().Contains("pw") ||
+                                schedTaskExecAction.Args.ToLower().Contains("cred") ||
+                                schedTaskExecAction.Args.ToLower().Contains("-p") ||
+                                schedTaskExecAction.Args.ToLower().Contains("/p"))
                             {
-                                if ((int)MinTriage < 3)
+
+                                if ((int) MinTriage < 3)
                                 {
                                     findings.Add(new GpoFinding()
                                     {
-                                        FindingReason = "Scheduled Task exec action has an arguments setting that looks like it might have a password in it?",
+                                        FindingReason =
+                                            "Scheduled Task exec action has an arguments setting that looks like it might have a password in it?",
                                         FindingDetail = "Arguments were: " + schedTaskExecAction.Args,
                                         Triage = Constants.Triage.Yellow
                                     });
                                 }
+
                             }
                         }
-
 
                         if (schedTaskExecAction.Command != null)
                         {
