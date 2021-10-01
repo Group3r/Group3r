@@ -308,7 +308,7 @@ namespace LibSnaffle.ActiveDirectory
                 {
                     using (DirectorySearcher mySearcher = new DirectorySearcher(confEntry))
                     {
-                        mySearcher.Filter = "(objectClass=site)";
+                        mySearcher.Filter = "(&(objectClass=site)(gPLink=*))";
                         mySearcher.PropertiesToLoad.Add("gPLink");
 
                         // No size limit, reads all objects
@@ -340,7 +340,7 @@ namespace LibSnaffle.ActiveDirectory
                 {
                     using (DirectorySearcher mySearcher = new DirectorySearcher(entry))
                     {
-                        mySearcher.Filter = "(objectClass=organizationalUnit)";
+                        mySearcher.Filter = "(&(objectCategory=organizationalUnit)(gPLink=*))";
                         mySearcher.PropertiesToLoad.Add("gplink");
 
                         // No size limit, reads all objects
