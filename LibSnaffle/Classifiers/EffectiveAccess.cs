@@ -27,7 +27,9 @@ namespace LibSnaffle.EffectiveAccess
                 RwStatus rwStatus = new RwStatus { CanWrite = false, CanRead = false, CanModify = false };
                 EffectivePermissions effPerms = new EffectivePermissions();
 
-                string whoami = WindowsIdentity.GetCurrent().Name;
+                //string whoami = WindowsIdentity.GetCurrent().Name;
+
+                string whoami = "l0sslab\\lp4";
 
                 string[] accessStrings = effPerms.GetEffectivePermissions(filesysInfo, whoami);
 
