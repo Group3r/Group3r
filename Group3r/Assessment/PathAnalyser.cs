@@ -2,18 +2,23 @@
 using LibSnaffle.Classifiers;
 using LibSnaffle.Classifiers.Results;
 using LibSnaffle.Concurrency;
+using LibSnaffle.EffectiveAccess;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Group3r.Assessment
 {
     class PathAnalyser
     {
         private AssessmentOptions AssessmentOptions { get; set; }
+        EffectivePermissions EffectivePermissions { get; set; }
 
         public PathAnalyser(AssessmentOptions assessmentOptions)
         {
             AssessmentOptions = assessmentOptions;
+            EffectivePermissions = new EffectivePermissions(assessmentOptions.TargetTrustees);
         }
 
         public PathFinding AnalysePath(string originalPath)
@@ -27,7 +32,7 @@ namespace Group3r.Assessment
                 {
                     PathFinding filePathFinding = AnalyseFilePath(originalPath);
                     filePathFinding.FileExists = true;
-                    filePathFinding.SetProperties(originalPath, sddlAnalyser, true);
+                    filePathFinding.SetProperties(originalPath, true);
                     if (filePathFinding.FileResult.RwStatus.CanModify)
                     {
                         filePathFinding.FileWritable = true;
@@ -47,7 +52,7 @@ namespace Group3r.Assessment
                 {
                     PathFinding dirPathFinding = AnalyseDirPath(originalPath);
                     dirPathFinding.DirectoryExists = true;
-                    dirPathFinding.SetProperties(originalPath, sddlAnalyser, true);
+                    dirPathFinding.SetProperties(originalPath, true);
                     if (dirPathFinding.DirResult.RwStatus.CanModify || dirPathFinding.DirResult.RwStatus.CanWrite)
                     {
                         dirPathFinding.DirectoryWritable = true;
@@ -75,9 +80,9 @@ namespace Group3r.Assessment
                 {
                     if (Directory.Exists(path))
                     {
-                        RwStatus rwstatus = LibSnaffle.EffectiveAccess.EffectivePermissions.CanRw(new DirectoryInfo(path));
+                        RwStatus rwstatus = EffectivePermissions.CanRw(new DirectoryInfo(path));
                         PathFinding dirPathFinding = AnalyseDirPath(originalPath);
-                        dirPathFinding.SetProperties(originalPath, sddlAnalyser, false);
+                        dirPathFinding.SetProperties(originalPath, false);
                         dirPathFinding.ParentDirectoryExists = path;
                         dirPathFinding.DirectoryExists = false;
                         dirPathFinding.DirectoryWritable = false;
@@ -112,6 +117,9 @@ namespace Group3r.Assessment
                 FileResult result = (FileResult)fileClassifier.Classify(rule, filePath);
                 if (result != null)
                 {
+                    FileInfo fileInfo = new FileInfo(filePath);
+                    RwStatus rwStatus = EffectivePermissions.CanRw(fileInfo);
+                    result.RwStatus = rwStatus;
                     filePathFinding.FileResult = result;
                 }
             }
@@ -121,6 +129,8 @@ namespace Group3r.Assessment
             {
                 FileInfo fileInfo = new FileInfo(filePath);
                 FileResult result = new FileResult(fileInfo, false, 0, null);
+                RwStatus rwStatus = EffectivePermissions.CanRw(fileInfo);
+                result.RwStatus = rwStatus;
                 filePathFinding.FileResult = result;
             }
 
@@ -140,6 +150,9 @@ namespace Group3r.Assessment
                 DirResult result = (DirResult)dirClassifier.Classify(rule, dirPath);
                 if (result.MatchedRule != null)
                 {
+                    DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
+                    RwStatus rwStatus = EffectivePermissions.CanRw(dirInfo);
+                    result.RwStatus = rwStatus;
                     dirPathFinding.DirResult = result;
                 }
             }
@@ -149,6 +162,8 @@ namespace Group3r.Assessment
             {
                 DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
                 DirResult result = new DirResult(dirInfo);
+                RwStatus rwStatus = EffectivePermissions.CanRw(dirInfo);
+                result.RwStatus = rwStatus;
                 dirPathFinding.DirResult = result;
             }
 

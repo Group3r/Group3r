@@ -9,12 +9,12 @@ namespace Group3r.Options.AssessmentOptions
     {
         public List<PrivRightOption> PrivRights { get; set; }
         public List<TrusteeOption> TrusteeOptions { get; set; }
+        public List<string> TargetTrustees { get; set; }
         public List<RegKey> RegKeys { get; set; }
         public List<string> ExeAndScriptExtentions { get; set; }
         public List<string> ConfigFileExtensions { get; set; }
         public List<string> OfficeMacroExtensions { get; set; }
         public ClassifierOptions ClassifierOptions { get; set; }
-        public List<string> TargetTrustees { get; set; }
         public Constants.Triage MinTriage { get; set; } = Constants.Triage.Green;
         public List<string> InterestingRights { get; set; } = new List<string>()
         {

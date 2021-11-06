@@ -26,49 +26,42 @@ namespace Group3r.Assessment
         public bool DirectoryWritable { get; set; }
         public string ParentDirectoryExists { get; set; }
         public bool ParentDirectoryWritable { get; set; }
-        public FileSecurity FileSecurity { get; set; }
-        public Sddl.Parser.Sddl FileSecuritySddl { get; set; }
-        public DirectorySecurity DirectorySecurity { get; set; }
-        public Sddl.Parser.Sddl DirSecuritySddl { get; set; }
-        public List<SimpleAce> AclResult { get; set; }
         public DirResult DirResult { get; set; }
         public FileResult FileResult { get; set; }
 
-        public abstract void SetProperties(string originalPath, SddlAnalyser sddlAnalyser, bool exists);
+        public abstract void SetProperties(string originalPath, bool exists);
     }
 
     //Just putting these here for now until I can think of or realise a better place to store them.
     public class FilePathFinding : PathFinding
     {
-        public override void SetProperties(string originalPath, SddlAnalyser sddlAnalyser, bool exists)
+        public override void SetProperties(string originalPath, bool exists)
         {
             if (exists)
             {
                 FileInfo fileInfo = new FileInfo(originalPath);
-                FileSecurity = fileInfo.GetAccessControl(System.Security.AccessControl.AccessControlSections.Access | System.Security.AccessControl.AccessControlSections.Owner);
-                string fileSecuritySddlString = FileSecurity.GetSecurityDescriptorSddlForm(System.Security.AccessControl.AccessControlSections.Access | System.Security.AccessControl.AccessControlSections.Owner);
-                AclResult = sddlAnalyser.AnalyseSddl(new Sddl.Parser.Sddl(fileSecuritySddlString, Sddl.Parser.SecurableObjectType.File));
+                //FileSecurity = fileInfo.GetAccessControl(System.Security.AccessControl.AccessControlSections.Access | System.Security.AccessControl.AccessControlSections.Owner);
+                //string fileSecuritySddlString = FileSecurity.GetSecurityDescriptorSddlForm(System.Security.AccessControl.AccessControlSections.Access | System.Security.AccessControl.AccessControlSections.Owner);
+                //AclResult = sddlAnalyser.AnalyseSddl(new Sddl.Parser.Sddl(fileSecuritySddlString, Sddl.Parser.SecurableObjectType.File));
                 FileExists = true;
             }
             AssessedPath = originalPath;
-            FileSecurity = null;
         }
     }
 
     public class DirPathFinding : PathFinding
     {
-        public override void SetProperties(string originalPath, SddlAnalyser sddlAnalyser, bool exists)
+        public override void SetProperties(string originalPath, bool exists)
         {
             if (exists)
             {
                 DirectoryInfo dirInfo = new DirectoryInfo(originalPath);
-                DirectorySecurity = dirInfo.GetAccessControl(System.Security.AccessControl.AccessControlSections.Access | System.Security.AccessControl.AccessControlSections.Owner);
-                string dirSecuritySddlString = DirectorySecurity.GetSecurityDescriptorSddlForm(System.Security.AccessControl.AccessControlSections.Access | System.Security.AccessControl.AccessControlSections.Owner);
-                AclResult = sddlAnalyser.AnalyseSddl(new Sddl.Parser.Sddl(dirSecuritySddlString, Sddl.Parser.SecurableObjectType.Directory));
+                //DirectorySecurity = dirInfo.GetAccessControl(System.Security.AccessControl.AccessControlSections.Access | System.Security.AccessControl.AccessControlSections.Owner);
+                //string dirSecuritySddlString = DirectorySecurity.GetSecurityDescriptorSddlForm(System.Security.AccessControl.AccessControlSections.Access | System.Security.AccessControl.AccessControlSections.Owner);
+                //AclResult = sddlAnalyser.AnalyseSddl(new Sddl.Parser.Sddl(dirSecuritySddlString, Sddl.Parser.SecurableObjectType.Directory));
                 DirectoryExists = true;
             }
             AssessedPath = originalPath;
-            DirectorySecurity = null;
         }
     }
 

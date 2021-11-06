@@ -31,8 +31,6 @@ namespace Group3r
             Mq = mq;
 
             GpoTaskScheduler = new BlockingStaticTaskScheduler(Options.MaxSysvolThreads, Options.MaxSysvolQueue);
-            // TODO is this task scheduler still needed?
-            //SnafflerTaskScheduler = new BlockingStaticTaskScheduler(50, 0);
         }
 
         /**
@@ -82,7 +80,6 @@ namespace Group3r
                     {
                         string thing = WindowsIdentity.GetCurrent().Name;
                         Options.AssessmentOptions.TargetTrustees = new List<string>() {thing};
-                        Options.AssessmentOptions.TargetTrustees.AddRange(ad.GetUsersGroupsAllDomains(thing));
                     }
 
                     Mq.Degub("Getting GPOs.");
