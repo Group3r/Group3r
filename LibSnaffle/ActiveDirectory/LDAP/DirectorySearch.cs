@@ -136,7 +136,7 @@ namespace LibSnaffle.ActiveDirectory.LDAP
                     if (searchResponse.Controls.Length != 1 ||
                         !(searchResponse.Controls[0] is PageResultResponseControl))
                     {
-                        Console.WriteLine("Server does not support paging");
+                        //Mq.Error("Server does not support paging");
                         yield break;
                     }
 
@@ -350,7 +350,7 @@ namespace LibSnaffle.ActiveDirectory.LDAP
 
             // AD Schema is defined at forest-level so we use forest DN as LDAP search base
             var path = _domain.Forest.Schema.Name;
-            Console.WriteLine($"[+] Creating Schema map for domain {_domainName} using path {path}");
+            
 
             foreach (var result in QueryLdap("(schemaIDGUID=*)", new[] { "schemaidguid", "name" }, SearchScope.Subtree, path))
             {
