@@ -22,7 +22,6 @@ namespace Group3r
     {
         private GrouperMq Mq { get; set; }
         private static BlockingStaticTaskScheduler GpoTaskScheduler;
-        //private static BlockingStaticTaskScheduler SnafflerTaskScheduler;
         private GrouperOptions Options { get; set; }
 
         public GroupCon(GrouperOptions options, GrouperMq mq)

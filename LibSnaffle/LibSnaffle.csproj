@@ -87,6 +87,10 @@
     <Compile Include="ActiveDirectory\GPO\GpoSettings\ShortCutSetting.cs" />
     <Compile Include="ActiveDirectory\GPO\GpoSettings\SystemAccessSetting.cs" />
     <Compile Include="ActiveDirectory\GPO\GpoSettings\UserSetting.cs" />
+    <Compile Include="ActiveDirectory\LDAP\DirectorySearch.cs" />
+    <Compile Include="ActiveDirectory\LDAP\Extensions.cs" />
+    <Compile Include="ActiveDirectory\LDAP\Helpers.cs" />
+    <Compile Include="ActiveDirectory\LDAP\LdapTypeEnum.cs" />
     <Compile Include="ActiveDirectory\Sysvol\GpoFiles\GpoFile.cs" />
     <Compile Include="ActiveDirectory\Sysvol\GpoFiles\GpoFileFactory.cs" />
     <Compile Include="ActiveDirectory\Sysvol\GpoFiles\InfGpoFile.cs" />
