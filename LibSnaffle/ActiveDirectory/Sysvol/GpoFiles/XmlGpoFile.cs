@@ -40,7 +40,7 @@ namespace LibSnaffle.ActiveDirectory
                         XmlNodeList groupNodeList = root.SelectNodes("Group");
                         foreach (XmlNode group in groupNodeList)
                         {
-                            GroupSetting groupSetting = new GroupSetting();
+                            GroupSetting groupSetting = new GroupSetting() { Source = FilePath };
                             XmlAttributeCollection groupAttributes = group.Attributes;
                             groupSetting.Name = groupAttributes.GetNamedItem("name").Value;
                             XmlNode groupProperties = group.SelectSingleNode("Properties");
@@ -87,7 +87,7 @@ namespace LibSnaffle.ActiveDirectory
                         XmlNodeList userNodeList = root.SelectNodes("User");
                         foreach (XmlNode user in userNodeList)
                         {
-                            UserSetting userSetting = new UserSetting();
+                            UserSetting userSetting = new UserSetting() { Source = FilePath };
                             XmlAttributeCollection userAttributes = user.Attributes;
                             userSetting.Name = userAttributes?["name"]?.Value;
                             XmlNode userProperties = user.SelectSingleNode("Properties");
@@ -117,7 +117,7 @@ namespace LibSnaffle.ActiveDirectory
                         XmlNodeList dsNodeList = root.SelectNodes("DataSource");
                         foreach (XmlNode ds in dsNodeList)
                         {
-                            DataSourceSetting dsSetting = new DataSourceSetting();
+                            DataSourceSetting dsSetting = new DataSourceSetting() { Source = FilePath };
                             XmlAttributeCollection dsAttributes = ds.Attributes;
                             XmlNode dsProperties = ds.SelectSingleNode("Properties");
                             XmlAttributeCollection dsPropAtts = dsProperties.Attributes;
@@ -139,7 +139,7 @@ namespace LibSnaffle.ActiveDirectory
                         XmlNodeList driveNodeList = root.SelectNodes("Drive");
                         foreach (XmlNode drive in driveNodeList)
                         {
-                            DriveSetting driveSetting = new DriveSetting();
+                            DriveSetting driveSetting = new DriveSetting() { Source = FilePath };
                             XmlAttributeCollection driveAttributes = drive.Attributes;
                             XmlNode driveProperties = drive.SelectSingleNode("Properties");
                             XmlAttributeCollection drivePropAtts = driveProperties.Attributes;
@@ -163,7 +163,7 @@ namespace LibSnaffle.ActiveDirectory
                         XmlNodeList evNodeList = root.SelectNodes("EnvironmentVariable");
                         foreach (XmlNode ev in evNodeList)
                         {
-                            EnvVarSetting evSetting = new EnvVarSetting();
+                            EnvVarSetting evSetting = new EnvVarSetting() { Source = FilePath };
                             XmlAttributeCollection evAttributes = ev.Attributes;
                             XmlNode evProperties = ev.SelectSingleNode("Properties");
                             XmlAttributeCollection evPropAtts = evProperties.Attributes;
@@ -179,7 +179,7 @@ namespace LibSnaffle.ActiveDirectory
                         XmlNodeList fileNodeList = root.SelectNodes("File");
                         foreach (XmlNode file in fileNodeList)
                         {
-                            FileSetting fileSetting = new FileSetting();
+                            FileSetting fileSetting = new FileSetting() { Source = FilePath };
                             XmlAttributeCollection fileAttributes = file.Attributes;
                             XmlNode fileProperties = file.SelectSingleNode("Properties");
                             XmlAttributeCollection filePropAtts = fileProperties.Attributes;
@@ -196,7 +196,7 @@ namespace LibSnaffle.ActiveDirectory
                         XmlNodeList ifNodeList = root.SelectNodes("Ini");
                         foreach (XmlNode iniFile in ifNodeList)
                         {
-                            IniFileSetting ifSetting = new IniFileSetting();
+                            IniFileSetting ifSetting = new IniFileSetting() { Source = FilePath };
                             XmlAttributeCollection ifAttributes = iniFile.Attributes;
                             XmlNode ifProperties = iniFile.SelectSingleNode("Properties");
                             XmlAttributeCollection ifPropAtts = ifProperties.Attributes;
@@ -213,7 +213,7 @@ namespace LibSnaffle.ActiveDirectory
                         XmlNodeList noNodeList = root.SelectNodes("NetworkOption");
                         foreach (XmlNode no in noNodeList)
                         {
-                            NetOptionSetting netoptionSetting = new NetOptionSetting();
+                            NetOptionSetting netoptionSetting = new NetOptionSetting() { Source = FilePath };
                             XmlAttributeCollection noAttributes = no.Attributes;
                             XmlNode noProperties = no.SelectSingleNode("Properties");
                             XmlAttributeCollection noPropAtts = noProperties.Attributes;
@@ -229,7 +229,7 @@ namespace LibSnaffle.ActiveDirectory
                         XmlNodeList nsNodeList = root.SelectNodes("NetworkShare");
                         foreach (XmlNode ns in nsNodeList)
                         {
-                            NetworkShareSetting nsSetting = new NetworkShareSetting();
+                            NetworkShareSetting nsSetting = new NetworkShareSetting() { Source = FilePath };
                             XmlAttributeCollection nsAttributes = ns.Attributes;
                             XmlNode nsProperties = ns.SelectSingleNode("Properties");
                             XmlAttributeCollection nsPropAtts = nsProperties.Attributes;
@@ -251,7 +251,7 @@ namespace LibSnaffle.ActiveDirectory
                         XmlNodeList serviceNodeList = root.SelectNodes("NTService");
                         foreach (XmlNode service in serviceNodeList)
                         {
-                            NtServiceSetting serviceSetting = new NtServiceSetting();
+                            NtServiceSetting serviceSetting = new NtServiceSetting() { Source = FilePath };
                             XmlAttributeCollection serviceAttributes = service.Attributes;
                             XmlNode serviceProperties = service.SelectSingleNode("Properties");
                             XmlAttributeCollection servicePropAtts = serviceProperties.Attributes;
@@ -278,7 +278,7 @@ namespace LibSnaffle.ActiveDirectory
                         XmlNodeList printerNodeList = root.SelectNodes("SharedPrinter");
                         foreach (XmlNode printer in printerNodeList)
                         {
-                            PrinterSetting printerSetting = new PrinterSetting();
+                            PrinterSetting printerSetting = new PrinterSetting() { Source = FilePath };
                             XmlAttributeCollection printerAttributes = printer.Attributes;
                             XmlNode printerProperties = printer.SelectSingleNode("Properties");
                             XmlAttributeCollection printerPropAtts = printerProperties.Attributes;
@@ -326,7 +326,7 @@ namespace LibSnaffle.ActiveDirectory
                         XmlNodeList shortcutNodeList = root.SelectNodes("Shortcut");
                         foreach (XmlNode shortcut in shortcutNodeList)
                         {
-                            ShortcutSetting shortcutSetting = new ShortcutSetting();
+                            ShortcutSetting shortcutSetting = new ShortcutSetting() { Source = FilePath };
                             XmlAttributeCollection shortcutAttributes = shortcut.Attributes;
                             XmlNode shortcutProperties = shortcut.SelectSingleNode("Properties");
                             XmlAttributeCollection shortcutPropAtts = shortcutProperties.Attributes;
@@ -398,7 +398,7 @@ namespace LibSnaffle.ActiveDirectory
                         XmlNodeList devicesNodeList = root.SelectNodes("Device");
                         foreach (XmlNode device in devicesNodeList)
                         {
-                            DeviceSetting deviceSetting = new DeviceSetting();
+                            DeviceSetting deviceSetting = new DeviceSetting() { Source = FilePath };
                             XmlAttributeCollection deviceAttributes = device.Attributes;
                             XmlNode deviceProperties = device.SelectSingleNode("Properties");
                             XmlAttributeCollection devicePropAtts = deviceProperties.Attributes;
@@ -415,7 +415,7 @@ namespace LibSnaffle.ActiveDirectory
                         XmlNodeList folderNodeList = root.SelectNodes("Folder");
                         foreach (XmlNode folder in folderNodeList)
                         {
-                            FolderSetting folderSetting = new FolderSetting();
+                            FolderSetting folderSetting = new FolderSetting() { Source = FilePath };
                             XmlAttributeCollection folderAttributes = folder.Attributes;
                             XmlNode folderProperties = folder.SelectSingleNode("Properties");
                             XmlAttributeCollection folderPropAtts = folderProperties.Attributes;

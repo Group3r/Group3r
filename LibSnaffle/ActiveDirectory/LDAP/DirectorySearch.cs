@@ -350,7 +350,6 @@ namespace LibSnaffle.ActiveDirectory.LDAP
 
             // AD Schema is defined at forest-level so we use forest DN as LDAP search base
             var path = _domain.Forest.Schema.Name;
-            
 
             foreach (var result in QueryLdap("(schemaIDGUID=*)", new[] { "schemaidguid", "name" }, SearchScope.Subtree, path))
             {

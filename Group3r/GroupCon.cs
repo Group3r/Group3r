@@ -140,7 +140,13 @@ namespace Group3r
                         {
                             try
                             {
-                                Mq.Trace("Analysing setting from " + setting.Source);
+                                if (String.IsNullOrWhiteSpace(setting.Source)){
+                                    Mq.Error("Not sure what file source i got this setting from but i'm analysing it anyway: " + setting.GetType().ToString());
+                                }
+                                else
+                                {
+                                    Mq.Trace("Analysing setting from " + setting.Source);
+                                }
                                 Analyser anal = analyserFactory.GetAnalyser(setting);
 
                                 if (anal != null)

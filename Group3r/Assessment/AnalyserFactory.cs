@@ -83,9 +83,7 @@ namespace Group3r.Assessment
                 NtServiceSetting castSetting = (NtServiceSetting)setting;
                 return new NtServiceAnalyser() { setting = castSetting };
             }
-            //else if (setting.GetType() == typeof(PackageSetting))
-
-            if (setting.GetType() == typeof(PackageSetting))
+            else if (setting.GetType() == typeof(PackageSetting))
             {
                 PackageSetting castSetting = (PackageSetting)setting;
                 return new PackageAnalyser() { setting = castSetting };

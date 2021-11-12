@@ -356,9 +356,9 @@ namespace LibSnaffle.ActiveDirectory
         private void EnumerateDomainGpoLinks()
         {
 
-            var ldapProperties = new string[]{"gplink"};
+            var ldapProperties = new string[]{"gplink, gpoptions, name, displayname"};
 
-            string ldapFilter = "(|(objectClass=organizationalUnit)(objectClass=site))";
+            string ldapFilter = "(|(objectClass=organizationalUnit)(objectClass=site)(objectClass=domain))";
 
             // UH OH we might need to fix the naming context thing
 
@@ -378,63 +378,72 @@ namespace LibSnaffle.ActiveDirectory
                     {
                         Mq.Degub("This is where the horrible GPO link bug happens...");
                         //string adspath = searchResultEntry.Path;
+                        
                         string linkedGpos = searchResultEntry.GetProperty("gplink");
 
-                        var splitGpos = linkedGpos.Split(']', '[');
-
-                        foreach (string gpolink in splitGpos)
+                        if (!string.IsNullOrWhiteSpace(linkedGpos))
                         {
-                            if (gpolink.StartsWith("LDAP"))
+
+                            var splitGpos = linkedGpos.Split(']', '[');
+
+                            foreach (string gpolink in splitGpos)
                             {
-                                GPOLink gpoLinkResult = new GPOLink();
-                                //Split the GPLink value. The distinguishedname will be in the first part, and the status of the gplink in the second
-                                var splitLink = gpolink.Split(';');
-                                var distinguishedName = splitLink[0];
-                                distinguishedName =
-                                    distinguishedName.Substring(distinguishedName.IndexOf("CN=",
-                                        StringComparison.OrdinalIgnoreCase));
-
-                                var status = splitLink[1];
-
-                                switch (status)
+                                if (gpolink.StartsWith("LDAP"))
                                 {
-                                    case "0":
-                                        gpoLinkResult.LinkEnforced = "Enabled, Unenforced";
-                                        break;
-                                    case "1":
-                                        gpoLinkResult.LinkEnforced = "Disabled, Unenforced";
-                                        break;
-                                    case "2":
-                                        gpoLinkResult.LinkEnforced = "Disabled, Enforced";
-                                        break;
-                                    case "3":
-                                        gpoLinkResult.LinkEnforced = "Enabled, Enforced";
-                                        break;
+                                    GPOLink gpoLinkResult = new GPOLink();
+                                    //Split the GPLink value. The distinguishedname will be in the first part, and the status of the gplink in the second
+                                    var splitLink = gpolink.Split(';');
+                                    var distinguishedName = splitLink[0];
+                                    distinguishedName =
+                                        distinguishedName.Substring(distinguishedName.IndexOf("CN=",
+                                            StringComparison.OrdinalIgnoreCase));
+
+                                    var status = splitLink[1];
+
+                                    switch (status)
+                                    {
+                                        case "0":
+                                            gpoLinkResult.LinkEnforced = "Enabled, Unenforced";
+                                            break;
+                                        case "1":
+                                            gpoLinkResult.LinkEnforced = "Disabled, Unenforced";
+                                            break;
+                                        case "2":
+                                            gpoLinkResult.LinkEnforced = "Disabled, Enforced";
+                                            break;
+                                        case "3":
+                                            gpoLinkResult.LinkEnforced = "Enabled, Enforced";
+                                            break;
+                                    }
+
+                                    //gpoLinkResult.LinkPath = adspath;
+
+                                    Mq.Degub("Or maybe this is where it went wrong...");
+                                    try
+                                    {
+                                        GPO gpo = Gpos.Where(g =>
+                                            g.Attributes.DistinguishedName.Equals(distinguishedName,
+                                                StringComparison.OrdinalIgnoreCase)).First();
+                                        gpo.Attributes.GpoLinks.Add(gpoLinkResult);
+                                        Mq.Degub("gpo selection went ok...");
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Mq.Error("Error looking up GPO " + distinguishedName + " to insert links in it.");
+                                    }
                                 }
-
-                                //gpoLinkResult.LinkPath = adspath;
-
-                                Mq.Degub("Or maybe this is where it went wrong...");
-                                try
+                                else
                                 {
-                                    GPO gpo = Gpos.Where(g =>
-                                        g.Attributes.DistinguishedName.Equals(distinguishedName,
-                                            StringComparison.OrdinalIgnoreCase)).First();
-                                    gpo.Attributes.GpoLinks.Add(gpoLinkResult);
-                                    Mq.Degub("gpo selection went ok...");
-                                }
-                                catch (Exception e)
-                                {
-                                    Mq.Error("Error looking up GPO " + distinguishedName + " to insert links in it.");
+                                    if (!String.IsNullOrWhiteSpace(gpolink))
+                                    {
+                                        Mq.Error("Unparsed GPO Link:" + gpolink);
+                                    }
                                 }
                             }
-                            else
-                            {
-                                if (!String.IsNullOrWhiteSpace(gpolink))
-                                {
-                                    Mq.Error("Unparsed GPO Link:" + gpolink);
-                                }
-                            }
+                        }
+                        else
+                        {
+                            Mq.Trace("No GPO Links found in " + searchResultEntry.DistinguishedName);
                         }
                     }
                     catch (Exception e)

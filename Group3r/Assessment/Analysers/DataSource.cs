@@ -45,52 +45,5 @@ namespace Group3r.Assessment.Analysers
 
             return SettingResult;
         }
-
-        public DataSourceSetting CleanupSetting(DataSourceSetting setting)
-        {
-            DataSourceSetting cleanSetting = new DataSourceSetting();
-
-            if (!String.IsNullOrWhiteSpace(setting.Source))
-            {
-                cleanSetting.Source = setting.Source;
-            }
-
-            cleanSetting.PolicyType = setting.PolicyType;
-
-            if (!String.IsNullOrWhiteSpace(setting.Name))
-            {
-                cleanSetting.Name = setting.Name;
-            }
-
-            cleanSetting.Action = setting.Action;
-
-            if (!String.IsNullOrWhiteSpace(setting.UserName))
-            {
-                cleanSetting.UserName = setting.UserName;
-            }
-            if (!String.IsNullOrWhiteSpace(setting.Cpassword))
-            {
-                cleanSetting.Cpassword = setting.Cpassword;
-            }
-            if (!String.IsNullOrWhiteSpace(setting.Password))
-            {
-                cleanSetting.Password = setting.Password;
-            }
-            if (!String.IsNullOrWhiteSpace(setting.DSN))
-            {
-                cleanSetting.DSN = setting.DSN;
-            }
-            if (!String.IsNullOrWhiteSpace(setting.Driver))
-            {
-                cleanSetting.Driver = setting.Driver;
-            }
-            if (!String.IsNullOrWhiteSpace(setting.Description))
-            {
-                cleanSetting.Description = setting.Description;
-            }
-            cleanSetting.Attributes = setting.Attributes;
-            return cleanSetting;
-        }
-
     }
 }
