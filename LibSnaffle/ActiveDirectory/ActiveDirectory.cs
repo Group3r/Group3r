@@ -641,6 +641,7 @@ namespace LibSnaffle.ActiveDirectory
                 {
                     PackageSetting gpoPackage = new PackageSetting
                     {
+                        Source = "LDAP",
                         // do stuff to put the right shit in the gpopackage.
 
                         DisplayName = package.GetProperty("displayName")
