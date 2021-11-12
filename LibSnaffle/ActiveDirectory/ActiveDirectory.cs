@@ -376,7 +376,7 @@ namespace LibSnaffle.ActiveDirectory
                 {
                     try
                     {
-                        Mq.Degub("This is where the horrible GPO link bug happens...");
+                        //Mq.Degub("This is where the horrible GPO link bug happens...");
                         //string adspath = searchResultEntry.Path;
                         
                         string linkedGpos = searchResultEntry.GetProperty("gplink");
@@ -418,14 +418,14 @@ namespace LibSnaffle.ActiveDirectory
 
                                     //gpoLinkResult.LinkPath = adspath;
 
-                                    Mq.Degub("Or maybe this is where it went wrong...");
+                                    //Mq.Degub("Or maybe this is where it went wrong...");
                                     try
                                     {
                                         GPO gpo = Gpos.Where(g =>
                                             g.Attributes.DistinguishedName.Equals(distinguishedName,
                                                 StringComparison.OrdinalIgnoreCase)).First();
                                         gpo.Attributes.GpoLinks.Add(gpoLinkResult);
-                                        Mq.Degub("gpo selection went ok...");
+                                        //Mq.Degub("gpo selection went ok...");
                                     }
                                     catch (Exception e)
                                     {
@@ -443,7 +443,7 @@ namespace LibSnaffle.ActiveDirectory
                         }
                         else
                         {
-                            Mq.Trace("No GPO Links found in " + searchResultEntry.DistinguishedName);
+                            //Mq.Trace("No GPO Links found in " + searchResultEntry.DistinguishedName);
                         }
                     }
                     catch (Exception e)

@@ -145,7 +145,7 @@ namespace Group3r
                                 }
                                 else
                                 {
-                                    Mq.Trace("Analysing setting from " + setting.Source);
+                                    //Mq.Trace("Analysing setting from " + setting.Source);
                                 }
                                 Analyser anal = analyserFactory.GetAnalyser(setting);
 
