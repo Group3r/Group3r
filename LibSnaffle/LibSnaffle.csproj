@@ -107,7 +107,6 @@
     <Compile Include="Classifiers\ClassifierOptions.cs" />
     <Compile Include="Classifiers\ContentClassifier.cs" />
     <Compile Include="Classifiers\DirClassifier.cs" />
-    <Compile Include="Classifiers\EffectiveAccess\AccessRights.cs" />
     <Compile Include="Classifiers\EffectiveAccess\EffectiveAccess.cs" />
     <Compile Include="Classifiers\FileClassifier.cs" />
     <Compile Include="Classifiers\Results\DirResult.cs" />

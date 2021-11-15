@@ -93,7 +93,7 @@ namespace Group3r.View
             */
 
             ConsoleTable gpoFindingTable = new ConsoleTable("Finding", "Placeholder");
-            gpoFindingTable.AddRow("Placeholder", "Placeholder");
+            gpoFindingTable.AddRow("This is where", "Findings about GPO ACLs will go.");
             sb.AppendLine(IndentPara(gpoFindingTable.ToMarkDownString(), 1));
             //sb.AppendLine("Findings for GPO Attributes will go here.");
             /*
