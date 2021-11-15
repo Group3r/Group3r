@@ -21,9 +21,15 @@ namespace Group3r
          * Imports: command line args
          * Exports: None
          */
+
+        private static readonly object ConsoleWriterLock = new object();
+
         public void Run(string[] args)
         {
-            Banner.PrintBanner();
+            lock (ConsoleWriterLock)
+            {
+                Banner.PrintBanner();
+            }
             GrouperMq mq = new GrouperMq();
 
             try
@@ -53,13 +59,18 @@ namespace Group3r
         {
             while (Mq.Q.TryTake(out QueueMessage message))
             {
-                // emergency dump of queue contents to console
-                Console.WriteLine(message.GetMessage());
+                lock (ConsoleWriterLock)
+                {
+                    // emergency dump of queue contents to console
+                    Console.WriteLine(message.GetMessage());
+                }
             }
             if (Debugger.IsAttached)
             {
-                Console.WriteLine("Emergency quit, dumped queue to console, press any key to exit.");
-                Console.ReadKey();
+                lock (ConsoleWriterLock)
+                {
+                    Console.WriteLine("Emergency quit, dumped queue to console.");
+                }
             }
             // TODO: exit nicely by returning to calling context.
             Environment.Exit(1);
@@ -79,7 +90,10 @@ namespace Group3r
             {
                 // mq.Pop blocks.
                 QueueMessage msg = mq.Pop();
-                processor.ProcessMessage(msg, options);
+                lock (ConsoleWriterLock)
+                {
+                    processor.ProcessMessage(msg, options);
+                }
             }
         }
         /// <summary>

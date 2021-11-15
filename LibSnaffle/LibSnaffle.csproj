@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LibSnaffle</RootNamespace>
     <AssemblyName>LibSnaffle</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AlphaFS, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -36,16 +39,18 @@
       <HintPath>Classifiers\EffectiveAccess\AlphaFS.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.7.6\lib\net40-client\NLog.dll</HintPath>
+      <HintPath>..\packages\NLog.4.7.12\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="Portable.System.ValueTuple, Version=1.0.1.1, Culture=neutral, PublicKeyToken=0007e0f1797b6946, processorArchitecture=MSIL">
-      <HintPath>..\packages\Portable.System.ValueTuple.1.0.1\lib\net40\Portable.System.ValueTuple.dll</HintPath>
+      <HintPath>..\packages\Portable.System.ValueTuple.1.0.1\lib\net45\Portable.System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.DirectoryServices.AccountManagement" />
+    <Reference Include="System.DirectoryServices.Protocols" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
@@ -82,6 +87,10 @@
     <Compile Include="ActiveDirectory\GPO\GpoSettings\ShortCutSetting.cs" />
     <Compile Include="ActiveDirectory\GPO\GpoSettings\SystemAccessSetting.cs" />
     <Compile Include="ActiveDirectory\GPO\GpoSettings\UserSetting.cs" />
+    <Compile Include="ActiveDirectory\LDAP\DirectorySearch.cs" />
+    <Compile Include="ActiveDirectory\LDAP\Extensions.cs" />
+    <Compile Include="ActiveDirectory\LDAP\Helpers.cs" />
+    <Compile Include="ActiveDirectory\LDAP\LdapTypeEnum.cs" />
     <Compile Include="ActiveDirectory\Sysvol\GpoFiles\GpoFile.cs" />
     <Compile Include="ActiveDirectory\Sysvol\GpoFiles\GpoFileFactory.cs" />
     <Compile Include="ActiveDirectory\Sysvol\GpoFiles\InfGpoFile.cs" />
@@ -98,7 +107,6 @@
     <Compile Include="Classifiers\ClassifierOptions.cs" />
     <Compile Include="Classifiers\ContentClassifier.cs" />
     <Compile Include="Classifiers\DirClassifier.cs" />
-    <Compile Include="Classifiers\EffectiveAccess.cs" />
     <Compile Include="Classifiers\EffectiveAccess\EffectiveAccess.cs" />
     <Compile Include="Classifiers\FileClassifier.cs" />
     <Compile Include="Classifiers\Results\DirResult.cs" />
@@ -146,9 +154,6 @@
     <Compile Include="Sddl.Parser\Sid.cs" />
     <Compile Include="Sddl.Parser\StringBuilderExtensions.cs" />
     <Compile Include="Sddl.Parser\StringLengthComparer.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Classifiers\EffectiveAccess\AlphaFS.dll" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

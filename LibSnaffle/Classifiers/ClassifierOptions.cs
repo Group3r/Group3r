@@ -1,4 +1,6 @@
-﻿namespace LibSnaffle.Classifiers
+﻿using System.Collections.Generic;
+
+namespace LibSnaffle.Classifiers
 {
     public class ClassifierOptions
     {
@@ -8,5 +10,6 @@
         public long MaxSizeToCopy { get; set; } = 10000000;
         public long MaxSizeToGrep { get; set; } = 1000000;
         public string PathToCopyTo { get; set; }
+        
     }
 }

@@ -4,6 +4,7 @@ using Group3r.Concurrency;
 //using Nett;
 using NLog;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Group3r.Options
@@ -30,17 +31,14 @@ namespace Group3r.Options
             parser.Arguments.Add(new SwitchArgument('h', "help", "Displays this help.", false));
             parser.Arguments.Add(new SwitchArgument('o', "offline", "Disables checks that require LDAP comms with a DC or SMB comms with file shares found in policy settings. Requires that you define a value for -s.", false));
             parser.Arguments.Add(new ValueArgument<string>('f', "outfile", "Path for output file. You probably want this if you're not using -s."));
-            //parser.Arguments.Add(new ValueArgument<string>('p', "password", "Password to use for LDAP operations."));
-            //parser.Arguments.Add(new SwitchArgument('q', "quiet", "Enables quiet mode. Turns off progress updates.", false));
             parser.Arguments.Add(new SwitchArgument('s', "stdout", "Enables outputting results to stdout as soon as they're found. You probably want this if you're not using -f.", false));
             parser.Arguments.Add(new ValueArgument<string>('y', "sysvol", "Set the path to a domain SYSVOL directory."));
             parser.Arguments.Add(new ValueArgument<int>('t', "threads", "Max number of threads. Defaults to 10."));
-            //parser.Arguments.Add(new ValueArgument<string>('u', "username", "Username to use for LDAP operations."));
             parser.Arguments.Add(new ValueArgument<string>('v', "verobsity", "Sets verobsity level. Do you want degubs? Options are 'info' (default), 'debug', 'degub', and 'trace'."));
             parser.Arguments.Add(new SwitchArgument('r', "currentonly", "Only checks current policies, ignoring stuff in those Policies_NTFRS_* directories that result from replication failures.", false));
-            //parser.Arguments.Add(new ValueArgument<string>('x', "printer", "Type of output to display. Options are none, nice, minimal, or json."));
             parser.Arguments.Add(new SwitchArgument('w', "findingsonly", "Only displays settings that had an associated finding.", false));
             parser.Arguments.Add(new ValueArgument<int>('a', "mintriage", "Minimum severity of findings to show where 1 is lowest severity and 4 is highest."));
+            parser.Arguments.Add(new ValueArgument<string>('u', "testuser", "Permission checks will focus on what access is available to this user. Format as domain\\user"));
             return parser;
         }
 
@@ -102,6 +100,9 @@ namespace Group3r.Options
                     //        mq.Info("Read config file from " + value);
                     //    }
                     //    return options;
+                    case "testuser":
+                        options.AssessmentOptions.TargetTrustees = new List<string>() { value };
+                        break;
                     case "offline":
                         options.OfflineMode = true;
                         break;

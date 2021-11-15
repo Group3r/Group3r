@@ -40,7 +40,7 @@ namespace LibSnaffle.ActiveDirectory
                 var length = reader.BaseStream.Length;
                 while (reader.BaseStream.Position < length)
                 {
-                    RegistrySetting setting = new RegistrySetting();
+                    RegistrySetting setting = new RegistrySetting() { Source = FilePath };
                     reader.ReadChar();
                     string keyPath = ReadString(reader);
                     string[] splitKeyPath = keyPath.Split('\\');

@@ -1,10 +1,13 @@
-﻿using LibSnaffle.Concurrency;
+﻿using LibSnaffle.ActiveDirectory.LDAP;
+using LibSnaffle.Concurrency;
 using LibSnaffle.Errors;
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
 using System.DirectoryServices.ActiveDirectory;
+using System.DirectoryServices.Protocols;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
@@ -88,23 +91,20 @@ namespace LibSnaffle.ActiveDirectory
             Mq = mq;
         }
 
+        public DirectorySearch DirectorySearch { get; set; }
+
         /// <summary>
         /// This constructor assumes it's running online and populates fields through enumeration.
         /// </summary>
-        /// <remarks>
-        /// Selects the first domain controller in the collection provided by ActiveDirectory.Domain.
-        /// </remarks>
-        /// <param name="context"></param>
-        /// <param name="fullCollection"></param>
         public ActiveDirectory(BlockingMq mq, string targetDomain = null, string targetDc = null)
         {
             Mq = mq;
             TargetDC = targetDc;
             TargetDomain = targetDomain;
-
+            
             try
             {
-                SetDirectoryContext();
+                DirectorySearch = GetDirectorySearch();
             }
             catch (ActiveDirectoryOperationException e)
             {
@@ -112,6 +112,68 @@ namespace LibSnaffle.ActiveDirectory
             }
         }
 
+        private DirectorySearch GetDirectorySearch()
+        {
+            try
+            {
+                /*
+                // target dc set, no target domain set
+                if ((!string.IsNullOrEmpty(TargetDC)) && (string.IsNullOrEmpty(TargetDomain)))
+                {
+                    Mq.Error("I need you to specify the FQDN of the target domain with -d as well as the target Domain Controller.");
+                    while (true)
+                    {
+                        Mq.Terminate();
+                    }
+                }
+                // target domain set, no target dc set
+                else if ((!string.IsNullOrEmpty(TargetDomain)) && (string.IsNullOrEmpty(TargetDC)))
+                {
+                    Mq.Trace("Target domain specified: " + TargetDomain + ", using it for domain enumeration.");
+                    try
+                    {
+                        Mq.Trace("Testing domain connectivity...");
+                        CurrentDomain =
+                            Domain.GetDomain(new DirectoryContext(DirectoryContextType.Domain, TargetDomain));
+                        Mq.Trace("Successfully queried the " + CurrentDomain.Name +
+                                 " domain. Hope that's what you had in mind...");
+                        TargetDC = CurrentDomain.Name;
+                    }
+                    catch (Exception e)
+                    {
+                        Mq.Error("Couldn't find " + TargetDomain + " on its own. Try fixing up your DNS to point at a DC, or specify a DC target with -c");
+                        while (true)
+                        {
+                            Mq.Terminate();
+                        }
+                    }
+                }
+                */
+                // target domain and dc set
+                if ((!string.IsNullOrEmpty(TargetDomain)) && (!string.IsNullOrEmpty(TargetDC)))
+                {
+                    Mq.Trace("Target DC and Domain specified: " + TargetDomain + " + "  + TargetDC);
+                }
+                // no target DC or domain set
+                else
+                {
+                    Mq.Trace("Getting current domain from user context.");
+                    CurrentDomain = Domain.GetCurrentDomain();
+                    TargetDomain = CurrentDomain.Name;
+                    TargetDC = TargetDomain;
+                }
+
+                return new DirectorySearch(TargetDomain, TargetDC);
+
+            }
+            // TODO: tidy up generic exception.
+            catch (Exception e)
+            {
+                throw new ActiveDirectoryException("Problem figuring out DirectoryContext and/or DCs, you might need to fix your DNS, or define manually with -d and/or -c.", e);
+            }
+        }
+
+        /*
         private void SetDirectoryContext()
         {
             try
@@ -202,6 +264,7 @@ namespace LibSnaffle.ActiveDirectory
                 throw new ActiveDirectoryException("Problem figuring out DirectoryContext and/or DCs, you might need to fix your DNS, or define manually with -d and/or -c.", e);
             }
         }
+        */
 
         /// <summary>
         /// Loads a Sysvol over the network.
@@ -292,146 +355,95 @@ namespace LibSnaffle.ActiveDirectory
 
         private void EnumerateDomainGpoLinks()
         {
-            // TODO add support for user defined creds here.
+
+            var ldapProperties = new string[]{"gplink, gpoptions, name, displayname"};
+
+            string ldapFilter = "(|(objectClass=organizationalUnit)(objectClass=site)(objectClass=domain))";
+
+            // UH OH we might need to fix the naming context thing
+
+            IEnumerable<SearchResultEntry> searchResultEntries = DirectorySearch.QueryLdap(ldapFilter, ldapProperties, System.DirectoryServices.Protocols.SearchScope.Subtree);
+
+            int count = searchResultEntries.Count();
+
+            Mq.Trace(count.ToString() + " sites and OUs found.");
+
             Dictionary<string, List<string>> gpoLinks = new Dictionary<string, List<string>>();
 
-            DirectoryEntry de = new DirectoryEntry("LDAP://" + TargetDC + "/RootDSE");
-
-            string domainDN = de.Properties["defaultNamingContext"].Value.ToString();
-
-            List<SearchResult> searchResults = new List<SearchResult>();
-
-            try
+            if (count >= 1)
             {
-                // first we gotta get sites so we need to be in the configuration naming context
-                using (DirectoryEntry confEntry = new DirectoryEntry("LDAP://" + TargetDC + "/CN=Sites,CN=Configuration," + domainDN))
-                {
-                    using (DirectorySearcher mySearcher = new DirectorySearcher(confEntry))
-                    {
-                        mySearcher.Filter = "(objectClass=site)";
-                        mySearcher.PropertiesToLoad.Add("gPLink");
-
-                        // No size limit, reads all objects
-                        mySearcher.SizeLimit = 0;
-
-                        // Read data in pages of 250 objects. Make sure this value is below the limit configured in your AD domain (if there is a limit)
-                        mySearcher.PageSize = 250;
-
-                        SearchResultCollection searchResultCollection = mySearcher.FindAll();
-                        if (searchResultCollection.Count >= 1)
-                        {
-                            foreach (SearchResult searchResult in searchResultCollection)
-                            {
-                                searchResults.Add(searchResult);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Mq.Error("Something went wrong enumerating links between GPOs and Sites." + e.ToString());
-            }
-
-            try
-            {
-                // then we're gonna get links to OUs, so we need to go back to our existing naming context
-                using (DirectoryEntry entry = new DirectoryEntry("LDAP://" + TargetDC))
-                {
-                    using (DirectorySearcher mySearcher = new DirectorySearcher(entry))
-                    {
-                        mySearcher.Filter = "(objectClass=organizationalUnit)";
-                        mySearcher.PropertiesToLoad.Add("gplink");
-
-                        // No size limit, reads all objects
-                        mySearcher.SizeLimit = 0;
-
-                        // Read data in pages of 250 objects. Make sure this value is below the limit configured in your AD domain (if there is a limit)
-                        mySearcher.PageSize = 250;
-
-                        SearchResultCollection searchResultCollection = mySearcher.FindAll();
-                        if (searchResultCollection.Count >= 1)
-                        {
-                            foreach (SearchResult searchResult in searchResultCollection)
-                            {
-                                searchResults.Add(searchResult);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Mq.Error("Something went wrong enumerating links between GPOs and OUs in the domain." + e.ToString());
-            }
-
-            if (searchResults.Count >= 1)
-            {
-                foreach (SearchResult searchResult in searchResults)
+                foreach (SearchResultEntry searchResultEntry in searchResultEntries)
                 {
                     try
                     {
-                        Mq.Degub("This is where the horrible GPO link bug happens...");
-                        string adspath = searchResult.Path;
-                        Mq.Degub("adspath went ok... - " + adspath);
-                        string linkedGpos = (string) searchResult.Properties["gplink"][0];
-                        Mq.Degub("gplink went ok too... " + linkedGpos);
+                        //Mq.Degub("This is where the horrible GPO link bug happens...");
+                        //string adspath = searchResultEntry.Path;
+                        
+                        string linkedGpos = searchResultEntry.GetProperty("gplink");
 
-                        var splitGpos = linkedGpos.Split(']', '[');
-
-                        foreach (string gpolink in splitGpos)
+                        if (!string.IsNullOrWhiteSpace(linkedGpos))
                         {
-                            if (gpolink.StartsWith("LDAP"))
+
+                            var splitGpos = linkedGpos.Split(']', '[');
+
+                            foreach (string gpolink in splitGpos)
                             {
-                                GPOLink gpoLinkResult = new GPOLink();
-                                //Split the GPLink value. The distinguishedname will be in the first part, and the status of the gplink in the second
-                                var splitLink = gpolink.Split(';');
-                                var distinguishedName = splitLink[0];
-                                distinguishedName =
-                                    distinguishedName.Substring(distinguishedName.IndexOf("CN=",
-                                        StringComparison.OrdinalIgnoreCase));
-
-                                var status = splitLink[1];
-
-                                switch (status)
+                                if (gpolink.StartsWith("LDAP"))
                                 {
-                                    case "0":
-                                        gpoLinkResult.LinkEnforced = "Enabled, Unenforced";
-                                        break;
-                                    case "1":
-                                        gpoLinkResult.LinkEnforced = "Disabled, Unenforced";
-                                        break;
-                                    case "2":
-                                        gpoLinkResult.LinkEnforced = "Disabled, Enforced";
-                                        break;
-                                    case "3":
-                                        gpoLinkResult.LinkEnforced = "Enabled, Enforced";
-                                        break;
+                                    GPOLink gpoLinkResult = new GPOLink();
+                                    //Split the GPLink value. The distinguishedname will be in the first part, and the status of the gplink in the second
+                                    var splitLink = gpolink.Split(';');
+                                    var distinguishedName = splitLink[0];
+                                    distinguishedName =
+                                        distinguishedName.Substring(distinguishedName.IndexOf("CN=",
+                                            StringComparison.OrdinalIgnoreCase));
+
+                                    var status = splitLink[1];
+
+                                    switch (status)
+                                    {
+                                        case "0":
+                                            gpoLinkResult.LinkEnforced = "Enabled, Unenforced";
+                                            break;
+                                        case "1":
+                                            gpoLinkResult.LinkEnforced = "Disabled, Unenforced";
+                                            break;
+                                        case "2":
+                                            gpoLinkResult.LinkEnforced = "Disabled, Enforced";
+                                            break;
+                                        case "3":
+                                            gpoLinkResult.LinkEnforced = "Enabled, Enforced";
+                                            break;
+                                    }
+
+                                    //gpoLinkResult.LinkPath = adspath;
+
+                                    //Mq.Degub("Or maybe this is where it went wrong...");
+                                    try
+                                    {
+                                        GPO gpo = Gpos.Where(g =>
+                                            g.Attributes.DistinguishedName.Equals(distinguishedName,
+                                                StringComparison.OrdinalIgnoreCase)).First();
+                                        gpo.Attributes.GpoLinks.Add(gpoLinkResult);
+                                        //Mq.Degub("gpo selection went ok...");
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Mq.Error("Error looking up GPO " + distinguishedName + " to insert links in it.");
+                                    }
                                 }
-
-                                gpoLinkResult.LinkPath = adspath;
-
-                                Mq.Degub("Or maybe this is where it went wrong...");
-                                try
+                                else
                                 {
-                                    GPO gpo = Gpos.Where(g =>
-                                        g.Attributes.DistinguishedName.Equals(distinguishedName,
-                                            StringComparison.OrdinalIgnoreCase)).First();
-                                    gpo.Attributes.GpoLinks.Add(gpoLinkResult);
-                                    Mq.Degub("gpo selection went ok...");
-                                }
-                                catch (Exception e)
-                                {
-                                    Mq.Error("Error looking up GPO " + distinguishedName + " to insert links in it.");
+                                    if (!String.IsNullOrWhiteSpace(gpolink))
+                                    {
+                                        Mq.Error("Unparsed GPO Link:" + gpolink);
+                                    }
                                 }
                             }
-                            else
-                            {
-                                if (!String.IsNullOrWhiteSpace(gpolink))
-                                {
-                                    Mq.Error("Unparsed GPO Link:" + gpolink);
-                                }
-                            }
+                        }
+                        else
+                        {
+                            //Mq.Trace("No GPO Links found in " + searchResultEntry.DistinguishedName);
                         }
                     }
                     catch (Exception e)
@@ -448,97 +460,91 @@ namespace LibSnaffle.ActiveDirectory
         /// <returns></returns>
         private List<GPO> EnumerateDomainGposFromDC()
         {
-            // TODO add support for user defined creds here.
             List<GPO> domainGpos = new List<GPO>();
-            using (DirectoryEntry entry = new DirectoryEntry("LDAP://" + TargetDC))
+
+            var ldapProperties = new string[]
             {
-                using (DirectorySearcher mySearcher = new DirectorySearcher(entry))
+            "adspath",
+            "displayname",
+            "whencreated",
+            "ntsecuritydescriptor",
+            "whenchanged",
+            "cn",
+            "distinguishedname",
+            "name",
+            "versionnumber",
+            "flags"
+            };
+
+            string ldapFilter = "(objectClass=groupPolicyContainer)";
+
+            IEnumerable<SearchResultEntry> searchResultEntries = DirectorySearch.QueryLdap(ldapFilter, ldapProperties, System.DirectoryServices.Protocols.SearchScope.Subtree);
+
+            int count = searchResultEntries.Count();
+
+            Mq.Trace(count.ToString() + " GPOs found.");
+
+            int i = 0;
+            foreach (SearchResultEntry resEnt in searchResultEntries)
+            {
+                i++;
+                Mq.Trace("Ingesting attributes for GPO #" + i.ToString());
+                // Note: Properties can contain multiple values.
+                string thisuid = resEnt.GetProperty("name");
+                GPO gpo = new GPO(thisuid);
+
+                gpo.Attributes.AdsPath = resEnt.GetProperty("adspath");
+                gpo.Attributes.DisplayName = resEnt.GetProperty("displayname");
+
+                string createdDate = resEnt.GetProperty("whenCreated");
+                string modifiedDate = resEnt.GetProperty("whenChanged");
+
+                gpo.Attributes.CreatedDate = DateTime.ParseExact(createdDate, "yyyyMMddHHmmss.0K", CultureInfo.InvariantCulture);
+                gpo.Attributes.ModifiedDate = DateTime.ParseExact(modifiedDate, "yyyyMMddHHmmss.0K", CultureInfo.InvariantCulture);
+                byte[] ntSecurityDescriptor = resEnt.GetPropertyAsBytes("ntsecuritydescriptor");
+                RawSecurityDescriptor rawSecurityDescriptor = new RawSecurityDescriptor(ntSecurityDescriptor, 0);
+
+                string ntSecurityDescriptorString = rawSecurityDescriptor.GetSddlForm(AccessControlSections.All);
+                gpo.Attributes.NtSecurityDescriptor = ntSecurityDescriptorString;
+
+                Sddl.Parser.Sddl parsedSddl = new Sddl.Parser.Sddl(ntSecurityDescriptorString, Sddl.Parser.SecurableObjectType.DirectoryServiceObject);
+                gpo.Attributes.NtSecurityDescriptorSddl = parsedSddl;
+
+                gpo.Attributes.Uid = resEnt.GetProperty("name");
+                gpo.Attributes.VersionNumber = resEnt.GetProperty("versionnumber");
+                //gpo.Attributes.Cn = resEnt.Properties["cn"][0].ToString();
+                gpo.Attributes.DistinguishedName = resEnt.GetProperty("distinguishedname");
+
+                string gpoFlags = resEnt.GetProperty("flags");
+                switch (gpoFlags)
                 {
-
-                    mySearcher.Filter = "(objectClass=groupPolicyContainer)";
-                    mySearcher.SecurityMasks = SecurityMasks.Dacl | SecurityMasks.Owner;
-                    mySearcher.PropertiesToLoad.Add("adspath");
-                    mySearcher.PropertiesToLoad.Add("displayname");
-                    mySearcher.PropertiesToLoad.Add("whencreated");
-                    mySearcher.PropertiesToLoad.Add("ntsecuritydescriptor");
-                    mySearcher.PropertiesToLoad.Add("whenchanged");
-                    mySearcher.PropertiesToLoad.Add("cn");
-                    mySearcher.PropertiesToLoad.Add("distinguishedname");
-                    mySearcher.PropertiesToLoad.Add("name");
-                    mySearcher.PropertiesToLoad.Add("versionnumber");
-                    mySearcher.PropertiesToLoad.Add("flags");
-
-                    // No size limit, reads all objects
-                    mySearcher.SizeLimit = 0;
-
-                    // Read data in pages of 250 objects. Make sure this value is below the limit configured in your AD domain (if there is a limit)
-                    mySearcher.PageSize = 250;
-
-                    SearchResultCollection searchResultCollection = mySearcher.FindAll();
-
-                    Mq.Trace(searchResultCollection.Count.ToString() + " GPOs found. Grabbing their attributes.");
-
-                    int i = 0;
-                    foreach (SearchResult resEnt in searchResultCollection)
-                    {
-                        i++;
-                        Mq.Trace("Grabbing attributes for GPO #" + i.ToString());
-                        // Note: Properties can contain multiple values.
-                        string thisuid = resEnt.Properties["name"][0].ToString();
-                        GPO gpo = new GPO(thisuid);
-
-                        gpo.Attributes.AdsPath = resEnt.Properties["adspath"][0].ToString();
-                        gpo.Attributes.DisplayName = resEnt.Properties["displayname"][0].ToString();
-                        gpo.Attributes.CreatedDate = (DateTime)(resEnt.Properties["whenCreated"][0]);
-                        gpo.Attributes.ModifiedDate = (DateTime)(resEnt.Properties["whenChanged"][0]);
-                        //string ntSecurityDescriptorString = resEnt.Properties["ntsecuritydescriptor"][0].ToString();
-                        byte[] ntSecurityDescriptor = (byte[])resEnt.Properties["ntsecuritydescriptor"][0];
-                        RawSecurityDescriptor rawSecurityDescriptor = new RawSecurityDescriptor(ntSecurityDescriptor, 0);
-
-                        string ntSecurityDescriptorString = rawSecurityDescriptor.GetSddlForm(AccessControlSections.All);
-                        gpo.Attributes.NtSecurityDescriptor = ntSecurityDescriptorString;
-
-                        Sddl.Parser.Sddl parsedSddl = new Sddl.Parser.Sddl(ntSecurityDescriptorString, Sddl.Parser.SecurableObjectType.DirectoryServiceObject);
-                        gpo.Attributes.NtSecurityDescriptorSddl = parsedSddl;
-
-                        gpo.Attributes.Uid = resEnt.Properties["name"][0].ToString();
-                        gpo.Attributes.VersionNumber = resEnt.Properties["versionnumber"][0].ToString();
-                        //gpo.Attributes.Cn = resEnt.Properties["cn"][0].ToString();
-                        gpo.Attributes.DistinguishedName = resEnt.Properties["distinguishedname"][0].ToString();
-
-                        string gpoFlags = resEnt.Properties["flags"][0].ToString();
-                        switch (gpoFlags)
-                        {
-                            case "0":
-                                gpo.Attributes.UserPolicyEnabled = true;
-                                gpo.Attributes.ComputerPolicyEnabled = true;
-                                break;
-                            case "1":
-                                gpo.Attributes.ComputerPolicyEnabled = true;
-                                gpo.Attributes.UserPolicyEnabled = false;
-                                break;
-                            case "2":
-                                gpo.Attributes.ComputerPolicyEnabled = false;
-                                gpo.Attributes.UserPolicyEnabled = true;
-                                break;
-                            case "3":
-                                gpo.Attributes.ComputerPolicyEnabled = false;
-                                gpo.Attributes.UserPolicyEnabled = false;
-                                break;
-                            default:
-                                Mq.Degub("Couldn't process GPO Enabled Status. Weird.");
-                                break;
-                        }
-
-                        domainGpos.Add(gpo);
-
-                    }
+                    case "0":
+                        gpo.Attributes.UserPolicyEnabled = true;
+                        gpo.Attributes.ComputerPolicyEnabled = true;
+                        break;
+                    case "1":
+                        gpo.Attributes.ComputerPolicyEnabled = true;
+                        gpo.Attributes.UserPolicyEnabled = false;
+                        break;
+                    case "2":
+                        gpo.Attributes.ComputerPolicyEnabled = false;
+                        gpo.Attributes.UserPolicyEnabled = true;
+                        break;
+                    case "3":
+                        gpo.Attributes.ComputerPolicyEnabled = false;
+                        gpo.Attributes.UserPolicyEnabled = false;
+                        break;
+                    default:
+                        Mq.Degub("Couldn't process GPO Enabled Status. Weird.");
+                        break;
                 }
+                domainGpos.Add(gpo);
+            }
                 Mq.Trace("Finished grabbing GPO attributes.");
                 return domainGpos;
-            }
         }
 
+        /*
         /// <summary>
         /// Queries the domain via LDAP and returns a list of computer names as strings.
         /// </summary>
@@ -574,6 +580,7 @@ namespace LibSnaffle.ActiveDirectory
 
             Computers = ComputerNames;
         }
+        */
 
         /// <summary>
         /// Consolidates GPOs enumerated from a DC and SYSVOL.
@@ -609,123 +616,132 @@ namespace LibSnaffle.ActiveDirectory
         /// <param name="gpos"></param>
         private void EnumerateGpoPackages(List<GPO> gpos)
         {
-            using (DirectorySearcher packageSearcher =
-                new DirectorySearcher("LDAP://" + TargetDC + "/System/Policies"))
+            var ldapProperties = new string[]
+            { "displayName",
+                "adsPath",
+                "distinguishedName",
+                "msiFileList",
+                "msiScriptName",
+                "productCode",
+                "whenCreated",
+                "whenChanged",
+                "upgradeProductCode",
+                "cn"};
+
+            string ldapFilter = "(objectClass=packageRegistration)";
+
+            IEnumerable<SearchResultEntry> searchResultEntries = DirectorySearch.QueryLdap(ldapFilter, ldapProperties, System.DirectoryServices.Protocols.SearchScope.Subtree);
+
+            int count = searchResultEntries.Count();
+
+            //iterate through the apps found
+            foreach (SearchResultEntry package in searchResultEntries)
             {
-                // this bit c/o @grouppolicyguy, thanks Darren!
-                packageSearcher.Filter = "(objectClass=packageRegistration)";
-                packageSearcher.PropertiesToLoad.Add("displayName");
-                packageSearcher.PropertiesToLoad.Add("distinguishedName");
-                packageSearcher.PropertiesToLoad.Add("msiFileList");
-                packageSearcher.PropertiesToLoad.Add("msiScriptName");
-                packageSearcher.PropertiesToLoad.Add("productCode");
-                packageSearcher.PropertiesToLoad.Add("whenCreated");
-                packageSearcher.PropertiesToLoad.Add("whenChanged");
-                packageSearcher.PropertiesToLoad.Add("upgradeProductCode");
-                packageSearcher.PropertiesToLoad.Add("cn");
-
-                SearchResultCollection foundPackages = packageSearcher.FindAll();
-
-                if (foundPackages.Count > 0)
+                try
                 {
-                    //iterate through the apps found
-                    foreach (SearchResult package in foundPackages)
+                    PackageSetting gpoPackage = new PackageSetting
                     {
-                        try
+                        Source = "LDAP",
+                        // do stuff to put the right shit in the gpopackage.
+
+                        DisplayName = package.GetProperty("displayName")
+                    };
+
+                    //check to see if there are transforms
+                    string[] msiFileList = package.GetPropertyAsArray("msiFileList");
+
+                    int msiFileCount = msiFileList.Count();
+                    if (msiFileCount > 1)
+                    {
+                        for (int i = 0; i < msiFileCount; i++)
                         {
-                            PackageSetting gpoPackage = new PackageSetting
+                            string[] splitPath = msiFileList[i].ToString()
+                                .Split(new Char[] { ':' });
+                            foreach (string path in splitPath)
                             {
-                                // do stuff to put the right shit in the gpopackage.
-
-                                DisplayName = package.Properties["displayName"][0].ToString()
-                            };
-
-                            //check to see if there are transforms
-                            if (package.Properties["msiFileList"].Count > 1)
-                            {
-                                for (int i = 0; i < package.Properties["msiFileList"].Count; i++)
+                                if (path == "0")
                                 {
-                                    string[] splitPath = package.Properties["msiFileList"][i].ToString()
-                                        .Split(new Char[] { ':' });
-                                    foreach (string path in splitPath)
-                                    {
-                                        if (path == "0")
-                                        {
-                                            continue;
-                                        }
-                                        else
-                                        {
-                                            gpoPackage.MsiFileList.Add(path);
-                                        }
-                                    }
+                                    continue;
+                                }
+                                else
+                                {
+                                    gpoPackage.MsiFileList.Add(path);
                                 }
                             }
-                            else
-                            {
-                                gpoPackage.MsiFileList.Add(package.Properties["msiFileList"][0].ToString()
-                                    .TrimStart(new char[] { '0', ':' }));
-                            }
-
-                            //the product code is a byte array, so we need to get the enum on it and iterate through the collection
-                            ResultPropertyValueCollection colProductCode = package.Properties["productCode"];
-                            byte[] productCodeBytes = (byte[])colProductCode[0];
-                            Guid productCodeGuid = new Guid(productCodeBytes);
-                            gpoPackage.ProductCode = productCodeGuid;
-                            // and again for the upgradeCode
-                            ResultPropertyValueCollection colUpgradeCode = package.Properties["upgradeProductCode"];
-                            byte[] upgradeCodeBytes = (byte[])colUpgradeCode[0];
-                            Guid upgradeCodeGuid = new Guid(upgradeCodeBytes);
-                            gpoPackage.UpgradeProductCode = upgradeCodeGuid;
-
-                            //now do the whenChanged and whenCreated stuff
-                            gpoPackage.CreatedDate = (DateTime)(package.Properties["whenCreated"][0]);
-                            gpoPackage.CreatedDate = (DateTime)(package.Properties["whenChanged"][0]);
-
-                            //Next we need to find the GPO this app is in
-                            string DN = package.Properties["adsPath"][0].ToString();
-                            string[] arrFQDN = DN.Split(new Char[] { ',' });
-                            string FQDN = "";
-                            for (int i = 0; i != arrFQDN.Length; i++)
-                            {
-                                if (i > 3)
-                                {
-                                    //if its the first one, don't put a comma in front of it
-                                    if (i == 4)
-                                        FQDN = arrFQDN[i];
-                                    else
-                                        FQDN = FQDN + "," + arrFQDN[i];
-                                }
-                            }
-
-                            FQDN = "LDAP://" + FQDN;
-                            DirectoryEntry GPOPath = new DirectoryEntry(FQDN);
-                            gpoPackage.ParentGpo = GPOPath.Properties["Name"][0].ToString();
-
-                            //now resolve whether the app is published or assigned
-                            if (arrFQDN[3] == "CN=User")
-                            {
-                                if (package.Properties["msiScriptName"][0].ToString() == "A")
-                                    gpoPackage.PackageAction = "User Assigned";
-                                if (package.Properties["msiScriptName"][0].ToString() == "P")
-                                    gpoPackage.PackageAction = "User Published";
-                                if (package.Properties["msiScriptName"][0].ToString() == "R")
-                                    gpoPackage.PackageAction = "Package Removed";
-                            }
-                            else if (package.Properties["msiScriptName"][0].ToString() == "R")
-                                gpoPackage.PackageAction = "Package Removed";
-                            else
-                                gpoPackage.PackageAction = "Computer Assigned";
-
-                            gpoPackage.Cn = package.Properties["cn"].ToString();
-                            // add the package directly into its parent GPO
-                            gpoPackage.PolicyType = PolicyType.Package;
-                            gpos.SingleOrDefault(p => p.Attributes.Uid == gpoPackage.ParentGpo).Settings.Add(gpoPackage);
-                        }
-                        catch (Exception e)
-                        {
-                            throw new ActiveDirectoryException("Error setting GPO packages", e);
                         }
                     }
+                    else
+                    {
+                        gpoPackage.MsiFileList.Add(msiFileList[0].ToString()
+                            .TrimStart(new char[] { '0', ':' }));
+                    }
+
+                    byte[] productCodeBytes = package.GetPropertyAsBytes("productCode");
+                    Guid productCodeGuid = new Guid(productCodeBytes);
+                    gpoPackage.ProductCode = productCodeGuid;
+                    // and again for the upgradeCode
+                    byte[] upgradeCodeBytes = package.GetPropertyAsBytes("upgradeProductCode");
+                    Guid upgradeCodeGuid = new Guid(upgradeCodeBytes);
+                    gpoPackage.UpgradeProductCode = upgradeCodeGuid;
+
+                    //now do the whenChanged and whenCreated stuff
+
+                    string createdDate = package.GetProperty("whenCreated");
+                    string modifiedDate = package.GetProperty("whenChanged");
+
+                    gpoPackage.CreatedDate = DateTime.ParseExact(createdDate, "yyyyMMddHHmmss.0K", CultureInfo.InvariantCulture); ;
+                    gpoPackage.ModifiedDate = DateTime.ParseExact(modifiedDate, "yyyyMMddHHmmss.0K", CultureInfo.InvariantCulture); ;
+
+                    //Next we need to find the GPO this app is in
+                    string DN = package.DistinguishedName;
+                    string[] arrFQDN = DN.Split(new Char[] { ',' });
+                    string FQDN = "";
+                    for (int i = 0; i != arrFQDN.Length; i++)
+                    {
+                        if (i > 3)
+                        {
+                            //if its the first one, don't put a comma in front of it
+                            if (i == 4)
+                                FQDN = arrFQDN[i];
+                            else
+                                FQDN = FQDN + "," + arrFQDN[i];
+                        }
+                    }
+
+                    FQDN = "LDAP://" + FQDN;
+                    try
+                    {
+                        DirectoryEntry GPOPath = new DirectoryEntry(FQDN);
+                        gpoPackage.ParentGpo = GPOPath.Properties["Name"][0].ToString();
+                    }
+                    catch (Exception e)
+                    {
+                        Mq.Error("That one thing with DirectoryEntry creation broke in the package enum method.");
+                    }
+
+                    //now resolve whether the app is published or assigned
+                    if (arrFQDN[3] == "CN=User")
+                    {
+                        if (package.GetProperty("msiScriptName") == "A")
+                            gpoPackage.PackageAction = "User Assigned";
+                        if (package.GetProperty("msiScriptName") == "P")
+                            gpoPackage.PackageAction = "User Published";
+                        if (package.GetProperty("msiScriptName") == "R")
+                            gpoPackage.PackageAction = "Package Removed";
+                    }
+                    else
+                        gpoPackage.PackageAction = "Computer Assigned";
+
+
+                    gpoPackage.Cn = package.GetProperty("cn");
+                    // add the package directly into its parent GPO
+                    gpoPackage.PolicyType = PolicyType.Package;
+
+                    gpos.SingleOrDefault(p => p.Attributes.Uid == gpoPackage.ParentGpo).Settings.Add(gpoPackage);
+                }
+                catch (Exception e)
+                {
+                    throw new ActiveDirectoryException("Error setting GPO packages", e);
                 }
             }
         }

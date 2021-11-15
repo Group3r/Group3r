@@ -196,6 +196,10 @@ namespace Group3r.Assessment.Analysers
                             }
                         }
                     }
+                    else if (action.GetType() == typeof(SchedTaskShowMessageAction))
+                    {
+                        Mq.Trace("Scheduled tasks that just show messages probably aren't worth a finding. Also I've never seen this used IRL.");
+                    }
                     else
                     {
                         Mq.Error("Unknown Scheduled Task action type.");

@@ -118,45 +118,10 @@ namespace Group3r.Assessment.Analysers
             SettingResult.Findings = findings;
 
             // make a new setting object minus the ugly bits we don't care about.
-            SettingResult.Setting = CleanupSetting(setting);
+            SettingResult.Setting = setting;
 
             return SettingResult;
         }
 
-        public FileSetting CleanupSetting(FileSetting setting)
-        {
-            FileSetting cleanSetting = new FileSetting();
-
-            if (!String.IsNullOrWhiteSpace(setting.Source))
-            {
-                cleanSetting.Source = setting.Source;
-            }
-
-            cleanSetting.PolicyType = setting.PolicyType;
-
-            if (!String.IsNullOrWhiteSpace(setting.FileName))
-            {
-                cleanSetting.FileName = setting.FileName;
-            }
-
-            if (!String.IsNullOrWhiteSpace(setting.Status))
-            {
-                cleanSetting.Status = setting.Status;
-            }
-
-            cleanSetting.Action = setting.Action;
-
-            if (!String.IsNullOrWhiteSpace(setting.TargetPath))
-            {
-                cleanSetting.TargetPath = setting.TargetPath;
-            }
-
-            if (!String.IsNullOrWhiteSpace(setting.FromPath))
-            {
-                cleanSetting.FromPath = setting.FromPath;
-            }
-
-            return cleanSetting;
-        }
     }
 }

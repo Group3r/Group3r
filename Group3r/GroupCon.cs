@@ -22,7 +22,6 @@ namespace Group3r
     {
         private GrouperMq Mq { get; set; }
         private static BlockingStaticTaskScheduler GpoTaskScheduler;
-        //private static BlockingStaticTaskScheduler SnafflerTaskScheduler;
         private GrouperOptions Options { get; set; }
 
         public GroupCon(GrouperOptions options, GrouperMq mq)
@@ -31,8 +30,6 @@ namespace Group3r
             Mq = mq;
 
             GpoTaskScheduler = new BlockingStaticTaskScheduler(Options.MaxSysvolThreads, Options.MaxSysvolQueue);
-            // TODO is this task scheduler still needed?
-            //SnafflerTaskScheduler = new BlockingStaticTaskScheduler(50, 0);
         }
 
         /**
@@ -82,7 +79,6 @@ namespace Group3r
                     {
                         string thing = WindowsIdentity.GetCurrent().Name;
                         Options.AssessmentOptions.TargetTrustees = new List<string>() {thing};
-                        Options.AssessmentOptions.TargetTrustees.AddRange(ad.GetUsersGroupsAllDomains(thing));
                     }
 
                     Mq.Degub("Getting GPOs.");
@@ -144,7 +140,13 @@ namespace Group3r
                         {
                             try
                             {
-                                Mq.Trace("Analysing setting from " + setting.Source);
+                                if (String.IsNullOrWhiteSpace(setting.Source)){
+                                    Mq.Error("Not sure what file source i got this setting from but i'm analysing it anyway: " + setting.GetType().ToString());
+                                }
+                                else
+                                {
+                                    //Mq.Trace("Analysing setting from " + setting.Source);
+                                }
                                 Analyser anal = analyserFactory.GetAnalyser(setting);
 
                                 if (anal != null)

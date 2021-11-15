@@ -13,7 +13,6 @@ namespace LibSnaffle.Classifiers.Results
         public DirResult(DirectoryInfo dirInfo)
         {
             ResultDirInfo = dirInfo;
-            RwStatus = EffectiveAccess.EffectivePermissions.CanRw(dirInfo);
         }
 
 

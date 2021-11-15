@@ -13,16 +13,6 @@ namespace LibSnaffle.Classifiers.Results
         public FileResult(FileInfo fileInfo, bool snaffle, long maxSizeToSnaffle, string snafflePath)
         {
             ResultFileInfo = fileInfo;
-
-            RwStatus = EffectiveAccess.EffectivePermissions.CanRw(fileInfo);
-
-            if (snaffle)
-            {
-                if ((maxSizeToSnaffle >= fileInfo.Length) && RwStatus.CanRead)
-                {
-                    CopyFile(fileInfo, snafflePath);
-                }
-            }
         }
 
         public void CopyFile(FileInfo fileInfo, string snafflePath)
