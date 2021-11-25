@@ -106,6 +106,10 @@ namespace LibSnaffle.ActiveDirectory
                             linesDict.Add(lineIndex, new List<string>() { line.Substring(1) });
                         }
                     }
+                    else if (lineIndexString == "E" | lineIndexString == "S")
+                    {
+                        Logger.Trace("Ignore StartExecutePSFirst or EndExecutePSFirst configuration");
+                    }
                     else
                     {
                         if (Logger != null)
