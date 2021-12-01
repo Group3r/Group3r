@@ -20,6 +20,92 @@ namespace LibSnaffle.EffectiveAccess
 {
     public class EffectivePermissions
     {
+        public RwStatus CanRw(FileSystemInfo filesysInfo)
+        {
+            bool suckItAndSee = true;
+            RwStatus rwStatus = new RwStatus() { CanRead = false, CanModify = false, CanWrite = false };
+
+            if (suckItAndSee)
+            {
+                try
+                {
+                    if (filesysInfo.GetType() == typeof(FileInfo))
+                    {
+                        var writer = new FileStream(filesysInfo.FullName, FileMode.Open, FileAccess.Write, FileShare.ReadWrite);
+                        writer.Close();
+                    }
+                    if (filesysInfo.GetType() == typeof(DirectoryInfo))
+                    {
+                        var tempfile = filesysInfo.FullName + "\\" + Guid.NewGuid().ToString() + ".gp3";
+                        var tfStream = File.Create(tempfile);
+                        tfStream.Close();
+                        try
+                        {
+                            File.Delete(tempfile);
+                        }
+                        catch
+                        {
+                            Console.WriteLine("Failed to delete " + tempfile + " which is a bit messy but you knew what you were in for.");
+                            //who cares, we are being messy.
+                        }
+                    }
+                    rwStatus.CanModify = true;
+                    rwStatus.CanWrite = true;
+                }
+                catch (System.IO.FileNotFoundException e)
+                {
+                    rwStatus.CanWrite = false;
+                    rwStatus.CanModify = false;
+                }
+                catch (System.IO.DirectoryNotFoundException e)
+                {
+                    rwStatus.CanWrite = false;
+                    rwStatus.CanModify = false;
+                }
+                catch (Exception e)
+                {
+                    rwStatus.CanWrite = false;
+                    rwStatus.CanModify = false;
+                    Console.WriteLine(e.ToString());
+                }
+                try
+                {
+                    if (filesysInfo.GetType() == typeof(FileInfo))
+                    {
+                        var reader = new FileStream(filesysInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                        reader.Close();
+                    }
+                    if (filesysInfo.GetType() == typeof(DirectoryInfo))
+                    {
+                        var files = ((DirectoryInfo)filesysInfo).EnumerateFiles();
+                    }
+                    rwStatus.CanRead = true;
+                }
+                catch (System.IO.DirectoryNotFoundException e)
+                {
+                    rwStatus.CanRead = false;
+                }
+                catch (System.IO.FileNotFoundException e)
+                {
+                    rwStatus.CanRead = false;
+                }
+                catch (Exception e)
+                {
+                    rwStatus.CanRead = false;
+                    Console.WriteLine(e.ToString());
+                }
+            }
+            else
+            {
+
+            }
+            return rwStatus;
+        }
+    }
+}
+/*
+    public class EffectivePermissions
+    {
         public string[] ReadRights { get; set; } = new string[] { "Read", "ReadAndExecute", "ReadData", "ListDirectory" };
         public string[] WriteRights { get; set; } = new string[] { "Write", "Modify", "FullControl", "TakeOwnership", "ChangePermissions", "AppendData", "WriteData", "CreateFiles", "CreateDirectories" };
         public string[] ModifyRights { get; set; } = new string[] { "Modify", "FullControl", "TakeOwnership", "ChangePermissions" };
@@ -1616,3 +1702,4 @@ namespace LibSnaffle.EffectiveAccess
         }
     }
 }
+*/

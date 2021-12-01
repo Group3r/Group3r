@@ -13,12 +13,13 @@ namespace Group3r.Assessment
     class PathAnalyser
     {
         private AssessmentOptions AssessmentOptions { get; set; }
-        EffectivePermissions EffectivePermissions { get; set; }
+       EffectivePermissions EffectivePermissions { get; set; }
 
         public PathAnalyser(AssessmentOptions assessmentOptions)
         {
             AssessmentOptions = assessmentOptions;
-            EffectivePermissions = new EffectivePermissions(assessmentOptions.TargetTrustees);
+            //EffectivePermissions = new EffectivePermissions(assessmentOptions.TargetTrustees);
+            EffectivePermissions = new EffectivePermissions();
         }
 
         public PathFinding AnalysePath(string originalPath)
