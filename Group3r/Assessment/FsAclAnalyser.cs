@@ -1,30 +1,28 @@
 ﻿using LibSnaffle.Classifiers.Results;
-using Microsoft.Win32.SafeHandles;
+using Sddl.Parser;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.ConstrainedExecution;
-using System.Runtime.InteropServices;
-using System.Security;
 using System.Security.AccessControl;
 using System.Security.Principal;
-using System.Text.RegularExpressions;
+using Group3r.Options.AssessmentOptions;
 
-namespace LibSnaffle.EffectiveAccess
+namespace Group3r.Assessment
 {
-    /*
-    public class EffectivePermissions
+    public class FsAclAnalyser
     {
-        public RwStatus CanRw(FileSystemInfo filesysInfo, List<string> targetTrustees)
+        public AssessmentOptions AssessmentOptions {get; set; }
+
+        public FsAclAnalyser(AssessmentOptions assessmentOptions)
+        {
+            AssessmentOptions = assessmentOptions;
+        }
+
+        public RwStatus GetRwStatus(FileSystemInfo filesysInfo)
         {
             bool suckItAndSee = false;
             RwStatus rwStatus = new RwStatus() { Exists = false, CanRead = false, CanModify = false, CanWrite = false };
 
-            if (suckItAndSee)
+            if (AssessmentOptions.SuckItAndSee)
             {
                 try
                 {
@@ -96,14 +94,14 @@ namespace LibSnaffle.EffectiveAccess
             }
             else
             {
-                if (targetTrustees == null)
+                if (AssessmentOptions.TargetTrustees == null)
                 {
                     throw new ArgumentException("If you aren't running in 'suck it and see' mode, the TargetTrustees option needs to be populated somehow.");
                 }
                 try
                 {
-                    IdentityReference owner;
-                    AuthorizationRuleCollection acl;
+                    Sddl.Parser.Sddl parsedSddl = null;
+                    string sddl;
                     // first we check if the thing even exists and we can look at it.
                     if (filesysInfo.GetType() == typeof(DirectoryInfo))
                     {
@@ -111,8 +109,8 @@ namespace LibSnaffle.EffectiveAccess
                         {
                             rwStatus.Exists = true;
                             DirectorySecurity dirSecurity = Directory.GetAccessControl(filesysInfo.FullName, AccessControlSections.Owner | AccessControlSections.Access);
-                            owner = dirSecurity.GetOwner(typeof(SecurityIdentifier));
-                            acl = dirSecurity.GetAccessRules(true, true, typeof(SecurityIdentifier));
+                            sddl = dirSecurity.GetSecurityDescriptorSddlForm(AccessControlSections.Owner | AccessControlSections.Access);
+                            parsedSddl = new Sddl.Parser.Sddl(sddl, SecurableObjectType.Directory);
                         }
                     }
                     else if (filesysInfo.GetType() == typeof(FileInfo))
@@ -121,11 +119,11 @@ namespace LibSnaffle.EffectiveAccess
                         {
                             rwStatus.Exists = true;
                             FileSecurity fileSecurity = File.GetAccessControl(filesysInfo.FullName, AccessControlSections.Owner | AccessControlSections.Access);
-                            owner = fileSecurity.GetOwner(typeof(SecurityIdentifier));
-                            acl = fileSecurity.GetAccessRules(true, true, typeof(SecurityIdentifier));
+                            sddl = fileSecurity.GetSecurityDescriptorSddlForm(AccessControlSections.Owner | AccessControlSections.Access);
+                            parsedSddl = new Sddl.Parser.Sddl(sddl, SecurableObjectType.File);
                         }
                     }
-
+                    Console.WriteLine(parsedSddl.ToString());
                 }
                 catch (UnauthorizedAccessException e)
                 {
@@ -157,7 +155,7 @@ namespace LibSnaffle.EffectiveAccess
                     check if we are doing remote sam enumeration:
                         do that - one day - when you can be fucked.
 
-                
+                */
             }
 
             return rwStatus;
@@ -179,9 +177,7 @@ namespace LibSnaffle.EffectiveAccess
         bool ModifyRight { get; set; } = false;
         AllowDeny AllowDeny { get; set; } = AllowDeny.Unset;
     }
-    */
 }
-
 /*
     public class EffectivePermissions
     {

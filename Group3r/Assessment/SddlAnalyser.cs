@@ -5,8 +5,6 @@ using System.Collections.Generic;
 
 namespace Group3r.Assessment
 {
-
-
     public class SddlAnalyser
     {
         private AssessmentOptions AssessmentOptions { get; set; }
@@ -157,7 +155,10 @@ namespace Group3r.Assessment
                             break;
                     }
                     simpleAce.Rights = SimplifyRights(ace.Rights);
-
+                    if (simpleAce.Trustee.Contains("\\"))
+                    {
+                        Console.Write("");
+                    }
                     SimpleAC.Add(simpleAce);
                 }
             }

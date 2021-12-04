@@ -2,30 +2,31 @@
 using LibSnaffle.Classifiers;
 using LibSnaffle.Classifiers.Results;
 using LibSnaffle.Concurrency;
-using LibSnaffle.EffectiveAccess;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Group3r.Assessment
 {
     class PathAnalyser
     {
         private AssessmentOptions AssessmentOptions { get; set; }
-       EffectivePermissions EffectivePermissions { get; set; }
+        SddlAnalyser SddlAnalyser { get; set; }
+        FsAclAnalyser FsAclAnalyser { get; set; }
+        //EffectivePermissions EffectivePermissions { get; set; }
 
         public PathAnalyser(AssessmentOptions assessmentOptions)
         {
             AssessmentOptions = assessmentOptions;
+            SddlAnalyser = new SddlAnalyser(AssessmentOptions);
+            FsAclAnalyser = new FsAclAnalyser(AssessmentOptions);
             //EffectivePermissions = new EffectivePermissions(assessmentOptions.TargetTrustees);
-            EffectivePermissions = new EffectivePermissions();
+            //EffectivePermissions = new EffectivePermissions();
         }
 
         public PathFinding AnalysePath(string originalPath)
         {
             PathFinding pathFinding = null;
-            SddlAnalyser sddlAnalyser = new SddlAnalyser(AssessmentOptions);
+
             // first we can check if it's a file (and the file exists) and analyse it
             if (File.Exists(originalPath))
             {
@@ -81,7 +82,7 @@ namespace Group3r.Assessment
                 {
                     if (Directory.Exists(path))
                     {
-                        RwStatus rwstatus = EffectivePermissions.CanRw(new DirectoryInfo(path));
+                        RwStatus rwstatus = FsAclAnalyser.GetRwStatus(new DirectoryInfo(path));
                         PathFinding dirPathFinding = AnalyseDirPath(originalPath);
                         dirPathFinding.SetProperties(originalPath, false);
                         dirPathFinding.ParentDirectoryExists = path;
@@ -119,7 +120,7 @@ namespace Group3r.Assessment
                 if (result != null)
                 {
                     FileInfo fileInfo = new FileInfo(filePath);
-                    RwStatus rwStatus = EffectivePermissions.CanRw(fileInfo);
+                    RwStatus rwStatus = FsAclAnalyser.GetRwStatus(fileInfo);
                     result.RwStatus = rwStatus;
                     filePathFinding.FileResult = result;
                 }
@@ -130,7 +131,7 @@ namespace Group3r.Assessment
             {
                 FileInfo fileInfo = new FileInfo(filePath);
                 FileResult result = new FileResult(fileInfo, false, 0, null);
-                RwStatus rwStatus = EffectivePermissions.CanRw(fileInfo);
+                RwStatus rwStatus = FsAclAnalyser.GetRwStatus(fileInfo);
                 result.RwStatus = rwStatus;
                 filePathFinding.FileResult = result;
             }
@@ -152,7 +153,7 @@ namespace Group3r.Assessment
                 if (result.MatchedRule != null)
                 {
                     DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
-                    RwStatus rwStatus = EffectivePermissions.CanRw(dirInfo);
+                    RwStatus rwStatus = FsAclAnalyser.GetRwStatus(dirInfo);
                     result.RwStatus = rwStatus;
                     dirPathFinding.DirResult = result;
                 }
@@ -163,7 +164,7 @@ namespace Group3r.Assessment
             {
                 DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
                 DirResult result = new DirResult(dirInfo);
-                RwStatus rwStatus = EffectivePermissions.CanRw(dirInfo);
+                RwStatus rwStatus = FsAclAnalyser.GetRwStatus(dirInfo);
                 result.RwStatus = rwStatus;
                 dirPathFinding.DirResult = result;
             }

@@ -9,6 +9,7 @@ namespace Group3r.Options.AssessmentOptions
     {
         public List<PrivRightOption> PrivRights { get; set; }
         public List<TrusteeOption> TrusteeOptions { get; set; }
+        public bool SuckItAndSee { get; set; } = false;
         public List<string> TargetTrustees { get; set; }
         public List<RegKey> RegKeys { get; set; }
         public List<string> ExeAndScriptExtentions { get; set; }
