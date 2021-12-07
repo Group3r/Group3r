@@ -82,13 +82,9 @@ namespace Group3r
                         {
                             targetUserName = targetUserName.Split('\\')[1];
                         }
-                        ad.GetUsersGroupsRecursive(targetUserName);
-                        //
-                        //Options.AssessmentOptions.TargetTrustees = new List<string>() {thing};
+                        
+                        Options.AssessmentOptions.TargetTrustees = ad.GetUsersGroupsRecursive(targetUserName);
                     }
-
-
-
 
                     Mq.Degub("Getting GPOs.");
                     ad.ObtainDomainGpos();
