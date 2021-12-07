@@ -22,6 +22,7 @@ namespace Group3r.Options.AssessmentOptions
             "Owner",
             "CREATE_CHILD",
             "GENERIC_WRITE",
+            "GENERIC_ALL",
             "WRITE_ATTRIBUTES",
             "WRITE_PROPERTIES",
             "WRITE_PROPERTY",
@@ -29,6 +30,13 @@ namespace Group3r.Options.AssessmentOptions
             "WRITE_DATA",
             "ALL_ACCESS",
             "DELETE_CHILD",
+            "CREATE_CHILD",
+            "WRITE_TREE",
+            "FILE_WRITE",
+            "FILE_ALL",
+            "KEY_WRITE",
+            "KEY_ALL",
+            "STANDARD_RIGHTS_ALL",
             "STANDARD_DELETE",
             "DELETE_TREE",
             "ADD_FILE",
@@ -38,7 +46,8 @@ namespace Group3r.Options.AssessmentOptions
             "CREATE_LINK",
             "SET_VALUE",
             "WRITE_DAC",
-            "WRITE_OWNER"
+            "WRITE_OWNER",
+            "SET_VALUE"
         };
 
         public AssessmentOptions()

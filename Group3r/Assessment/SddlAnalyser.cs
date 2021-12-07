@@ -75,6 +75,7 @@ namespace Group3r.Assessment
                             }
                             else if (!trustee.LowPriv)
                             {
+                                //non-default, slightly more interesting.
                                 SimpleAce aceResult = new SimpleAce
                                 {
                                     Trustee = ace.Trustee,

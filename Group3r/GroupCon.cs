@@ -77,9 +77,18 @@ namespace Group3r
                     Mq.Trace("Enumerating current user's name and group memberships.");
                     if (Options.AssessmentOptions.TargetTrustees == null)
                     {
-                        string thing = WindowsIdentity.GetCurrent().Name;
-                        Options.AssessmentOptions.TargetTrustees = new List<string>() {thing};
+                        string targetUserName = WindowsIdentity.GetCurrent().Name;
+                        if (targetUserName.Contains("\\"))
+                        {
+                            targetUserName = targetUserName.Split('\\')[1];
+                        }
+                        ad.GetUsersGroupsRecursive(targetUserName);
+                        //
+                        //Options.AssessmentOptions.TargetTrustees = new List<string>() {thing};
                     }
+
+
+
 
                     Mq.Degub("Getting GPOs.");
                     ad.ObtainDomainGpos();

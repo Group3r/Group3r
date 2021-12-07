@@ -5,16 +5,19 @@ using System.IO;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using Group3r.Options.AssessmentOptions;
+using System.Collections.Generic;
 
 namespace Group3r.Assessment
 {
     public class FsAclAnalyser
     {
         public AssessmentOptions AssessmentOptions {get; set; }
+        public SddlAnalyser SddlAnalyser { get; set; }
 
         public FsAclAnalyser(AssessmentOptions assessmentOptions)
         {
             AssessmentOptions = assessmentOptions;
+            SddlAnalyser = new SddlAnalyser(assessmentOptions);
         }
 
         public RwStatus GetRwStatus(FileSystemInfo filesysInfo)
@@ -123,6 +126,8 @@ namespace Group3r.Assessment
                             parsedSddl = new Sddl.Parser.Sddl(sddl, SecurableObjectType.File);
                         }
                     }
+                    List<SimpleAce> analysedSddl = SddlAnalyser.AnalyseSddl(parsedSddl);
+
                     Console.WriteLine(parsedSddl.ToString());
                 }
                 catch (UnauthorizedAccessException e)
