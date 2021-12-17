@@ -10,7 +10,7 @@ namespace Group3r.Options.AssessmentOptions
         public List<PrivRightOption> PrivRights { get; set; }
         public List<TrusteeOption> TrusteeOptions { get; set; }
         public bool SuckItAndSee { get; set; } = false;
-        public List<string> TargetTrustees { get; set; }
+        public List<TrusteeOption> TargetTrustees { get; set; }
         public List<RegKey> RegKeys { get; set; }
         public List<string> ExeAndScriptExtentions { get; set; }
         public List<string> ConfigFileExtensions { get; set; }
@@ -88,6 +88,7 @@ namespace Group3r.Options.AssessmentOptions
         public bool LocalSID { get; set; } // is this the sid of a local group/account?
         public bool HighPriv { get; set; } // is this group/account canonically high-priv, i.e. do they have well-known paths to get local Admin/Domain Admin by default?
         public bool LowPriv { get; set; } // is this group/account canonically low-priv, i.e. are they one of the massive default groups like Domain Users etc.
+        public bool Target { get; set; }
     }
 
     public enum InterestingIf

@@ -6,21 +6,32 @@ using System.Security.AccessControl;
 using System.Security.Principal;
 using Group3r.Options.AssessmentOptions;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Group3r.Assessment
 {
+    public class FsAclResult
+    {
+        public RwStatus RwStatus { get; set; }
+        public List<SimpleAce> InterestingAces { get; set; } = new List<SimpleAce>();
+        public List<GpoFinding> Findings { get; set; } = new List<GpoFinding>();
+    }
+
     public class FsAclAnalyser
     {
         public AssessmentOptions AssessmentOptions {get; set; }
         public SddlAnalyser SddlAnalyser { get; set; }
 
+        //public string[] ReadRights { get; set; } = new string[] { "Read", "ReadAndExecute", "ReadData", "ListDirectory" };
+        public string[] WriteRights { get; set; } = new string[] { "CREATE_LINK", "WRITE", "WRITE_OWNER", "WRITE_DAC", "APPEND_DATA", "WRITE_DATA", "CREATE_CHILD", "FILE_WRITE", "ADD_FILE", "ADD_SUBDIRECTORY" };
+        public string[] ModifyRights { get; set; } = new string[] { "STANDARD_RIGHTS_ALL", "STANDARD_DELETE", "DELETE_TREE", "FILE_ALL", "GENERIC_ALL", "GENERIC_WRITE", "WRITE_OWNER", "WRITE_DAC", "Owner", "DELETE_CHILD" };
         public FsAclAnalyser(AssessmentOptions assessmentOptions)
         {
             AssessmentOptions = assessmentOptions;
             SddlAnalyser = new SddlAnalyser(assessmentOptions);
         }
 
-        public RwStatus GetRwStatus(FileSystemInfo filesysInfo)
+        public FsAclResult AnalyseFsAcl(FileSystemInfo filesysInfo)
         {
             bool suckItAndSee = false;
             RwStatus rwStatus = new RwStatus() { Exists = false, CanRead = false, CanModify = false, CanWrite = false };
@@ -97,7 +108,7 @@ namespace Group3r.Assessment
             }
             else
             {
-                if (AssessmentOptions.TargetTrustees == null)
+                if (AssessmentOptions.TrusteeOptions == null)
                 {
                     throw new ArgumentException("If you aren't running in 'suck it and see' mode, the TargetTrustees option needs to be populated somehow.");
                 }
@@ -110,6 +121,7 @@ namespace Group3r.Assessment
                     {
                         if (Directory.Exists(filesysInfo.FullName))
                         {
+                            // then we get the access control as an sddl because that's our lowest-common-denominator format for parsing/assessing these things.
                             rwStatus.Exists = true;
                             DirectorySecurity dirSecurity = Directory.GetAccessControl(filesysInfo.FullName, AccessControlSections.Owner | AccessControlSections.Access);
                             sddl = dirSecurity.GetSecurityDescriptorSddlForm(AccessControlSections.Owner | AccessControlSections.Access);
@@ -126,44 +138,117 @@ namespace Group3r.Assessment
                             parsedSddl = new Sddl.Parser.Sddl(sddl, SecurableObjectType.File);
                         }
                     }
-                    List<SimpleAce> analysedSddl = SddlAnalyser.AnalyseSddl(parsedSddl);
 
-                    Console.WriteLine(parsedSddl.ToString());
+                    // if it doesn't exist then might as well bail out now.
+                    if (!rwStatus.Exists)
+                    {
+                        return new FsAclResult() { RwStatus = rwStatus };
+                    }
+
+                    FsAclResult fsAclResult = new FsAclResult();
+
+                    if (parsedSddl != null)
+                    {
+                        // Parse the SDDL into a workable format
+                        List<SimpleAce> analysedSddl = SddlAnalyser.AnalyseSddl(parsedSddl);
+
+                        foreach (SimpleAce simpleAce in analysedSddl)
+                        {
+                            bool grantsWrite = false;
+                            bool grantsModify = false;
+                            bool denyRight = false;
+                            //see if any of the rights are interesting
+                            foreach (string right in simpleAce.Rights)
+                            {
+                                //if (ReadRights.Contains(right)) { rwStatus.CanRead = true; }
+                                if (WriteRights.Contains(right)) { grantsWrite = true; }
+                                if (ModifyRights.Contains(right)) { grantsModify = true; }
+                            }
+
+                            // check if it's allow or deny
+                            if (simpleAce.ACEType == ACEType.Deny) { denyRight = true; }
+
+                            if (denyRight) { continue; } // TODO actually ahandle deny rights properly
+
+                            //see if the trustee is a users/group we know about.
+                            IEnumerable<TrusteeOption> nameMatches = AssessmentOptions.TrusteeOptions.Where(trusteeopt => trusteeopt.DisplayName == simpleAce.Trustee.DisplayName);
+                            IEnumerable<TrusteeOption> sidMatches = AssessmentOptions.TrusteeOptions.Where(trusteeopt => trusteeopt.SID == simpleAce.Trustee.Sid);
+
+                            TrusteeOption match = new TrusteeOption();
+                            if (nameMatches.Any()) { match = nameMatches.First(); }
+                            if (sidMatches.Any()) { match = sidMatches.First(); }
+                            if (match.DisplayName != null)
+                            {
+                                // so if it's a user/group that we know about...
+                                if (match.Target || match.LowPriv)
+                                {
+                                    // and it's either canonically low-priv or we are a member of it
+                                    //set rwStatus based on it.
+                                    if (grantsModify) { rwStatus.CanModify = true; }
+                                    if (grantsWrite) { rwStatus.CanRead = true; }
+                                    if (grantsModify || grantsWrite)
+                                    {
+                                        fsAclResult.InterestingAces.Add(simpleAce);
+                                    }
+                                }
+                                else if (!match.HighPriv)
+                                {
+                                    fsAclResult.InterestingAces.Add(simpleAce);
+                                    if (grantsModify || grantsWrite)
+                                    {
+                                        fsAclResult.InterestingAces.Add(simpleAce);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                // otherwise there's no match.
+                                if (grantsModify || grantsWrite)
+                                {
+                                    fsAclResult.InterestingAces.Add(simpleAce);
+                                }
+                            }
+                        }
+                        fsAclResult.RwStatus = rwStatus;
+                        return fsAclResult;
+                    }
+                    else
+                    {
+                        throw new Exception("File/Folder ACL not read/parsed properly.");
+                    }
+
+
+                    /*
+                    when checking a file:
+                create our simple model blanked
+                get all the aces
+                foreach ace:
+                    if the group is in our well-known-sid list as 'canonically low-priv':
+                        check if it's an allow or a deny
+                        check what access it grants/denies
+                        set that into our result, break
+                    if it's a domain trustee:
+                        check if the trustee appears in our list
+                        check if it's an 'allow' or a 'deny'
+                        check what acess it grants/denies
+                        set that into our result, break
+                    if the ace trustee is local to a computer or is from a a diff domain:
+                        check if we are doing remote sam enumeration:
+                            do that - one day - when you can be fucked.
+                    */
+
+                    
+
+
+                    //Console.WriteLine(parsedSddl.ToString());
                 }
                 catch (UnauthorizedAccessException e)
                 {
-                    return rwStatus;
+                    return new FsAclResult() { RwStatus = rwStatus };
                 }
 
-                // if it doesn't exist then might as well bail out now.
-                if (!rwStatus.Exists)
-                {
-                    return rwStatus;
-                }
-
-
-                /*
-                when checking a file:
-            create our simple model blanked
-            get all the aces
-            foreach ace:
-                if the group is in our well-known-sid list as 'canonically low-priv':
-                    check if it's an allow or a deny
-                    check what access it grants/denies
-                    set that into our result, break
-                if it's a domain trustee:
-                    check if the trustee appears in our list
-                    check if it's an 'allow' or a 'deny'
-                    check what acess it grants/denies
-                    set that into our result, break
-                if the ace trustee is local to a computer or is from a a diff domain:
-                    check if we are doing remote sam enumeration:
-                        do that - one day - when you can be fucked.
-
-                */
             }
-
-            return rwStatus;
+            return new FsAclResult() { RwStatus = rwStatus };
         }
     }
 

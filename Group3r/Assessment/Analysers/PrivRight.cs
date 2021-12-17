@@ -61,6 +61,21 @@ namespace Group3r.Assessment.Analysers
                                     // add details
                                     findings.Add(gpoFinding);
                                 }
+                                else if (trusteeOption.Target)
+                                {
+                                    matched = true;
+                                    if ((int)MinTriage < 4)
+                                    {
+                                        // finding
+                                        GpoFinding gpoFinding = new GpoFinding
+                                        {
+                                            FindingReason = "Targeted user/group assigned an interesting OS privilege.",
+                                            FindingDetail = setting.Privilege + " was assigned to " + trustee.DisplayName + " - " + trustee.Sid,
+                                            Triage = Constants.Triage.Red
+                                        };
+                                        findings.Add(gpoFinding);
+                                    }
+                                }
                                 else
                                 {
                                     if ((int)MinTriage < 2)
@@ -77,39 +92,6 @@ namespace Group3r.Assessment.Analysers
                                     }
                                 }
                                 break;
-                            }
-                        }
-                        foreach (string targetuser in assessmentOptions.TargetTrustees)
-                        {
-                            if (trustee.DisplayName.ToLower() == targetuser)
-                            {
-                                matched = true;
-                                if ((int)MinTriage < 4)
-                                {
-                                    // finding
-                                    GpoFinding gpoFinding = new GpoFinding
-                                    {
-                                        FindingReason = "Targeted user/group assigned an interesting OS privilege.",
-                                        FindingDetail = setting.Privilege + " was assigned to " + trustee.DisplayName + " - " + trustee.Sid,
-                                        Triage = Constants.Triage.Red
-                                    };
-                                    findings.Add(gpoFinding);
-                                }
-                            }
-                        }
-                        if (matched == false)
-                        {
-                            if ((int)MinTriage < 2)
-                            {
-                                // finding
-                                GpoFinding gpoFinding = new GpoFinding
-                                {
-                                    FindingReason = "User/group assigned an interesting OS privilege. ",
-                                    FindingDetail = setting.Privilege + " was assigned to " + trustee.DisplayName + " - " + trustee.Sid,
-                                    Triage = Constants.Triage.Green
-                                };
-                                // add details
-                                findings.Add(gpoFinding);
                             }
                         }
                     }

@@ -82,7 +82,7 @@ namespace Group3r.Assessment
                 {
                     if (Directory.Exists(path))
                     {
-                        RwStatus rwstatus = FsAclAnalyser.GetRwStatus(new DirectoryInfo(path));
+                        RwStatus rwstatus = FsAclAnalyser.AnalyseFsAcl(new DirectoryInfo(path)).RwStatus;
                         PathFinding dirPathFinding = AnalyseDirPath(originalPath);
                         dirPathFinding.SetProperties(originalPath, false);
                         dirPathFinding.ParentDirectoryExists = path;
@@ -120,7 +120,7 @@ namespace Group3r.Assessment
                 if (result != null)
                 {
                     FileInfo fileInfo = new FileInfo(filePath);
-                    RwStatus rwStatus = FsAclAnalyser.GetRwStatus(fileInfo);
+                    RwStatus rwStatus = FsAclAnalyser.AnalyseFsAcl(fileInfo).RwStatus;
                     result.RwStatus = rwStatus;
                     filePathFinding.FileResult = result;
                 }
@@ -131,7 +131,7 @@ namespace Group3r.Assessment
             {
                 FileInfo fileInfo = new FileInfo(filePath);
                 FileResult result = new FileResult(fileInfo, false, 0, null);
-                RwStatus rwStatus = FsAclAnalyser.GetRwStatus(fileInfo);
+                RwStatus rwStatus = FsAclAnalyser.AnalyseFsAcl(fileInfo).RwStatus;
                 result.RwStatus = rwStatus;
                 filePathFinding.FileResult = result;
             }
@@ -153,7 +153,7 @@ namespace Group3r.Assessment
                 if (result.MatchedRule != null)
                 {
                     DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
-                    RwStatus rwStatus = FsAclAnalyser.GetRwStatus(dirInfo);
+                    RwStatus rwStatus = FsAclAnalyser.AnalyseFsAcl(dirInfo).RwStatus;
                     result.RwStatus = rwStatus;
                     dirPathFinding.DirResult = result;
                 }
@@ -164,7 +164,7 @@ namespace Group3r.Assessment
             {
                 DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
                 DirResult result = new DirResult(dirInfo);
-                RwStatus rwStatus = FsAclAnalyser.GetRwStatus(dirInfo);
+                RwStatus rwStatus = FsAclAnalyser.AnalyseFsAcl(dirInfo).RwStatus;
                 result.RwStatus = rwStatus;
                 dirPathFinding.DirResult = result;
             }

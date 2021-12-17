@@ -12,7 +12,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
-using System.Security.Principal;
 
 namespace LibSnaffle.ActiveDirectory
 {
@@ -584,12 +583,12 @@ namespace LibSnaffle.ActiveDirectory
             }
         }
 
-        public List<string> GetUsersGroupsRecursive(string domainUser)
+        public List<Trustee> GetUsersGroupsRecursive(string domainUser)
         {
-            List<string> results = new List<string>();
+            List<Trustee> results = new List<Trustee>();
             // get user's distinguishedName
-            string userFilter = "(&(objectCategory=user)(objectClass=user)(|(userPrincipalName={0})(samAccountName=" + domainUser + ")))";
-            var ldapProperties = new string[] { "distinguishedName" };
+            string userFilter = "(&(objectCategory=user)(objectClass=user)(|(userPrincipalName={0})(cn=" + domainUser + ")))";
+            var ldapProperties = new string[] { "distinguishedName", "sid", "cn" };
             IEnumerable<SearchResultEntry> userSearchResultEntries = DirectorySearch.QueryLdap(userFilter, ldapProperties, System.DirectoryServices.Protocols.SearchScope.Subtree);
 
             // check we got something
@@ -599,52 +598,47 @@ namespace LibSnaffle.ActiveDirectory
                 // get user's direct group memberships
                 string groupFilter = "(&(objectClass=group)(member=" + userDn.GetProperty("distinguishedName") + "))";
                 // stick user in result list
-                results.Add(userDn.DistinguishedName);
+                results.Add(new Trustee() { DistinguishedName = userDn.DistinguishedName, Sid = userDn.GetProperty("sid"), DisplayName = userDn.GetProperty("cn") });
                 IEnumerable<SearchResultEntry> groupSearchResultEntries = DirectorySearch.QueryLdap(groupFilter, ldapProperties, System.DirectoryServices.Protocols.SearchScope.Subtree);
-                
-                ConcurrentBag<string> workingGroups = new ConcurrentBag<string>();
+
+                ConcurrentBag<Trustee> workingGroups = new ConcurrentBag<Trustee>();
                 //add first round results into bag and list
                 foreach (SearchResultEntry srcGroup in groupSearchResultEntries)
                 {
-                    string groupDn = srcGroup.DistinguishedName;
+                    Trustee groupDn = new Trustee() { DistinguishedName = srcGroup.DistinguishedName, DisplayName = srcGroup.GetProperty("cn"), Sid = srcGroup.GetProperty("sid") };
                     Mq.Degub("Added " + groupDn + " to Target Trustees");
                     workingGroups.Add(groupDn);
                     results.Add(groupDn);
                 }
                 // iterate while bag is not empty
-                while (!workingGroups.IsEmpty) 
+                while (!workingGroups.IsEmpty)
                 {
-                    string subGroupDn;
+                    Trustee subGroupDn;
                     // grab one from the working bag
                     workingGroups.TryTake(out subGroupDn);
                     // find the groups it's a member of
-                    string subGroupFilter = "(&(objectClass=group)(member=" + subGroupDn + "))";
+                    string subGroupFilter = "(&(objectClass=group)(member=" + subGroupDn.DistinguishedName + "))";
                     IEnumerable<SearchResultEntry> subGroupSearchResultEntries = DirectorySearch.QueryLdap(subGroupFilter, ldapProperties, System.DirectoryServices.Protocols.SearchScope.Subtree);
 
                     foreach (SearchResultEntry srcGroup in subGroupSearchResultEntries)
                     {
                         string nextGroupDn = srcGroup.DistinguishedName;
                         // if we don't already have them, add them to working and result vars.
-                        if (!results.Contains(nextGroupDn))
+                        IEnumerable<Trustee> matches = results.Where(group => group.DistinguishedName == nextGroupDn);
+                        if (!matches.Any())
                         {
                             Mq.Degub("Added " + nextGroupDn + " to Target Trustees");
-                            workingGroups.Add(nextGroupDn);
-                            results.Add(nextGroupDn);
+
+                            workingGroups.Add(new Trustee() { DistinguishedName = srcGroup.DistinguishedName, DisplayName = srcGroup.GetProperty("cn"), Sid = srcGroup.GetProperty("sid") });
+                            results.Add(new Trustee() { DistinguishedName = srcGroup.DistinguishedName, DisplayName = srcGroup.GetProperty("cn"), Sid = srcGroup.GetProperty("sid") });
                         }
                     }
                 }
-                List<string> targetTrustees = new List<string>();
-                foreach (string dn in results)
-                {
-                    string[] dnbits = dn.Split('=');
-                    string trustee = dnbits[1].Split(',')[0];
-                    targetTrustees.Add(trustee);
-                }
-                return targetTrustees;
+                return results;
             }
             else {
                 Mq.Error("Failed to find target user in domain, ACL checks are likely to be inaccurate.");
-                return new List<string>() { domainUser };
+                return new List<Trustee>() { new Trustee() { DisplayName = domainUser, Sid = "" } };
             }
         }
     }

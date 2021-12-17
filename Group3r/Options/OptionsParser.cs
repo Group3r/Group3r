@@ -100,9 +100,6 @@ namespace Group3r.Options
                     //        mq.Info("Read config file from " + value);
                     //    }
                     //    return options;
-                    case "testuser":
-                        options.AssessmentOptions.TargetTrustees = new List<string>() { value };
-                        break;
                     case "offline":
                         options.OfflineMode = true;
                         break;

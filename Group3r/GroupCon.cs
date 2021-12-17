@@ -2,12 +2,14 @@ using Group3r.Assessment;
 using Group3r.Assessment.Analysers;
 using Group3r.Concurrency;
 using Group3r.Options;
+using Group3r.Options.AssessmentOptions;
 using LibSnaffle.ActiveDirectory;
 using LibSnaffle.Concurrency;
 using LibSnaffle.Errors;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Security.Principal;
 using System.Threading;
 using System.Timers;
@@ -75,15 +77,55 @@ namespace Group3r
                     ad = new ActiveDirectory(Mq, Options.TargetDomain, Options.TargetDc);
 
                     Mq.Trace("Enumerating current user's name and group memberships.");
-                    if (Options.AssessmentOptions.TargetTrustees == null)
-                    {
+                    //if (Options.AssessmentOptions.TargetTrustees == null)
+                    //{
                         string targetUserName = WindowsIdentity.GetCurrent().Name;
-                        if (targetUserName.Contains("\\"))
-                        {
-                            targetUserName = targetUserName.Split('\\')[1];
-                        }
+                    if (targetUserName.Contains("\\"))
+                    {
+                        targetUserName = targetUserName.Split('\\')[1];
+                    }
                         
-                        Options.AssessmentOptions.TargetTrustees = ad.GetUsersGroupsRecursive(targetUserName);
+                    List<Trustee> currentUserAndGroups = ad.GetUsersGroupsRecursive(targetUserName);
+
+                    foreach (Trustee uog in currentUserAndGroups)
+                    {
+                        bool match = false;
+                        // check match on both SID and displayname
+                        IEnumerable<TrusteeOption> matches = Options.AssessmentOptions.TrusteeOptions.Where(trustee => trustee.DisplayName == uog.DisplayName);
+                        if (matches.Any())
+                        {
+                            match = true;
+                            
+                        }
+                        matches = Options.AssessmentOptions.TrusteeOptions.Where(trustee => trustee.SID == uog.Sid);
+                        if (matches.Any())
+                        {
+                            match = true;
+                        }
+                        if (!match)
+                        {
+                            // if it's not already in the list of well-known principals, add it to TrusteeOptions
+                            Options.AssessmentOptions.TrusteeOptions.Add(new TrusteeOption()
+                            {
+                                SID = uog.Sid,
+                                DisplayName = uog.DisplayName,
+                                Target = true
+                            });
+                        }
+                        else
+                        {
+                            // if we are a member of a well-known group it should be targeted
+                            matches.First().Target = true;
+                        }
+                    }
+                    //}
+
+                    if (Options.AssessmentOptions.TargetTrustees != null)
+                    {
+                        foreach (TrusteeOption trusteeOption in Options.AssessmentOptions.TargetTrustees)
+                        {
+                            Options.AssessmentOptions.TrusteeOptions.Add(trusteeOption);
+                        }
                     }
 
                     Mq.Degub("Getting GPOs.");
