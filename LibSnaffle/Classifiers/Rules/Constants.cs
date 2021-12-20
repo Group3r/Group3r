@@ -35,10 +35,10 @@
 
         public enum Triage
         {
-            Black,
             Green,
             Yellow,
-            Red
+            Red,
+            Black
         }
         public enum EnumerationScope
         {

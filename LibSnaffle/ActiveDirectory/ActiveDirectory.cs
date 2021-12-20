@@ -588,7 +588,7 @@ namespace LibSnaffle.ActiveDirectory
             List<Trustee> results = new List<Trustee>();
             // get user's distinguishedName
             string userFilter = "(&(objectCategory=user)(objectClass=user)(|(userPrincipalName={0})(cn=" + domainUser + ")))";
-            var ldapProperties = new string[] { "distinguishedName", "sid", "cn" };
+            var ldapProperties = new string[] { "distinguishedName", "objectsid", "cn" };
             IEnumerable<SearchResultEntry> userSearchResultEntries = DirectorySearch.QueryLdap(userFilter, ldapProperties, System.DirectoryServices.Protocols.SearchScope.Subtree);
 
             // check we got something
@@ -598,14 +598,14 @@ namespace LibSnaffle.ActiveDirectory
                 // get user's direct group memberships
                 string groupFilter = "(&(objectClass=group)(member=" + userDn.GetProperty("distinguishedName") + "))";
                 // stick user in result list
-                results.Add(new Trustee() { DistinguishedName = userDn.DistinguishedName, Sid = userDn.GetProperty("sid"), DisplayName = userDn.GetProperty("cn") });
+                results.Add(new Trustee() { DistinguishedName = userDn.DistinguishedName, Sid = userDn.GetSid(), DisplayName = userDn.GetProperty("cn") });
                 IEnumerable<SearchResultEntry> groupSearchResultEntries = DirectorySearch.QueryLdap(groupFilter, ldapProperties, System.DirectoryServices.Protocols.SearchScope.Subtree);
 
                 ConcurrentBag<Trustee> workingGroups = new ConcurrentBag<Trustee>();
                 //add first round results into bag and list
                 foreach (SearchResultEntry srcGroup in groupSearchResultEntries)
                 {
-                    Trustee groupDn = new Trustee() { DistinguishedName = srcGroup.DistinguishedName, DisplayName = srcGroup.GetProperty("cn"), Sid = srcGroup.GetProperty("sid") };
+                    Trustee groupDn = new Trustee() { DistinguishedName = srcGroup.DistinguishedName, DisplayName = srcGroup.GetProperty("cn"), Sid = srcGroup.GetSid() };
                     Mq.Degub("Added " + groupDn + " to Target Trustees");
                     workingGroups.Add(groupDn);
                     results.Add(groupDn);
@@ -629,8 +629,8 @@ namespace LibSnaffle.ActiveDirectory
                         {
                             Mq.Degub("Added " + nextGroupDn + " to Target Trustees");
 
-                            workingGroups.Add(new Trustee() { DistinguishedName = srcGroup.DistinguishedName, DisplayName = srcGroup.GetProperty("cn"), Sid = srcGroup.GetProperty("sid") });
-                            results.Add(new Trustee() { DistinguishedName = srcGroup.DistinguishedName, DisplayName = srcGroup.GetProperty("cn"), Sid = srcGroup.GetProperty("sid") });
+                            workingGroups.Add(new Trustee() { DistinguishedName = srcGroup.DistinguishedName, DisplayName = srcGroup.GetProperty("cn"), Sid = srcGroup.GetSid() });
+                            results.Add(new Trustee() { DistinguishedName = srcGroup.DistinguishedName, DisplayName = srcGroup.GetProperty("cn"), Sid = srcGroup.GetSid() });
                         }
                     }
                 }

@@ -4,6 +4,7 @@ using LibSnaffle.Classifiers.Rules;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using LibSnaffle.Classifiers.Results;
 
 namespace Group3r.Assessment.Analysers
 {
@@ -13,20 +14,6 @@ namespace Group3r.Assessment.Analysers
         public override SettingResult Analyse(AssessmentOptions assessmentOptions)
         {
             List<GpoFinding> findings = new List<GpoFinding>();
-
-            /*
-            findings.Add(new GpoFinding()
-            {
-                FindingReason = "SchedTask analyser not implemented.",
-                FindingDetail = "SchedTask analyser not implemented.",
-                Triage = Constants.Triage.Green
-            });
-            // put findings in settingResult
-            SettingResult.Findings = findings;
-
-            // make a new setting object minus the ugly bits we don't care about.
-            SettingResult.Setting = new SchedTaskSetting();
-            */
 
             // if they're specifying who to run the task as
             if (setting.Principals != null)
@@ -60,16 +47,15 @@ namespace Group3r.Assessment.Analysers
 
                         SchedTaskExecAction schedTaskExecAction = (SchedTaskExecAction)action;
 
-
                         if (schedTaskExecAction.WorkingDir != null)
                         {
                             if (schedTaskExecAction.WorkingDir.StartsWith("\\\\"))
                             {
-                                PathFinding pathFinding = pathAnalyser.AnalysePath(schedTaskExecAction.WorkingDir);
+                                PathResult pathResult = pathAnalyser.AnalysePath(schedTaskExecAction.WorkingDir);
 
                                 // schedtask uses a startin directory on a network share, we need to look at that.
 
-                                if (pathFinding.DirectoryExists && pathFinding.DirectoryWritable)
+                                if (pathResult.DirectoryExists && pathResult.DirectoryWritable)
                                 {
                                     if ((int)MinTriage < 3)
                                     {
@@ -81,7 +67,7 @@ namespace Group3r.Assessment.Analysers
                                         });
                                     }
                                 }
-                                else if (!pathFinding.FileExists && !pathFinding.DirectoryExists && !String.IsNullOrWhiteSpace(pathFinding.ParentDirectoryExists) && pathFinding.ParentDirectoryWritable)
+                                else if (!pathResult.FileExists && !pathResult.DirectoryExists && !String.IsNullOrWhiteSpace(pathResult.ParentDirectoryExists) && pathResult.ParentDirectoryWritable)
                                 {
                                     if ((int)MinTriage < 3)
                                     {
@@ -123,9 +109,9 @@ namespace Group3r.Assessment.Analysers
                         {
                             if (schedTaskExecAction.Command.StartsWith("\\\\"))
                             {
-                                PathFinding pathFinding = pathAnalyser.AnalysePath(schedTaskExecAction.Command);
+                                PathResult pathResult = pathAnalyser.AnalysePath(schedTaskExecAction.Command);
 
-                                if (pathFinding.FileExists && pathFinding.FileWritable)
+                                if (pathResult.FileExists && pathResult.FileWritable)
                                 {
                                     if ((int)MinTriage < 4)
                                     {
@@ -137,7 +123,7 @@ namespace Group3r.Assessment.Analysers
                                         });
                                     }
                                 }
-                                else if (!pathFinding.FileExists && pathFinding.DirectoryExists && pathFinding.DirectoryWritable)
+                                else if (!pathResult.FileExists && pathResult.DirectoryExists && pathResult.DirectoryWritable)
                                 {
                                     if ((int)MinTriage < 4)
                                     {
@@ -149,7 +135,7 @@ namespace Group3r.Assessment.Analysers
                                         });
                                     }
                                 }
-                                else if (!pathFinding.FileExists && !pathFinding.DirectoryExists && !String.IsNullOrWhiteSpace(pathFinding.ParentDirectoryExists) && pathFinding.ParentDirectoryWritable)
+                                else if (!pathResult.FileExists && !pathResult.DirectoryExists && !String.IsNullOrWhiteSpace(pathResult.ParentDirectoryExists) && pathResult.ParentDirectoryWritable)
                                 {
                                     if ((int)MinTriage < 4)
                                     {
@@ -159,6 +145,48 @@ namespace Group3r.Assessment.Analysers
                                             FindingDetail = "It points to " + schedTaskExecAction.Command + " so maybe see what happens if you create that file.",
                                             Triage = Constants.Triage.Red
                                         });
+                                    }
+                                }
+
+                                // if the path points to a dir or a file that exist and snaffler deems them interesting, that's a finding on its own, regardless of whether they're modifiable
+                                if (pathResult.SnaffDirResults.Count > 0)
+                                {
+                                    foreach (DirResult dr in pathResult.SnaffDirResults)
+                                    {
+                                        if (dr.MatchedRule != null)
+                                        {
+                                            if ((int)MinTriage <= (int)dr.Triage)
+                                            {
+                                                findings.Add(new GpoFinding()
+                                                {
+                                                    PathFindings = new List<PathResult>() { pathResult },
+                                                    FindingReason =
+                                                        "The Snaffler engine deemed this directory path interesting on its own.",
+                                                    FindingDetail = "Matched Path: " + dr.ResultDirInfo.FullName + " Matched Rule: " + dr.MatchedRule.RuleName,
+                                                    Triage = dr.Triage
+                                                });
+                                            }
+                                        }
+                                    }
+                                }
+                                if (pathResult.SnaffFileResults.Count > 0)
+                                {
+                                    foreach (FileResult fr in pathResult.SnaffFileResults)
+                                    {
+                                        if (fr.MatchedRule != null)
+                                        {
+                                            if ((int)MinTriage <= (int)fr.Triage)
+                                            {
+                                                findings.Add(new GpoFinding()
+                                                {
+                                                    PathFindings = new List<PathResult>() { pathResult },
+                                                    FindingReason =
+                                                        "The Snaffler engine deemed this file path interesting on its own.",
+                                                    FindingDetail = "Matched Path: " + fr.ResultFileInfo.FullName + " Matched Rule: " + fr.MatchedRule.RuleName + " Match Context: " + fr.TextResult.MatchContext,
+                                                    Triage = fr.Triage
+                                                });
+                                            }
+                                        }
                                     }
                                 }
                             }

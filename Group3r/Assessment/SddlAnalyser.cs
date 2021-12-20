@@ -37,10 +37,6 @@ namespace Group3r.Assessment
             {
                 foreach (Ace ace in sddl.Dacl.Aces)
                 {
-                    if (ace.AceSid.Raw.Contains("S-"))
-                    {
-                        Console.WriteLine(ace.AceSid.Raw + " " + ace.AceSid.Alias);
-                    }
                     SimpleAce simpleAce = new SimpleAce
                     {
                         Trustee = new Trustee()
