@@ -304,21 +304,25 @@ namespace LibSnaffle.ActiveDirectory
                         foreach (XmlNode schedTask in schedTaskNodeList)
                         {
                             SchedTaskSetting sts = stParser.ParseSchedTask(SchedTaskType.Task, schedTask);
+                            sts.Source = FilePath;
                             Settings.Add(sts);
                         }
                         foreach (XmlNode schedTask in schedTaskV2NodeList)
                         {
                             SchedTaskSetting sts = stv2Parser.ParseSchedTask(SchedTaskType.TaskV2, schedTask);
+                            sts.Source = FilePath;
                             Settings.Add(sts);
                         }
                         foreach (XmlNode schedTask in immediateTaskNodeList)
                         {
                             SchedTaskSetting sts = stParser.ParseSchedTask(SchedTaskType.ImmediateTask, schedTask);
+                            sts.Source = FilePath;
                             Settings.Add(sts);
                         }
                         foreach (XmlNode schedTask in immediateTaskV2NodeList)
                         {
                             SchedTaskSetting sts = stv2Parser.ParseSchedTask(SchedTaskType.ImmediateTaskV2, schedTask);
+                            sts.Source = FilePath;
                             Settings.Add(sts);
                         }
                         break;
@@ -352,7 +356,7 @@ namespace LibSnaffle.ActiveDirectory
 
                         foreach (XmlNode rsNode in rsNodeList)
                         {
-                            RegistrySetting rs = new RegistrySetting();
+                            RegistrySetting rs = new RegistrySetting() {Source = FilePath};
                             XmlAttributeCollection rsAttributes = rsNode.Attributes;
                             XmlNode rsProperties = rsNode.SelectSingleNode("Properties");
                             XmlAttributeCollection rsPropAtts = rsProperties.Attributes;
