@@ -79,12 +79,12 @@ namespace Group3r
                     Mq.Trace("Enumerating current user's name and group memberships.");
                     //if (Options.AssessmentOptions.TargetTrustees == null)
                     //{
-                        string targetUserName = WindowsIdentity.GetCurrent().Name;
+                    string targetUserName = WindowsIdentity.GetCurrent().Name;
                     if (targetUserName.Contains("\\"))
                     {
                         targetUserName = targetUserName.Split('\\')[1];
                     }
-                        
+
                     List<Trustee> currentUserAndGroups = ad.GetUsersGroupsRecursive(targetUserName);
 
                     foreach (Trustee uog in currentUserAndGroups)
@@ -95,7 +95,7 @@ namespace Group3r
                         if (matches.Any())
                         {
                             match = true;
-                            
+
                         }
                         matches = Options.AssessmentOptions.TrusteeOptions.Where(trustee => trustee.SID == uog.Sid);
                         if (matches.Any())
@@ -187,7 +187,8 @@ namespace Group3r
                         {
                             try
                             {
-                                if (String.IsNullOrWhiteSpace(setting.Source)){
+                                if (String.IsNullOrWhiteSpace(setting.Source))
+                                {
                                     Mq.Error("Not sure what file source i got this setting from but i'm analysing it anyway: " + setting.GetType().ToString());
                                 }
                                 else

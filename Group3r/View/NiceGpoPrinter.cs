@@ -1,12 +1,12 @@
-﻿using System;
+﻿using ConsoleTables;
+using Group3r.Assessment;
+using Group3r.Options;
+using LibSnaffle.ActiveDirectory;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Group3r.Assessment;
-using LibSnaffle.ActiveDirectory;
 using System.Text;
 using System.Xml;
-using Group3r.Options;
-using ConsoleTables;
 
 namespace Group3r.View
 {
@@ -63,11 +63,11 @@ namespace Group3r.View
                 gpoDisplayName = "(No Display Name)";
             }
             string columntwo = String.Format("{0} {1} {2}", gpoDisplayName, gpoResult.Attributes.Uid, morphed);
-            ConsoleTable gpoTable = new ConsoleTable("GPO",columntwo);
+            ConsoleTable gpoTable = new ConsoleTable("GPO", columntwo);
             gpoTable.AddRow("Date Created", gpoResult.Attributes.CreatedDate);
             gpoTable.AddRow("Date Modified", gpoResult.Attributes.ModifiedDate);
             gpoTable.AddRow("Path in SYSVOL", gpoResult.Attributes.PathInSysvol);
-           
+
             string computerPolicy = "Disabled";
             string userPolicy = "Disabled";
             if (gpoResult.Attributes.ComputerPolicyEnabled)
@@ -81,7 +81,7 @@ namespace Group3r.View
 
             gpoTable.AddRow("Computer Policy", computerPolicy);
             gpoTable.AddRow("User Policy", userPolicy);
-            
+
             foreach (GPOLink gpoLink in gpoResult.Attributes.GpoLinks)
             {
                 string linkPath = String.Format("{0} ({1})", gpoLink.LinkPath, gpoLink.LinkEnforced);
@@ -131,13 +131,13 @@ namespace Group3r.View
                     poltype = "User Policy";
 
                 }
-/*
-                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Data Source");
+                /*
+                                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Data Source");
 
-                    sTable = TableAdd(sTable, "Name", cs.Name);
+                                    sTable = TableAdd(sTable, "Name", cs.Name);
 
-                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
-*/
+                                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
+                */
                 if (sr.Setting.GetType() == typeof(DataSourceSetting))
                 {
                     DataSourceSetting cs = (DataSourceSetting)sr.Setting;
@@ -214,11 +214,11 @@ namespace Group3r.View
                     sTable = TableAdd(sTable, "Delete All Groups", cs.DeleteAllGroups.ToString());
                     sTable = TableAdd(sTable, "Delete All Users", cs.DeleteAllUsers.ToString());
                     sTable = TableAdd(sTable, "Remove Accounts", cs.RemoveAccounts.ToString());
-                    
+
                     foreach (GroupSettingMember member in cs.Members)
                     {
                         string memberstring = member.Action + " " + member.Name + " " + member.ResolvedName + " " + member.Sid;
-                                      
+
                         sTable = TableAdd(sTable, "Member", memberstring);
                     }
 
@@ -344,7 +344,7 @@ namespace Group3r.View
                             t = "";
                         }
                         if (trustee.DisplayName == "Failed to resolve SID.")
-                        { 
+                        {
                             sTable = TableAdd(sTable, t, trustee.Sid);
                         }
                         else
@@ -385,7 +385,7 @@ namespace Group3r.View
                     sTable = TableAdd(sTable, "Description", cs.Description1);
                     sTable = TableAdd(sTable, "Enabled", cs.Enabled.ToString());
                     sTable = TableAdd(sTable, "Name", cs.Name);
-                    
+
                     sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
 
                     if (cs.Principals.Count >= 1)
@@ -411,7 +411,7 @@ namespace Group3r.View
                         {
                             if (action.GetType() == typeof(SchedTaskEmailAction))
                             {
-                                SchedTaskEmailAction ca = (SchedTaskEmailAction) action;
+                                SchedTaskEmailAction ca = (SchedTaskEmailAction)action;
 
                                 ConsoleTable aTable = new ConsoleTable("Email Action", "");
                                 aTable = TableAdd(aTable, "From", ca.From);
@@ -426,24 +426,24 @@ namespace Group3r.View
                                     foreach (string attachment in ca.Attachments)
                                     {
                                         aTable = TableAdd(aTable, "Attachment", attachment);
-                                    }                                    
+                                    }
                                 }
                                 sb.AppendLine(IndentPara(aTable.ToMarkDownString(), 2));
                             }
                             else if (action.GetType() == typeof(SchedTaskExecAction))
                             {
-                                SchedTaskExecAction ca = (SchedTaskExecAction) action;
+                                SchedTaskExecAction ca = (SchedTaskExecAction)action;
 
                                 ConsoleTable aTable = new ConsoleTable("Execute Action", "");
                                 sTable = TableAdd(sTable, "Command", ca.Command);
                                 sTable = TableAdd(sTable, "Args", ca.Args);
                                 sTable = TableAdd(sTable, "Working Directory", ca.WorkingDir);
-                              
+
                                 sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 2));
                             }
                             else if (action.GetType() == typeof(SchedTaskShowMessageAction))
                             {
-                                SchedTaskShowMessageAction ca = (SchedTaskShowMessageAction) action;
+                                SchedTaskShowMessageAction ca = (SchedTaskShowMessageAction)action;
 
                                 ConsoleTable aTable = new ConsoleTable("Message Action", "");
 
@@ -585,7 +585,7 @@ namespace Group3r.View
             if (v2.Length > 80)
             {
                 IEnumerable<String> strchunks = ChunksUpto(v2, 80);
-                
+
                 bool first = true;
                 foreach (string chunk in strchunks)
                 {

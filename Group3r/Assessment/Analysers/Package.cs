@@ -67,7 +67,7 @@ namespace Group3r.Assessment.Analysers
                     }
                 }
             }
-            
+
             SettingResult.Findings = findings;
             SettingResult.Setting = setting;
 

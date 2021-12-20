@@ -31,6 +31,6 @@ namespace Group3r.Assessment.Analysers
 
             return SettingResult;
         }
-        
+
     }
 }

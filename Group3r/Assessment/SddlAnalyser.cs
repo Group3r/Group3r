@@ -192,7 +192,7 @@ namespace Group3r.Assessment
             return aclResult;
         }
         */
-    }   
+    }
 
     public class SimpleAce
     {

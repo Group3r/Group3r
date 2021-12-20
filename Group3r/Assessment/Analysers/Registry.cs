@@ -86,7 +86,7 @@ namespace Group3r.Assessment.Analysers
 
                                 if (trustee.LowPriv && keyWritable)
                                 {
-                                    if ((int) MinTriage < 3)
+                                    if ((int)MinTriage < 3)
                                     {
                                         findings.Add(new GpoFinding()
                                         {

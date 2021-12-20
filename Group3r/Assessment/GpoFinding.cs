@@ -1,9 +1,7 @@
-﻿using LibSnaffle.ActiveDirectory;
-using LibSnaffle.Classifiers.Results;
+﻿using LibSnaffle.Classifiers.Results;
 using LibSnaffle.Classifiers.Rules;
 using System.Collections.Generic;
 using System.IO;
-using System.Security.AccessControl;
 
 namespace Group3r.Assessment
 {

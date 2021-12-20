@@ -1,10 +1,9 @@
 ﻿using Group3r.Options.AssessmentOptions;
 using LibSnaffle.ActiveDirectory;
+using LibSnaffle.Classifiers.Results;
 using LibSnaffle.Classifiers.Rules;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using LibSnaffle.Classifiers.Results;
 
 namespace Group3r.Assessment.Analysers
 {
@@ -91,7 +90,7 @@ namespace Group3r.Assessment.Analysers
                                 schedTaskExecAction.Args.ToLower().Contains("/p"))
                             {
 
-                                if ((int) MinTriage < 3)
+                                if ((int)MinTriage < 3)
                                 {
                                     findings.Add(new GpoFinding()
                                     {
@@ -216,7 +215,7 @@ namespace Group3r.Assessment.Analysers
                                 findings.Add(new GpoFinding()
                                 {
                                     FindingReason = "Scheduled Task is emailing attachments. Could be interesting.",
-                                    
+
 
                                     FindingDetail = "Check out " + attachments,
                                     Triage = Constants.Triage.Green

@@ -1,10 +1,10 @@
 ﻿using Group3r.Options.AssessmentOptions;
 using LibSnaffle.ActiveDirectory;
+using LibSnaffle.Classifiers.Results;
 using LibSnaffle.Classifiers.Rules;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using LibSnaffle.Classifiers.Results;
 
 namespace Group3r.Assessment.Analysers
 {
@@ -20,10 +20,10 @@ namespace Group3r.Assessment.Analysers
             // if the script is being run with args that look like creds, that's a finding.
             if (!String.IsNullOrWhiteSpace(setting.Parameters))
             {
-                if (setting.Parameters.ToLower().Contains("pass") || 
-                    setting.Parameters.ToLower().Contains("pw") || 
-                    setting.Parameters.ToLower().Contains("cred") || 
-                    setting.Parameters.ToLower().Contains("-p") || 
+                if (setting.Parameters.ToLower().Contains("pass") ||
+                    setting.Parameters.ToLower().Contains("pw") ||
+                    setting.Parameters.ToLower().Contains("cred") ||
+                    setting.Parameters.ToLower().Contains("-p") ||
                     setting.Parameters.ToLower().Contains("/p"))
                 {
                     if ((int)MinTriage < 3)

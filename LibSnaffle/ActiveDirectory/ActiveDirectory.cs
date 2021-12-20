@@ -636,7 +636,8 @@ namespace LibSnaffle.ActiveDirectory
                 }
                 return results;
             }
-            else {
+            else
+            {
                 Mq.Error("Failed to find target user in domain, ACL checks are likely to be inaccurate.");
                 return new List<Trustee>() { new Trustee() { DisplayName = domainUser, Sid = "" } };
             }

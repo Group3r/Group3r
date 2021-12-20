@@ -1,9 +1,9 @@
 ﻿using Group3r.Options.AssessmentOptions;
 using LibSnaffle.ActiveDirectory;
+using LibSnaffle.Classifiers.Results;
 using LibSnaffle.Classifiers.Rules;
 using System;
 using System.Collections.Generic;
-using LibSnaffle.Classifiers.Results;
 
 namespace Group3r.Assessment.Analysers
 {

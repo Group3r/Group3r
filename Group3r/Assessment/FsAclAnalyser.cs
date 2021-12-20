@@ -1,12 +1,11 @@
-﻿using LibSnaffle.Classifiers.Results;
+﻿using Group3r.Options.AssessmentOptions;
+using LibSnaffle.Classifiers.Results;
 using Sddl.Parser;
 using System;
-using System.IO;
-using System.Security.AccessControl;
-using System.Security.Principal;
-using Group3r.Options.AssessmentOptions;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 
 namespace Group3r.Assessment
 {
@@ -19,7 +18,7 @@ namespace Group3r.Assessment
 
     public class FsAclAnalyser
     {
-        public AssessmentOptions AssessmentOptions {get; set; }
+        public AssessmentOptions AssessmentOptions { get; set; }
         public SddlAnalyser SddlAnalyser { get; set; }
 
         //public string[] ReadRights { get; set; } = new string[] { "Read", "ReadAndExecute", "ReadData", "ListDirectory" };
@@ -253,7 +252,7 @@ namespace Group3r.Assessment
                             do that - one day - when you can be fucked.
                     */
 
-                    
+
 
 
                     //Console.WriteLine(parsedSddl.ToString());

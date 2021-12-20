@@ -117,7 +117,7 @@ namespace Group3r.Assessment
             //we know the file exists, so it's worth running through the snaffler engine.
             foreach (ClassifierRule rule in AssessmentOptions.ClassifierOptions.AllRules.FileClassifierRules)
             {
-                FileResult snaffResult = (FileResult) fileClassifier.Classify(rule, filePath);
+                FileResult snaffResult = (FileResult)fileClassifier.Classify(rule, filePath);
                 if (snaffResult != null && snaffResult.MatchedRule != null)
                 {
                     filePathResult.SnaffFileResults.Add(snaffResult);

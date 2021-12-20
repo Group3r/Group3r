@@ -1,20 +1,4 @@
-﻿using LibSnaffle.Classifiers.Results;
-using Microsoft.Win32.SafeHandles;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.ConstrainedExecution;
-using System.Runtime.InteropServices;
-using System.Security;
-using System.Security.AccessControl;
-using System.Security.Principal;
-using System.Text.RegularExpressions;
-
-namespace LibSnaffle.EffectiveAccess
+﻿namespace LibSnaffle.EffectiveAccess
 {
     /*
     public class EffectivePermissions

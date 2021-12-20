@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Group3r
+﻿namespace Group3r
 {
     public static class Group3r
     {
