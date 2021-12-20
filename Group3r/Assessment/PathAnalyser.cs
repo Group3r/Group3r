@@ -82,13 +82,13 @@ namespace Group3r.Assessment
                 {
                     if (Directory.Exists(path))
                     {
-                        RwStatus rwstatus = FsAclAnalyser.AnalyseFsAcl(new DirectoryInfo(path)).RwStatus;
-                        PathResult dirPathResult = AnalyseDirPath(originalPath);
+                        //RwStatus rwstatus = FsAclAnalyser.AnalyseFsAcl(new DirectoryInfo(path)).RwStatus;
+                        DirPathResult dirPathResult = AnalyseDirPath(path);
                         dirPathResult.SetProperties(originalPath, false);
                         dirPathResult.ParentDirectoryExists = path;
                         dirPathResult.DirectoryExists = false;
                         dirPathResult.DirectoryWritable = false;
-                        if (rwstatus.CanWrite || rwstatus.CanModify)
+                        if (dirPathResult.RwStatus.CanWrite || dirPathResult.RwStatus.CanModify)
                         {
                             dirPathResult.ParentDirectoryWritable = true;
                         }

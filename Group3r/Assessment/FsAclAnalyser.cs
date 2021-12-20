@@ -22,7 +22,7 @@ namespace Group3r.Assessment
         public SddlAnalyser SddlAnalyser { get; set; }
 
         //public string[] ReadRights { get; set; } = new string[] { "Read", "ReadAndExecute", "ReadData", "ListDirectory" };
-        public string[] WriteRights { get; set; } = new string[] { "CREATE_LINK", "WRITE", "WRITE_OWNER", "WRITE_DAC", "APPEND_DATA", "WRITE_DATA", "CREATE_CHILD", "FILE_WRITE", "ADD_FILE", "ADD_SUBDIRECTORY" };
+        public string[] WriteRights { get; set; } = new string[] { "CREATE_LINK", "WRITE", "WRITE_OWNER", "WRITE_DAC", "APPEND_DATA", "WRITE_DATA", "CREATE_CHILD", "FILE_WRITE", "ADD_FILE", "ADD_SUBDIRECTORY", "Owner" };
         public string[] ModifyRights { get; set; } = new string[] { "STANDARD_RIGHTS_ALL", "STANDARD_DELETE", "DELETE_TREE", "FILE_ALL", "GENERIC_ALL", "GENERIC_WRITE", "WRITE_OWNER", "WRITE_DAC", "Owner", "DELETE_CHILD" };
         public FsAclAnalyser(AssessmentOptions assessmentOptions)
         {
@@ -160,7 +160,10 @@ namespace Group3r.Assessment
                             foreach (string right in simpleAce.Rights)
                             {
                                 //if (ReadRights.Contains(right)) { rwStatus.CanRead = true; }
-                                if (WriteRights.Contains(right)) { grantsWrite = true; }
+                                if (WriteRights.Contains(right))
+                                {
+                                    grantsWrite = true;
+                                }
                                 if (ModifyRights.Contains(right)) { grantsModify = true; }
                             }
 
@@ -199,8 +202,15 @@ namespace Group3r.Assessment
                                 {
                                     // and it's either canonically low-priv or we are a member of it
                                     //set rwStatus based on it.
-                                    if (grantsModify) { rwStatus.CanModify = true; }
-                                    if (grantsWrite) { rwStatus.CanRead = true; }
+                                    if (grantsModify)
+                                    {
+                                        rwStatus.CanModify = true;
+                                    }
+
+                                    if (grantsWrite)
+                                    {
+                                        rwStatus.CanWrite = true;
+                                    }
                                     if (grantsModify || grantsWrite)
                                     {
                                         fsAclResult.InterestingAces.Add(simpleAce);
