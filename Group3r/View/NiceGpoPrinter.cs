@@ -16,7 +16,7 @@ namespace Group3r.View
     class NiceGpoPrinter : IGpoPrinter
     {
         private GrouperOptions grouperOptions;
-        private int indent = 4;
+        private int _indent = 4;
         /**
          * Summary: constructor
          * Arguments: none
@@ -551,12 +551,14 @@ namespace Group3r.View
 
             sb.AppendLine(IndentPara(fTable.ToMarkDownString(), 2));
 
+            /*
             if (finding.AclResult.Count >= 1)
             {
                 sb.AppendLine("...ACL.Finding.Details...");
                 sb.AppendLine(PrintNiceAces(finding.AclResult));
                 sb.AppendLine("......");
             }
+            */
 
             /*
             if (finding.PathFindings.Count >= 1)
@@ -621,9 +623,20 @@ namespace Group3r.View
 
         string IndentPara(string inString, int indentfactor)
         {
-            string istring = String.Concat(Enumerable.Repeat(" ", (indent * indentfactor)));
-            string result = istring + inString.Replace("\n", "\n" + istring);
-            return result;
+            string istring = String.Concat(Enumerable.Repeat(" ", _indent));
+            string fullindent = String.Concat(Enumerable.Repeat(istring, indentfactor));
+            string tailend = String.Concat(Enumerable.Repeat("_", (_indent - 1)));
+            string tail = "\\" + tailend;
+            StringBuilder sb = new StringBuilder();
+            --indentfactor;
+            while (indentfactor > 0)
+            {
+                sb.Append(istring);
+                --indentfactor;
+            }
+            sb.Append(tail + "\r\n" + fullindent);
+            sb.Append(inString.Replace("\r\n", "\r\n" + fullindent));
+             return sb.ToString();
         }
     }
 }

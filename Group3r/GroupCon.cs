@@ -91,16 +91,19 @@ namespace Group3r
                     {
                         bool match = false;
                         // check match on both SID and displayname
-                        IEnumerable<TrusteeOption> matches = Options.AssessmentOptions.TrusteeOptions.Where(trustee => trustee.DisplayName == uog.DisplayName);
-                        if (matches.Any())
+                        IEnumerable<TrusteeOption> dispMatches = Options.AssessmentOptions.TrusteeOptions.Where(trustee => trustee.DisplayName == uog.DisplayName);
+                        if (dispMatches.Any())
                         {
                             match = true;
-
+                            // if we are a member of a well-known group it should be targeted
+                            dispMatches.First().Target = true;
                         }
-                        matches = Options.AssessmentOptions.TrusteeOptions.Where(trustee => trustee.SID == uog.Sid);
-                        if (matches.Any())
+                        IEnumerable<TrusteeOption> sidMatches = Options.AssessmentOptions.TrusteeOptions.Where(trustee => trustee.SID == uog.Sid);
+                        if (sidMatches.Any())
                         {
                             match = true;
+                            // if we are a member of a well-known group it should be targeted
+                            sidMatches.First().Target = true;
                         }
                         if (!match)
                         {
@@ -112,18 +115,14 @@ namespace Group3r
                                 Target = true
                             });
                         }
-                        else
-                        {
-                            // if we are a member of a well-known group it should be targeted
-                            matches.First().Target = true;
-                        }
                     }
-                    //}
 
+                    // if the user has defined some custom trustee(s) to target:
                     if (Options.AssessmentOptions.TargetTrustees != null)
                     {
                         foreach (TrusteeOption trusteeOption in Options.AssessmentOptions.TargetTrustees)
                         {
+                            trusteeOption.Target = true;
                             Options.AssessmentOptions.TrusteeOptions.Add(trusteeOption);
                         }
                     }
