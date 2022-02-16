@@ -21,7 +21,7 @@ namespace Group3r.Assessment
         public AssessmentOptions AssessmentOptions { get; set; }
         public SddlAnalyser SddlAnalyser { get; set; }
 
-        //public string[] ReadRights { get; set; } = new string[] { "Read", "ReadAndExecute", "ReadData", "ListDirectory" };
+        public string[] ReadRights { get; set; } = new string[] { "Read", "ReadAndExecute", "ReadData", "ListDirectory" };
         public string[] WriteRights { get; set; } = new string[] { "CREATE_LINK", "WRITE", "WRITE_OWNER", "WRITE_DAC", "APPEND_DATA", "WRITE_DATA", "CREATE_CHILD", "FILE_WRITE", "ADD_FILE", "ADD_SUBDIRECTORY", "Owner" };
         public string[] ModifyRights { get; set; } = new string[] { "STANDARD_RIGHTS_ALL", "STANDARD_DELETE", "DELETE_TREE", "FILE_ALL", "GENERIC_ALL", "GENERIC_WRITE", "WRITE_OWNER", "WRITE_DAC", "Owner", "DELETE_CHILD" };
         public FsAclAnalyser(AssessmentOptions assessmentOptions)
@@ -41,14 +41,13 @@ namespace Group3r.Assessment
                 {
                     if (filesysInfo.GetType() == typeof(FileInfo))
                     {
-                        var writer = new FileStream(filesysInfo.FullName, FileMode.Open, FileAccess.Write, FileShare.ReadWrite);
-                        writer.Close();
+                        new FileStream(filesysInfo.FullName, FileMode.Open, FileAccess.Write).Dispose();
                     }
                     if (filesysInfo.GetType() == typeof(DirectoryInfo))
                     {
                         var tempfile = filesysInfo.FullName + "\\" + Guid.NewGuid().ToString() + ".gp3";
-                        var tfStream = File.Create(tempfile);
-                        tfStream.Close();
+                        new FileStream(tempfile, FileMode.Open, FileAccess.Write).Dispose();
+
                         try
                         {
                             File.Delete(tempfile);
@@ -82,8 +81,7 @@ namespace Group3r.Assessment
                 {
                     if (filesysInfo.GetType() == typeof(FileInfo))
                     {
-                        var reader = new FileStream(filesysInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                        reader.Close();
+                        new FileStream(filesysInfo.FullName, FileMode.Open, FileAccess.Read).Dispose();
                     }
                     if (filesysInfo.GetType() == typeof(DirectoryInfo))
                     {
@@ -153,13 +151,14 @@ namespace Group3r.Assessment
 
                         foreach (SimpleAce simpleAce in analysedSddl)
                         {
+                            //bool grantsRead = false;
                             bool grantsWrite = false;
                             bool grantsModify = false;
                             bool denyRight = false;
                             //see if any of the rights are interesting
                             foreach (string right in simpleAce.Rights)
                             {
-                                //if (ReadRights.Contains(right)) { rwStatus.CanRead = true; }
+                                //if (ReadRights.Contains(right)) { grantsRead = true; }
                                 if (WriteRights.Contains(right))
                                 {
                                     grantsWrite = true;
@@ -206,7 +205,6 @@ namespace Group3r.Assessment
                                     {
                                         rwStatus.CanModify = true;
                                     }
-
                                     if (grantsWrite)
                                     {
                                         rwStatus.CanWrite = true;
@@ -241,31 +239,6 @@ namespace Group3r.Assessment
                     {
                         throw new Exception("File/Folder ACL not read/parsed properly.");
                     }
-
-
-                    /*
-                    when checking a file:
-                create our simple model blanked
-                get all the aces
-                foreach ace:
-                    if the group is in our well-known-sid list as 'canonically low-priv':
-                        check if it's an allow or a deny
-                        check what access it grants/denies
-                        set that into our result, break
-                    if it's a domain trustee:
-                        check if the trustee appears in our list
-                        check if it's an 'allow' or a 'deny'
-                        check what acess it grants/denies
-                        set that into our result, break
-                    if the ace trustee is local to a computer or is from a a diff domain:
-                        check if we are doing remote sam enumeration:
-                            do that - one day - when you can be fucked.
-                    */
-
-
-
-
-                    //Console.WriteLine(parsedSddl.ToString());
                 }
                 catch (UnauthorizedAccessException e)
                 {

@@ -412,7 +412,6 @@ namespace Group3r.View
                                 aTable = TableAdd(aTable, "To", ca.To);
                                 aTable = TableAdd(aTable, "Subject", ca.Subject);
                                 aTable = TableAdd(aTable, "Body", ca.Body);
-                                aTable = TableAdd(aTable, "Server", ca.Server);
                                 aTable = TableAdd(aTable, "Header Fields", ca.HeaderFields);
                                 aTable = TableAdd(aTable, "Server", ca.Server);
                                 if (ca.Attachments.Count >= 1)
