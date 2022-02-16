@@ -87,14 +87,14 @@ namespace Group3r.View
                 string linkPath = String.Format("{0} ({1})", gpoLink.LinkPath, gpoLink.LinkEnforced);
                 gpoTable.AddRow("Link", linkPath);
             }
-            sb.AppendLine(gpoTable.ToMarkDownString());
+            sb.Append(gpoTable.ToMarkDownString());
             /*
             * Findings for GPO Attributes
             */
 
             ConsoleTable gpoFindingTable = new ConsoleTable("Finding", "Placeholder");
             gpoFindingTable.AddRow("This is where", "Findings about GPO ACLs will go.");
-            sb.AppendLine(IndentPara(gpoFindingTable.ToMarkDownString(), 1));
+            sb.Append(IndentPara(gpoFindingTable.ToMarkDownString(), 1));
             //sb.AppendLine("Findings for GPO Attributes will go here.");
             /*
             if (gpoResult.GpoAttributeFindings.Count >= 1)
@@ -131,13 +131,7 @@ namespace Group3r.View
                     poltype = "User Policy";
 
                 }
-                /*
-                                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Data Source");
 
-                                    sTable = TableAdd(sTable, "Name", cs.Name);
-
-                                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
-                */
                 if (sr.Setting.GetType() == typeof(DataSourceSetting))
                 {
                     DataSourceSetting cs = (DataSourceSetting)sr.Setting;
@@ -152,7 +146,7 @@ namespace Group3r.View
                     sTable = TableAdd(sTable, "Cpassword", cs.Cpassword);
                     sTable = TableAdd(sTable, "Password", cs.DSN);
 
-                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
+                    sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(DeviceSetting))
                 {
@@ -172,7 +166,7 @@ namespace Group3r.View
                     sTable = TableAdd(sTable, "Cpassword", cs.Cpassword);
                     sTable = TableAdd(sTable, "Password", cs.Password);
 
-                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
+                    sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
 
                 }
                 else if (sr.Setting.GetType() == typeof(EnvVarSetting))
@@ -196,7 +190,7 @@ namespace Group3r.View
                     sTable = TableAdd(sTable, "FromPath", cs.FromPath);
                     sTable = TableAdd(sTable, "TargetPath", cs.TargetPath);
 
-                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
+                    sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(FolderSetting))
                 {
@@ -222,7 +216,7 @@ namespace Group3r.View
                         sTable = TableAdd(sTable, "Member", memberstring);
                     }
 
-                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
+                    sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
 
                 }
                 else if (sr.Setting.GetType() == typeof(IniFileSetting))
@@ -286,7 +280,7 @@ namespace Group3r.View
                     sTable = TableAdd(sTable, "Cpassword", cs.Cpassword);
                     sTable = TableAdd(sTable, "Password", cs.Password);
 
-                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
+                    sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(PackageSetting))
                 {
@@ -305,7 +299,7 @@ namespace Group3r.View
                     sTable = TableAdd(sTable, "Product Code", cs.ProductCode.ToString());
                     sTable = TableAdd(sTable, "Upgrade Product Code", cs.UpgradeProductCode.ToString());
 
-                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
+                    sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(PrinterSetting))
                 {
@@ -321,7 +315,7 @@ namespace Group3r.View
                     sTable = TableAdd(sTable, "Cpassword", cs.Cpassword);
                     sTable = TableAdd(sTable, "Password", cs.Password);
 
-                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
+                    sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(PrivRightSetting))
                 {
@@ -352,7 +346,7 @@ namespace Group3r.View
                             sTable = TableAdd(sTable, t, trustee.DisplayName + " " + trustee.Sid);
                         }
                     }
-                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
+                    sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(RegistrySetting))
                 {
@@ -372,7 +366,7 @@ namespace Group3r.View
                     }
 
                     Console.WriteLine(sTable.ToMarkDownString());
-                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
+                    sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(SchedTaskSetting))
                 {
@@ -386,7 +380,7 @@ namespace Group3r.View
                     sTable = TableAdd(sTable, "Enabled", cs.Enabled.ToString());
                     sTable = TableAdd(sTable, "Name", cs.Name);
 
-                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
+                    sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
 
                     if (cs.Principals.Count >= 1)
                     {
@@ -400,7 +394,7 @@ namespace Group3r.View
                             pTable = TableAdd(pTable, "Password", principal.Password);
                             pTable = TableAdd(pTable, "LogonType", principal.LogonType);
                             pTable = TableAdd(pTable, "RunLevel", principal.RunLevel);
-                            sb.AppendLine(IndentPara(pTable.ToMarkDownString(), 2));
+                            sb.Append(IndentPara(pTable.ToMarkDownString(), 2));
                             i++;
                         }
                     }
@@ -428,7 +422,7 @@ namespace Group3r.View
                                         aTable = TableAdd(aTable, "Attachment", attachment);
                                     }
                                 }
-                                sb.AppendLine(IndentPara(aTable.ToMarkDownString(), 2));
+                                sb.Append(IndentPara(aTable.ToMarkDownString(), 2));
                             }
                             else if (action.GetType() == typeof(SchedTaskExecAction))
                             {
@@ -439,7 +433,7 @@ namespace Group3r.View
                                 sTable = TableAdd(sTable, "Args", ca.Args);
                                 sTable = TableAdd(sTable, "Working Directory", ca.WorkingDir);
 
-                                sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 2));
+                                sb.Append(IndentPara(sTable.ToMarkDownString(), 2));
                             }
                             else if (action.GetType() == typeof(SchedTaskShowMessageAction))
                             {
@@ -449,7 +443,7 @@ namespace Group3r.View
 
                                 sTable = TableAdd(sTable, "Title", ca.Title);
                                 sTable = TableAdd(sTable, "Body", ca.Body);
-                                sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 2));
+                                sb.Append(IndentPara(sTable.ToMarkDownString(), 2));
                             }
                         }
                     }
@@ -462,7 +456,7 @@ namespace Group3r.View
                             tTable = TableAdd(tTable, "", node.InnerXml);
                         }
 
-                        sb.AppendLine(IndentPara(tTable.ToMarkDownString(), 2));
+                        sb.Append(IndentPara(tTable.ToMarkDownString(), 2));
                     }
                 }
                 else if (sr.Setting.GetType() == typeof(ScriptSetting))
@@ -475,7 +469,7 @@ namespace Group3r.View
                     sTable = TableAdd(sTable, "CmdLine", cs.CmdLine);
                     sTable = TableAdd(sTable, "Args", cs.Parameters);
 
-                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
+                    sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(ShortcutSetting))
                 {
@@ -494,7 +488,7 @@ namespace Group3r.View
                     sTable = TableAdd(sTable, "IconIndex", cs.IconIndex);
                     sTable = TableAdd(sTable, "Status", cs.Status);
 
-                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
+                    sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(SystemAccessSetting))
                 {
@@ -502,7 +496,7 @@ namespace Group3r.View
 
                     ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "System Access");
                     sTable = TableAdd(sTable, cs.SettingName, cs.ValueString);
-                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
+                    sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
 
                 }
                 else if (sr.Setting.GetType() == typeof(UserSetting))
@@ -521,7 +515,7 @@ namespace Group3r.View
                     sTable = TableAdd(sTable, "Password", cs.Password);
                     sTable = TableAdd(sTable, "PwNeverExpires", cs.PwNeverExpires.ToString());
 
-                    sb.AppendLine(IndentPara(sTable.ToMarkDownString(), 1));
+                    sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else
                 {
@@ -549,7 +543,7 @@ namespace Group3r.View
             fTable = TableAdd(fTable, "Reason", finding.FindingReason);
             fTable = TableAdd(fTable, "Detail", finding.FindingDetail);
 
-            sb.AppendLine(IndentPara(fTable.ToMarkDownString(), 2));
+            sb.Append(IndentPara(fTable.ToMarkDownString(), 2));
 
             /*
             if (finding.AclResult.Count >= 1)
@@ -621,22 +615,20 @@ namespace Group3r.View
             return sb.ToString();
         }
 
-        string IndentPara(string inString, int indentfactor)
+        string IndentPara(string inString, int indentfactor, bool tailOn = true)
         {
             string istring = String.Concat(Enumerable.Repeat(" ", _indent));
             string fullindent = String.Concat(Enumerable.Repeat(istring, indentfactor));
             string tailend = String.Concat(Enumerable.Repeat("_", (_indent - 1)));
             string tail = "\\" + tailend;
             StringBuilder sb = new StringBuilder();
-            --indentfactor;
-            while (indentfactor > 0)
+            string taildent = String.Concat(Enumerable.Repeat(istring, indentfactor - 1));
+            if (tailOn)
             {
-                sb.Append(istring);
-                --indentfactor;
+                sb.Append(taildent + tail + "\r\n" + fullindent);
             }
-            sb.Append(tail + "\r\n" + fullindent);
             sb.Append(inString.Replace("\r\n", "\r\n" + fullindent));
-             return sb.ToString();
+             return (sb.ToString().TrimEnd() + "\r\n");
         }
     }
 }
