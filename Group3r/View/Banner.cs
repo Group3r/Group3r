@@ -36,8 +36,8 @@ namespace Group3r.View
                 @"'$$c.    '$$ $$$$$$c    $$$,     $$$$$      $$$   $$$''      ``'$$$ $$$$$$c   ",
                 @" `Y8bo,,,o88o888b '88bo,'888,_ _,88P88    .d888   888o       ,,o888 888b'''8b,",
                 @"   `'YMUP'YMMMMMM  'W'   'YMMMMMP'  'YmmMMMM''   YMMMb      YMMP'  MMMM   'WM;",
-                @"                                                      github.com/l0ss/Group3r ",
-                @"                                                      @mikeloss               ",
+                @"                                                    github.com/Group3r/Group3r",
+                @"                                                            @mikeloss         ",
                 @"                                                                              ",
                 @"Gaze not into the abyss, lest you become recognized as an abyss domain expert,",
                 @"and they expect you keep gazing into the damn thing... - @nickm_tor           "

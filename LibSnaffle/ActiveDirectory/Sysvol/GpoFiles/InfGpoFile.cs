@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -81,7 +80,7 @@ namespace LibSnaffle.ActiveDirectory
                 try
                 {
                     //get the section heading
-                    char[] squareBrackets = {'[', ']'};
+                    char[] squareBrackets = { '[', ']' };
                     string sectionSliceKey = infContentArray[sectionSlice.Key];
                     string sectionHeading = sectionSliceKey.Trim(squareBrackets);
                     //get the line where the section content starts by adding one to the heading's line
@@ -175,7 +174,7 @@ namespace LibSnaffle.ActiveDirectory
                                     // create value objects for each of them
                                     foreach (string value in splitValues.Skip(1))
                                     {
-                                        regVal.RegKeyValType = (RegKeyValType) valType;
+                                        regVal.RegKeyValType = (RegKeyValType)valType;
                                         regVal.ValueBytes = Encoding.Unicode.GetBytes(value);
                                         regVal.ValueString = value;
                                         // add them to the setting
@@ -288,7 +287,7 @@ namespace LibSnaffle.ActiveDirectory
                                             }
 
                                             GroupSetting groupSetting = new GroupSetting()
-                                                {Action = SettingAction.Update};
+                                            { Action = SettingAction.Update };
                                             groupSetting.Name = groupDisplayName;
                                             groupSetting.Source = FilePath;
                                             groupSetting.Members.Add(groupSettingMember);
@@ -301,7 +300,7 @@ namespace LibSnaffle.ActiveDirectory
                                     string group = lineKey.Split('_')[0].Trim('*');
                                     string[] members = splitValues;
 
-                                    GroupSetting groupSetting = new GroupSetting() {Action = SettingAction.Update};
+                                    GroupSetting groupSetting = new GroupSetting() { Action = SettingAction.Update };
 
                                     if (group.StartsWith("S-"))
                                     {
@@ -395,18 +394,18 @@ namespace LibSnaffle.ActiveDirectory
                             case "Version":
                                 // don't care about this but it's expected
                                 break;
-                         // case "System Log":
-                         //     // don't care about this but it's expected
-                         //     break;
-                         // case "Application Log":
-                         //     // don't care about this but it's expected
-                         //     break;
-                         // case "Security Log":
-                         //     // don't care about this but it's expected
-                         //     break;
-                         // case "Profile Description":
-                         //     // don't care about this but it's expected
-                         //     break;
+                            // case "System Log":
+                            //     // don't care about this but it's expected
+                            //     break;
+                            // case "Application Log":
+                            //     // don't care about this but it's expected
+                            //     break;
+                            // case "Security Log":
+                            //     // don't care about this but it's expected
+                            //     break;
+                            // case "Profile Description":
+                            //     // don't care about this but it's expected
+                            //     break;
                             default:
                                 Logger.Degub("Something unexpected or unhandled in an Inf file: " + sectionHeading);
                                 break;

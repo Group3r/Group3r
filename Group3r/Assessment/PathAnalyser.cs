@@ -2,42 +2,44 @@
 using LibSnaffle.Classifiers;
 using LibSnaffle.Classifiers.Results;
 using LibSnaffle.Concurrency;
-using LibSnaffle.EffectiveAccess;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Group3r.Assessment
 {
     class PathAnalyser
     {
         private AssessmentOptions AssessmentOptions { get; set; }
-        EffectivePermissions EffectivePermissions { get; set; }
+        SddlAnalyser SddlAnalyser { get; set; }
+        FsAclAnalyser FsAclAnalyser { get; set; }
+        //EffectivePermissions EffectivePermissions { get; set; }
 
         public PathAnalyser(AssessmentOptions assessmentOptions)
         {
             AssessmentOptions = assessmentOptions;
-            EffectivePermissions = new EffectivePermissions(assessmentOptions.TargetTrustees);
+            SddlAnalyser = new SddlAnalyser(AssessmentOptions);
+            FsAclAnalyser = new FsAclAnalyser(AssessmentOptions);
+            //EffectivePermissions = new EffectivePermissions(assessmentOptions.TargetTrustees);
+            //EffectivePermissions = new EffectivePermissions();
         }
 
-        public PathFinding AnalysePath(string originalPath)
+        public PathResult AnalysePath(string originalPath)
         {
-            PathFinding pathFinding = null;
-            SddlAnalyser sddlAnalyser = new SddlAnalyser(AssessmentOptions);
+            PathResult pathResult = null;
+
             // first we can check if it's a file (and the file exists) and analyse it
             if (File.Exists(originalPath))
             {
                 try
                 {
-                    PathFinding filePathFinding = AnalyseFilePath(originalPath);
-                    filePathFinding.FileExists = true;
-                    filePathFinding.SetProperties(originalPath, true);
-                    if (filePathFinding.FileResult.RwStatus.CanModify)
+                    PathResult filePathResult = AnalyseFilePath(originalPath);
+                    filePathResult.FileExists = true;
+                    filePathResult.SetProperties(originalPath, true);
+                    if (filePathResult.RwStatus.CanModify)
                     {
-                        filePathFinding.FileWritable = true;
+                        filePathResult.FileWritable = true;
                     }
-                    pathFinding = filePathFinding;
+                    pathResult = filePathResult;
                 }
                 catch (Exception e)
                 {
@@ -50,14 +52,14 @@ namespace Group3r.Assessment
                 // or if it's a dir
                 try
                 {
-                    PathFinding dirPathFinding = AnalyseDirPath(originalPath);
-                    dirPathFinding.DirectoryExists = true;
-                    dirPathFinding.SetProperties(originalPath, true);
-                    if (dirPathFinding.DirResult.RwStatus.CanModify || dirPathFinding.DirResult.RwStatus.CanWrite)
+                    PathResult dirPathResult = AnalyseDirPath(originalPath);
+                    dirPathResult.DirectoryExists = true;
+                    dirPathResult.SetProperties(originalPath, true);
+                    if (dirPathResult.RwStatus.CanModify || dirPathResult.RwStatus.CanWrite)
                     {
-                        dirPathFinding.DirectoryWritable = true;
+                        dirPathResult.DirectoryWritable = true;
                     }
-                    pathFinding = dirPathFinding;
+                    pathResult = dirPathResult;
                 }
                 catch (Exception e)
                 {
@@ -80,17 +82,17 @@ namespace Group3r.Assessment
                 {
                     if (Directory.Exists(path))
                     {
-                        RwStatus rwstatus = EffectivePermissions.CanRw(new DirectoryInfo(path));
-                        PathFinding dirPathFinding = AnalyseDirPath(originalPath);
-                        dirPathFinding.SetProperties(originalPath, false);
-                        dirPathFinding.ParentDirectoryExists = path;
-                        dirPathFinding.DirectoryExists = false;
-                        dirPathFinding.DirectoryWritable = false;
-                        if (rwstatus.CanWrite || rwstatus.CanModify)
+                        //RwStatus rwstatus = FsAclAnalyser.AnalyseFsAcl(new DirectoryInfo(path)).RwStatus;
+                        DirPathResult dirPathResult = AnalyseDirPath(path);
+                        dirPathResult.SetProperties(originalPath, false);
+                        dirPathResult.ParentDirectoryExists = path;
+                        dirPathResult.DirectoryExists = false;
+                        dirPathResult.DirectoryWritable = false;
+                        if (dirPathResult.RwStatus.CanWrite || dirPathResult.RwStatus.CanModify)
                         {
-                            dirPathFinding.ParentDirectoryWritable = true;
+                            dirPathResult.ParentDirectoryWritable = true;
                         }
-                        pathFinding = dirPathFinding;
+                        pathResult = dirPathResult;
                         break;
                     }
                     else
@@ -101,73 +103,57 @@ namespace Group3r.Assessment
                     }
                 }
             }
-            return pathFinding;
+            return pathResult;
         }
 
-        public PathFinding AnalyseFilePath(string filePath)
+        public FilePathResult AnalyseFilePath(string filePath)
         {
             BlockingMq mq = new BlockingMq();
 
             FileClassifier fileClassifier = new FileClassifier(mq, AssessmentOptions.ClassifierOptions);
 
-            PathFinding filePathFinding = new FilePathFinding();
+            FilePathResult filePathResult = new FilePathResult();
 
+            //we know the file exists, so it's worth running through the snaffler engine.
             foreach (ClassifierRule rule in AssessmentOptions.ClassifierOptions.AllRules.FileClassifierRules)
             {
-                FileResult result = (FileResult)fileClassifier.Classify(rule, filePath);
-                if (result != null)
+                FileResult snaffResult = (FileResult)fileClassifier.Classify(rule, filePath);
+                if (snaffResult != null && snaffResult.MatchedRule != null)
                 {
-                    FileInfo fileInfo = new FileInfo(filePath);
-                    RwStatus rwStatus = EffectivePermissions.CanRw(fileInfo);
-                    result.RwStatus = rwStatus;
-                    filePathFinding.FileResult = result;
+                    filePathResult.SnaffFileResults.Add(snaffResult);
                 }
             }
 
-            // if we didn't get any hits from snaffler we will still create a fileResult to capture the info about if it's writable
-            if (filePathFinding.FileResult == null)
-            {
-                FileInfo fileInfo = new FileInfo(filePath);
-                FileResult result = new FileResult(fileInfo, false, 0, null);
-                RwStatus rwStatus = EffectivePermissions.CanRw(fileInfo);
-                result.RwStatus = rwStatus;
-                filePathFinding.FileResult = result;
-            }
+            FileInfo fileInfo = new FileInfo(filePath);
+            RwStatus rwStatus = FsAclAnalyser.AnalyseFsAcl(fileInfo).RwStatus;
+            filePathResult.RwStatus = rwStatus;
 
-            return filePathFinding;
+            return filePathResult;
         }
 
-        public PathFinding AnalyseDirPath(string dirPath)
+        public DirPathResult AnalyseDirPath(string dirPath)
         {
             BlockingMq mq = new BlockingMq();
 
             DirClassifier dirClassifier = new DirClassifier(mq, AssessmentOptions.ClassifierOptions);
 
-            PathFinding dirPathFinding = new DirPathFinding();
+            DirPathResult dirPathResult = new DirPathResult();
 
+            //we know the dir exists, so it's worth running through the snaffler engine.
             foreach (ClassifierRule rule in AssessmentOptions.ClassifierOptions.AllRules.DirClassifierRules)
             {
-                DirResult result = (DirResult)dirClassifier.Classify(rule, dirPath);
-                if (result.MatchedRule != null)
+                DirResult snaffResult = (DirResult)dirClassifier.Classify(rule, dirPath);
+                if (snaffResult != null && snaffResult.MatchedRule != null)
                 {
-                    DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
-                    RwStatus rwStatus = EffectivePermissions.CanRw(dirInfo);
-                    result.RwStatus = rwStatus;
-                    dirPathFinding.DirResult = result;
+                    dirPathResult.SnaffDirResults.Add(snaffResult);
                 }
             }
 
-            // if we didn't get any hits from snaffler we will still create a dirResult to capture the info about if it's writable
-            if (dirPathFinding.DirResult == null)
-            {
-                DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
-                DirResult result = new DirResult(dirInfo);
-                RwStatus rwStatus = EffectivePermissions.CanRw(dirInfo);
-                result.RwStatus = rwStatus;
-                dirPathFinding.DirResult = result;
-            }
+            DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
+            RwStatus rwStatus = FsAclAnalyser.AnalyseFsAcl(dirInfo).RwStatus;
+            dirPathResult.RwStatus = rwStatus;
 
-            return dirPathFinding;
+            return dirPathResult;
         }
     }
 }

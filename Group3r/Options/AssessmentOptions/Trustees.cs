@@ -374,7 +374,7 @@ namespace Group3r.Options.AssessmentOptions
                     HighPriv = true,
                     LowPriv = false
                 },
-                                new TrusteeOption()
+                new TrusteeOption()
                 {
                     SID = "S-1-5-21-<DOMAIN>-500",
                     DisplayName = "BUILTIN\\Administrator",
@@ -642,7 +642,7 @@ namespace Group3r.Options.AssessmentOptions
                     DisplayName = "Account Operators",
                     Description =
                         "A built-in group that exists only on domain controllers. By default, the group has no members. By default, Account Operators have permission to create, modify, and delete accounts for users, groups, and computers in all containers and organizational units of Active Directory except the Builtin container and the Domain Controllers OU. Account Operators do not have permission to modify the Administrators and Domain Admins groups, nor do they have permission to modify the accounts for members of those groups.",
-                    DomainSID = true,
+                    DomainSID = false,
                     LocalSID = true,
                     HighPriv = true,
                     LowPriv = false
@@ -653,7 +653,7 @@ namespace Group3r.Options.AssessmentOptions
                     DisplayName = "BUILTIN\\Account Operators",
                     Description =
                         "A built-in group that exists only on domain controllers. By default, the group has no members. By default, Account Operators have permission to create, modify, and delete accounts for users, groups, and computers in all containers and organizational units of Active Directory except the Builtin container and the Domain Controllers OU. Account Operators do not have permission to modify the Administrators and Domain Admins groups, nor do they have permission to modify the accounts for members of those groups.",
-                    DomainSID = true,
+                    DomainSID = false,
                     LocalSID = true,
                     HighPriv = true,
                     LowPriv = false
@@ -664,7 +664,7 @@ namespace Group3r.Options.AssessmentOptions
                     DisplayName = "Server Operators",
                     Description =
                         "A built-in group that exists only on domain controllers. By default, the group has no members. Server Operators can log on to a server interactively; create and delete network shares; start and stop services; back up and restore files; format the hard disk of the computer; and shut down the computer.",
-                    DomainSID = true,
+                    DomainSID = false,
                     LocalSID = true,
                     HighPriv = true,
                     LowPriv = false
@@ -675,7 +675,7 @@ namespace Group3r.Options.AssessmentOptions
                     DisplayName = "BUILTIN\\Server Operators",
                     Description =
                         "A built-in group that exists only on domain controllers. By default, the group has no members. Server Operators can log on to a server interactively; create and delete network shares; start and stop services; back up and restore files; format the hard disk of the computer; and shut down the computer.",
-                    DomainSID = true,
+                    DomainSID = false,
                     LocalSID = true,
                     HighPriv = true,
                     LowPriv = false
@@ -686,7 +686,7 @@ namespace Group3r.Options.AssessmentOptions
                     DisplayName = "Print Operators",
                     Description =
                         "A built-in group that exists only on domain controllers. Print Operators can manage printers and document queues.",
-                    DomainSID = true,
+                    DomainSID = false,
                     LocalSID = true,
                     HighPriv = true,
                     LowPriv = false
@@ -697,7 +697,7 @@ namespace Group3r.Options.AssessmentOptions
                     DisplayName = "BUILTIN\\Print Operators",
                     Description =
                         "A built-in group that exists only on domain controllers. Print Operators can manage printers and document queues.",
-                    DomainSID = true,
+                    DomainSID = false,
                     LocalSID = true,
                     HighPriv = true,
                     LowPriv = false
@@ -708,7 +708,7 @@ namespace Group3r.Options.AssessmentOptions
                     DisplayName = "Backup Operators",
                     Description =
                         "A built-in group. By default, the group has no members. Backup Operators can back up and restore all files on a computer, regardless of the permissions that protect those files. Backup Operators also can log on to the computer and shut it down.",
-                    DomainSID = true,
+                    DomainSID = false,
                     LocalSID = true,
                     HighPriv = true,
                     LowPriv = false
@@ -719,7 +719,7 @@ namespace Group3r.Options.AssessmentOptions
                     DisplayName = "BUILTIN\\Backup Operators",
                     Description =
                         "A built-in group. By default, the group has no members. Backup Operators can back up and restore all files on a computer, regardless of the permissions that protect those files. Backup Operators also can log on to the computer and shut it down.",
-                    DomainSID = true,
+                    DomainSID = false,
                     LocalSID = true,
                     HighPriv = true,
                     LowPriv = false
@@ -730,7 +730,7 @@ namespace Group3r.Options.AssessmentOptions
                     DisplayName = "Replicators",
                     Description =
                         "A built-in group that is used by the File Replication service on domain controllers. By default, the group has no members. Do not add users to this group.",
-                    DomainSID = true,
+                    DomainSID = false,
                     LocalSID = true,
                     HighPriv = true,
                     LowPriv = false
@@ -741,7 +741,7 @@ namespace Group3r.Options.AssessmentOptions
                     DisplayName = "BUILTIN\\Replicators",
                     Description =
                         "A built-in group that is used by the File Replication service on domain controllers. By default, the group has no members. Do not add users to this group.",
-                    DomainSID = true,
+                    DomainSID = false,
                     LocalSID = true,
                     HighPriv = true,
                     LowPriv = false
@@ -895,7 +895,7 @@ namespace Group3r.Options.AssessmentOptions
                     DisplayName = "BUILTIN\\Pre-Windows 2000 Compatible Access",
                     Description =
                         "An alias added by Windows 2000. A backward compatibility group which allows read access on all users and groups in the domain.",
-                    DomainSID = true,
+                    DomainSID = false,
                     LocalSID = false,
                     HighPriv = false,
                     LowPriv = true
@@ -905,7 +905,7 @@ namespace Group3r.Options.AssessmentOptions
                     SID = "S-1-5-32-555",
                     DisplayName = "BUILTIN\\Remote Desktop Users",
                     Description = "An alias. Members in this group are granted the right to logon remotely.",
-                    DomainSID = true,
+                    DomainSID = false,
                     LocalSID = true,
                     HighPriv = true,
                     LowPriv = false
@@ -980,7 +980,7 @@ namespace Group3r.Options.AssessmentOptions
                     DisplayName = "BUILTIN\\Distributed COM Users",
                     Description =
                         "An alias. A group for COM to provide computerwide access controls that govern access to all call, activation, or launch requests on the computer.",
-                    DomainSID = true,
+                    DomainSID = false,
                     LocalSID = true,
                     HighPriv = true,
                     LowPriv = false
@@ -1002,7 +1002,7 @@ namespace Group3r.Options.AssessmentOptions
                     DisplayName = "Read-only Domain Controllers",
                     Description =
                         "A Global group. Members of this group are Read-Only Domain Controllers in the domain",
-                    DomainSID = true,
+                    DomainSID = false,
                     LocalSID = false,
                     HighPriv = true,
                     LowPriv = false
@@ -1110,7 +1110,7 @@ namespace Group3r.Options.AssessmentOptions
                     DisplayName = "BUILTIN\\Hyper-V Administrators",
                     Description =
                         "A Builtin Local group. Members of this group have complete and unrestricted access to all features of Hyper-V.",
-                    DomainSID = true,
+                    DomainSID = false,
                     LocalSID = true,
                     HighPriv = true,
                     LowPriv = false

@@ -23,11 +23,11 @@ namespace Group3r.Assessment.Analysers
                     if (msiPath.StartsWith("\\\\"))
                     {
                         // shortcut targets a network share, we need to look at that
-                        PathFinding pathFinding = pathAnalyser.AnalysePath(msiPath);
+                        PathResult pathResult = pathAnalyser.AnalysePath(msiPath);
 
-                        if (pathFinding != null)
+                        if (pathResult != null)
                         {
-                            if (pathFinding.FileExists && pathFinding.FileWritable)
+                            if (pathResult.FileExists && pathResult.FileWritable)
                             {
                                 if ((int)MinTriage < 4)
                                 {
@@ -39,7 +39,7 @@ namespace Group3r.Assessment.Analysers
                                     });
                                 }
                             }
-                            else if (!pathFinding.FileExists && pathFinding.DirectoryExists && pathFinding.DirectoryWritable)
+                            else if (!pathResult.FileExists && pathResult.DirectoryExists && pathResult.DirectoryWritable)
                             {
                                 if ((int)MinTriage < 4)
                                 {
@@ -51,7 +51,7 @@ namespace Group3r.Assessment.Analysers
                                     });
                                 }
                             }
-                            else if (!pathFinding.FileExists && !pathFinding.DirectoryExists && !String.IsNullOrWhiteSpace(pathFinding.ParentDirectoryExists) && pathFinding.ParentDirectoryWritable)
+                            else if (!pathResult.FileExists && !pathResult.DirectoryExists && !String.IsNullOrWhiteSpace(pathResult.ParentDirectoryExists) && pathResult.ParentDirectoryWritable)
                             {
                                 if ((int)MinTriage < 4)
                                 {
@@ -68,20 +68,6 @@ namespace Group3r.Assessment.Analysers
                 }
             }
 
-            /*
-            findings.Add(new GpoFinding()
-            {
-                //GpoSetting = setting,
-                FindingReason = "Package analyser not implemented.",
-                FindingDetail = "Package analyser not implemented.",
-                Triage = Constants.Triage.Green
-            });
-            // put findings in settingResult
-            SettingResult.Findings = findings;
-
-            // make a new setting object minus the ugly bits we don't care about.
-            SettingResult.Setting = new PackageSetting();
-            */
             SettingResult.Findings = findings;
             SettingResult.Setting = setting;
 

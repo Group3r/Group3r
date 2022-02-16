@@ -46,7 +46,7 @@ namespace Group3r
                 Console.WriteLine(e.ToString());
                 DumpQueue(mq);
                 Console.ReadLine();
-                
+
             }
         }
 

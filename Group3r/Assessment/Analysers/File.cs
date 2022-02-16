@@ -1,5 +1,6 @@
 ﻿using Group3r.Options.AssessmentOptions;
 using LibSnaffle.ActiveDirectory;
+using LibSnaffle.Classifiers.Results;
 using LibSnaffle.Classifiers.Rules;
 using System;
 using System.Collections.Generic;
@@ -29,32 +30,32 @@ namespace Group3r.Assessment.Analysers
                 }
                 else if (Path.IsPathRooted(fromPath))
                 {
-                    PathFinding pathFinding = pathAnalyser.AnalysePath(fromPath);
+                    PathResult pathResult = pathAnalyser.AnalysePath(fromPath);
 
-                    if (pathFinding != null)
+                    if (pathResult != null)
                     {
                         // if the path points to a file and we can write to it, that's a finding
-                        if (pathFinding.FileExists && pathFinding.FileWritable)
+                        if (pathResult.FileExists && pathResult.FileWritable)
                         {
                             if ((int)MinTriage < 4)
                             {
                                 findings.Add(new GpoFinding()
                                 {
-                                    PathFindings = new List<PathFinding>() { pathFinding },
-                                    FindingReason = "Writable file identified at " + pathFinding.AssessedPath + " to be copied to " + setting.TargetPath,
+                                    PathFindings = new List<PathResult>() { pathResult },
+                                    FindingReason = "Writable file identified at " + pathResult.AssessedPath + " to be copied to " + setting.TargetPath,
                                     FindingDetail = "This GPO setting will copy a file from point A to point B. If it's a config file you might be able to modify how an app executes. If it's a script you might be able to modify it before it runs as someone else, if it's an Office doc that supports macros... you get the idea.",
                                     Triage = Constants.Triage.Red
                                 });
                             }
                         }
                         // if the path points to a dir and we can write to it, that's a lesser finding
-                        if (pathFinding.DirectoryExists && pathFinding.DirectoryWritable)
+                        if (pathResult.DirectoryExists && pathResult.DirectoryWritable)
                         {
                             if ((int)MinTriage < 2)
                             {
                                 findings.Add(new GpoFinding()
                                 {
-                                    PathFindings = new List<PathFinding>() { pathFinding },
+                                    PathFindings = new List<PathResult>() { pathResult },
                                     FindingReason = "Honestly this looks like a misconfigured GPP File GPO setting, or a bug in Group3r.",
                                     FindingDetail = "This setting type should be for moving a file, it should never point at a dir.",
                                     Triage = Constants.Triage.Green
@@ -62,51 +63,57 @@ namespace Group3r.Assessment.Analysers
                             }
                         }
                         // if the path points to a dir or a file that doesn't exist, but a parent directory does, and we can write to that, that's a finding
-                        if (!String.IsNullOrEmpty(pathFinding.ParentDirectoryExists) && pathFinding.ParentDirectoryWritable)
+                        if (!String.IsNullOrEmpty(pathResult.ParentDirectoryExists) && pathResult.ParentDirectoryWritable)
                         {
                             if ((int)MinTriage < 3)
                             {
                                 findings.Add(new GpoFinding()
                                 {
-                                    PathFindings = new List<PathFinding>() { pathFinding },
-                                    FindingReason = "A GPP File GPO setting is missing its source file, and it has a writable parent dir identified at " + pathFinding.ParentDirectoryExists + ". The original target path was " + pathFinding.AssessedPath + ". Depending on the file type you might be able to do something fun?",
+                                    PathFindings = new List<PathResult>() { pathResult },
+                                    FindingReason = "A GPP File GPO setting is missing its source file, and it has a writable parent dir identified at " + pathResult.ParentDirectoryExists + ". The original target path was " + pathResult.AssessedPath + ". Depending on the file type you might be able to do something fun?",
                                     FindingDetail = "Recreate the missing parts of the path in the parent dir, put bad guy stuff in the file, cross your fingers.",
                                     Triage = Constants.Triage.Yellow
                                 });
                             }
                         }
-
                         // if the path points to a dir or a file that exist and snaffler deems them interesting, that's a finding on its own, regardless of whether they're modifiable
-                        if (pathFinding.DirResult != null)
+                        if (pathResult.SnaffDirResults.Count > 0)
                         {
-                            if (pathFinding.DirResult.MatchedRule != null)
+                            foreach (DirResult dr in pathResult.SnaffDirResults)
                             {
-                                if ((int)MinTriage <= (int)pathFinding.DirResult.Triage)
+                                if (dr.MatchedRule != null)
                                 {
-                                    findings.Add(new GpoFinding()
+                                    if ((int)MinTriage <= (int)dr.Triage)
                                     {
-                                        PathFindings = new List<PathFinding>() { pathFinding },
-                                        FindingReason = "The Snaffler engine deemed this directory path interesting on its own.",
-                                        FindingDetail = "Have a look at the associated PathFinding.",
-                                        Triage = pathFinding.DirResult.Triage
-                                    });
+                                        findings.Add(new GpoFinding()
+                                        {
+                                            PathFindings = new List<PathResult>() { pathResult },
+                                            FindingReason =
+                                                "The Snaffler engine deemed this directory path interesting on its own.",
+                                            FindingDetail = "Matched Path: " + dr.ResultDirInfo.FullName + " Matched Rule: " + dr.MatchedRule.RuleName,
+                                            Triage = dr.Triage
+                                        });
+                                    }
                                 }
                             }
                         }
-
-                        if (pathFinding.FileResult != null)
+                        if (pathResult.SnaffFileResults.Count > 0)
                         {
-                            if (pathFinding.FileResult.MatchedRule != null)
+                            foreach (FileResult fr in pathResult.SnaffFileResults)
                             {
-                                if ((int)MinTriage <= (int)pathFinding.FileResult.Triage)
+                                if (fr.MatchedRule != null)
                                 {
-                                    findings.Add(new GpoFinding()
+                                    if ((int)MinTriage <= (int)fr.Triage)
                                     {
-                                        PathFindings = new List<PathFinding>() { pathFinding },
-                                        FindingReason = "The Snaffler engine deemed this file path interesting on its own.",
-                                        FindingDetail = "Have a look at the associated PathFinding.",
-                                        Triage = pathFinding.FileResult.Triage
-                                    });
+                                        findings.Add(new GpoFinding()
+                                        {
+                                            PathFindings = new List<PathResult>() { pathResult },
+                                            FindingReason =
+                                                "The Snaffler engine deemed this file path interesting on its own.",
+                                            FindingDetail = "Matched Path: " + fr.ResultFileInfo.FullName + " Matched Rule: " + fr.MatchedRule.RuleName + " Match Context: " + fr.TextResult.MatchContext,
+                                            Triage = fr.Triage
+                                        });
+                                    }
                                 }
                             }
                         }
@@ -116,8 +123,6 @@ namespace Group3r.Assessment.Analysers
 
             // put findings in settingResult
             SettingResult.Findings = findings;
-
-            // make a new setting object minus the ugly bits we don't care about.
             SettingResult.Setting = setting;
 
             return SettingResult;

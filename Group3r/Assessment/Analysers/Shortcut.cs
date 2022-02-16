@@ -1,5 +1,6 @@
 ﻿using Group3r.Options.AssessmentOptions;
 using LibSnaffle.ActiveDirectory;
+using LibSnaffle.Classifiers.Results;
 using LibSnaffle.Classifiers.Rules;
 using System;
 using System.Collections.Generic;
@@ -19,9 +20,9 @@ namespace Group3r.Assessment.Analysers
             if (setting.TargetPath.StartsWith("\\\\"))
             {
                 // shortcut targets a network share, we need to look at that
-                PathFinding pathFinding = pathAnalyser.AnalysePath(setting.TargetPath);
+                PathResult pathResult = pathAnalyser.AnalysePath(setting.TargetPath);
 
-                if (pathFinding.FileExists && pathFinding.FileWritable)
+                if (pathResult.FileExists && pathResult.FileWritable)
                 {
                     if ((int)MinTriage < 4)
                     {
@@ -33,7 +34,7 @@ namespace Group3r.Assessment.Analysers
                         });
                     }
                 }
-                else if (!pathFinding.FileExists && pathFinding.DirectoryExists && pathFinding.DirectoryWritable)
+                else if (!pathResult.FileExists && pathResult.DirectoryExists && pathResult.DirectoryWritable)
                 {
                     if ((int)MinTriage < 4)
                     {
@@ -45,7 +46,7 @@ namespace Group3r.Assessment.Analysers
                         });
                     }
                 }
-                else if (!pathFinding.FileExists && !pathFinding.DirectoryExists && !String.IsNullOrWhiteSpace(pathFinding.ParentDirectoryExists) && pathFinding.ParentDirectoryWritable)
+                else if (!pathResult.FileExists && !pathResult.DirectoryExists && !String.IsNullOrWhiteSpace(pathResult.ParentDirectoryExists) && pathResult.ParentDirectoryWritable)
                 {
                     if ((int)MinTriage < 4)
                     {
@@ -61,11 +62,11 @@ namespace Group3r.Assessment.Analysers
 
             if (setting.StartIn.StartsWith("\\\\"))
             {
-                PathFinding pathFinding = pathAnalyser.AnalysePath(setting.StartIn);
+                PathResult pathResult = pathAnalyser.AnalysePath(setting.StartIn);
 
                 // shortcut uses a startin directory on a network share, we need to look at that.
 
-                if (pathFinding.DirectoryExists && pathFinding.DirectoryWritable)
+                if (pathResult.DirectoryExists && pathResult.DirectoryWritable)
                 {
                     if ((int)MinTriage < 3)
                     {
@@ -77,7 +78,7 @@ namespace Group3r.Assessment.Analysers
                         });
                     }
                 }
-                else if (!pathFinding.FileExists && !pathFinding.DirectoryExists && !String.IsNullOrWhiteSpace(pathFinding.ParentDirectoryExists) && pathFinding.ParentDirectoryWritable)
+                else if (!pathResult.FileExists && !pathResult.DirectoryExists && !String.IsNullOrWhiteSpace(pathResult.ParentDirectoryExists) && pathResult.ParentDirectoryWritable)
                 {
                     if ((int)MinTriage < 3)
                     {
@@ -87,6 +88,48 @@ namespace Group3r.Assessment.Analysers
                             FindingDetail = "You might be able to pull some DLL sideloading shenanigans in " + setting.StartIn + " if you create it.",
                             Triage = Constants.Triage.Yellow
                         });
+                    }
+                }
+
+                // if the path points to a dir or a file that exist and snaffler deems them interesting, that's a finding on its own, regardless of whether they're modifiable
+                if (pathResult.SnaffDirResults.Count > 0)
+                {
+                    foreach (DirResult dr in pathResult.SnaffDirResults)
+                    {
+                        if (dr.MatchedRule != null)
+                        {
+                            if ((int)MinTriage <= (int)dr.Triage)
+                            {
+                                findings.Add(new GpoFinding()
+                                {
+                                    PathFindings = new List<PathResult>() { pathResult },
+                                    FindingReason =
+                                        "The Snaffler engine deemed this directory path interesting on its own.",
+                                    FindingDetail = "Matched Path: " + dr.ResultDirInfo.FullName + " Matched Rule: " + dr.MatchedRule.RuleName,
+                                    Triage = dr.Triage
+                                });
+                            }
+                        }
+                    }
+                }
+                if (pathResult.SnaffFileResults.Count > 0)
+                {
+                    foreach (FileResult fr in pathResult.SnaffFileResults)
+                    {
+                        if (fr.MatchedRule != null)
+                        {
+                            if ((int)MinTriage <= (int)fr.Triage)
+                            {
+                                findings.Add(new GpoFinding()
+                                {
+                                    PathFindings = new List<PathResult>() { pathResult },
+                                    FindingReason =
+                                        "The Snaffler engine deemed this file path interesting on its own.",
+                                    FindingDetail = "Matched Path: " + fr.ResultFileInfo.FullName + " Matched Rule: " + fr.MatchedRule.RuleName + " Match Context: " + fr.TextResult.MatchContext,
+                                    Triage = fr.Triage
+                                });
+                            }
+                        }
                     }
                 }
             }

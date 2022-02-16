@@ -2,12 +2,14 @@ using Group3r.Assessment;
 using Group3r.Assessment.Analysers;
 using Group3r.Concurrency;
 using Group3r.Options;
+using Group3r.Options.AssessmentOptions;
 using LibSnaffle.ActiveDirectory;
 using LibSnaffle.Concurrency;
 using LibSnaffle.Errors;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Security.Principal;
 using System.Threading;
 using System.Timers;
@@ -75,10 +77,54 @@ namespace Group3r
                     ad = new ActiveDirectory(Mq, Options.TargetDomain, Options.TargetDc);
 
                     Mq.Trace("Enumerating current user's name and group memberships.");
-                    if (Options.AssessmentOptions.TargetTrustees == null)
+                    //if (Options.AssessmentOptions.TargetTrustees == null)
+                    //{
+                    string targetUserName = WindowsIdentity.GetCurrent().Name;
+                    if (targetUserName.Contains("\\"))
                     {
-                        string thing = WindowsIdentity.GetCurrent().Name;
-                        Options.AssessmentOptions.TargetTrustees = new List<string>() {thing};
+                        targetUserName = targetUserName.Split('\\')[1];
+                    }
+
+                    List<Trustee> currentUserAndGroups = ad.GetUsersGroupsRecursive(targetUserName);
+
+                    foreach (Trustee uog in currentUserAndGroups)
+                    {
+                        bool match = false;
+                        // check match on both SID and displayname
+                        IEnumerable<TrusteeOption> dispMatches = Options.AssessmentOptions.TrusteeOptions.Where(trustee => trustee.DisplayName == uog.DisplayName);
+                        if (dispMatches.Any())
+                        {
+                            match = true;
+                            // if we are a member of a well-known group it should be targeted
+                            dispMatches.First().Target = true;
+                        }
+                        IEnumerable<TrusteeOption> sidMatches = Options.AssessmentOptions.TrusteeOptions.Where(trustee => trustee.SID == uog.Sid);
+                        if (sidMatches.Any())
+                        {
+                            match = true;
+                            // if we are a member of a well-known group it should be targeted
+                            sidMatches.First().Target = true;
+                        }
+                        if (!match)
+                        {
+                            // if it's not already in the list of well-known principals, add it to TrusteeOptions
+                            Options.AssessmentOptions.TrusteeOptions.Add(new TrusteeOption()
+                            {
+                                SID = uog.Sid,
+                                DisplayName = uog.DisplayName,
+                                Target = true
+                            });
+                        }
+                    }
+
+                    // if the user has defined some custom trustee(s) to target:
+                    if (Options.AssessmentOptions.TargetTrustees != null)
+                    {
+                        foreach (TrusteeOption trusteeOption in Options.AssessmentOptions.TargetTrustees)
+                        {
+                            trusteeOption.Target = true;
+                            Options.AssessmentOptions.TrusteeOptions.Add(trusteeOption);
+                        }
                     }
 
                     Mq.Degub("Getting GPOs.");
@@ -140,7 +186,8 @@ namespace Group3r
                         {
                             try
                             {
-                                if (String.IsNullOrWhiteSpace(setting.Source)){
+                                if (String.IsNullOrWhiteSpace(setting.Source))
+                                {
                                     Mq.Error("Not sure what file source i got this setting from but i'm analysing it anyway: " + setting.GetType().ToString());
                                 }
                                 else

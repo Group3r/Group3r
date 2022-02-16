@@ -12,7 +12,9 @@ namespace LibSnaffle.ActiveDirectory
         public string Sid { get; set; }
         public string DisplayName { get; set; }
         public string WkHighOrLowPriv { get; set; }
+        public string DistinguishedName { get; set; }
 
+        public Trustee() { }
         public Trustee(string input, bool isSid = true)
         {
             // clean up input

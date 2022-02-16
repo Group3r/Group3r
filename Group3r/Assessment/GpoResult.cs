@@ -42,10 +42,6 @@ namespace Group3r.Assessment
                     };
                     GpoAttributeFindings.Add(gpoFinding);
                 }
-
-                // null these out, we don't want them any more.
-                Attributes.NtSecurityDescriptor = null;
-                Attributes.NtSecurityDescriptorSddl = null;
             }
         }
     }

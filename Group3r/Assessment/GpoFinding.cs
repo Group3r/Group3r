@@ -1,9 +1,7 @@
-﻿using LibSnaffle.ActiveDirectory;
-using LibSnaffle.Classifiers.Results;
+﻿using LibSnaffle.Classifiers.Results;
 using LibSnaffle.Classifiers.Rules;
 using System.Collections.Generic;
 using System.IO;
-using System.Security.AccessControl;
 
 namespace Group3r.Assessment
 {
@@ -12,11 +10,11 @@ namespace Group3r.Assessment
         public string FindingReason { get; set; }
         public string FindingDetail { get; set; }
         public Constants.Triage Triage { get; set; }
-        public List<PathFinding> PathFindings { get; set; } = new List<PathFinding>();
+        public List<PathResult> PathFindings { get; set; } = new List<PathResult>();
         public List<SimpleAce> AclResult { get; set; } = new List<SimpleAce>();
     }
 
-    public abstract class PathFinding
+    public abstract class PathResult
     {
         // path-finding-specific fields
         public string AssessedPath { get; set; }
@@ -26,14 +24,14 @@ namespace Group3r.Assessment
         public bool DirectoryWritable { get; set; }
         public string ParentDirectoryExists { get; set; }
         public bool ParentDirectoryWritable { get; set; }
-        public DirResult DirResult { get; set; }
-        public FileResult FileResult { get; set; }
-
+        public List<DirResult> SnaffDirResults { get; set; } = new List<DirResult>();
+        public List<FileResult> SnaffFileResults { get; set; } = new List<FileResult>();
+        public RwStatus RwStatus { get; set; }
         public abstract void SetProperties(string originalPath, bool exists);
     }
 
     //Just putting these here for now until I can think of or realise a better place to store them.
-    public class FilePathFinding : PathFinding
+    public class FilePathResult : PathResult
     {
         public override void SetProperties(string originalPath, bool exists)
         {
@@ -49,7 +47,7 @@ namespace Group3r.Assessment
         }
     }
 
-    public class DirPathFinding : PathFinding
+    public class DirPathResult : PathResult
     {
         public override void SetProperties(string originalPath, bool exists)
         {

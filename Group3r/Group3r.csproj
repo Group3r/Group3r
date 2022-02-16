@@ -81,6 +81,7 @@
     <Compile Include="Assessment\Analysers\Shortcut.cs" />
     <Compile Include="Assessment\Analysers\SystemAccess.cs" />
     <Compile Include="Assessment\Analysers\User.cs" />
+    <Compile Include="Assessment\FsAclAnalyser.cs" />
     <Compile Include="Assessment\GpoFinding.cs" />
     <Compile Include="Assessment\GpoResult.cs" />
     <Compile Include="Assessment\PathAnalyser.cs" />
@@ -118,6 +119,7 @@
       <Name>LibSnaffle</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

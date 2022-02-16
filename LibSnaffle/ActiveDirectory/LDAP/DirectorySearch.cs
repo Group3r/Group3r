@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.DirectoryServices.ActiveDirectory;
 using System.DirectoryServices.Protocols;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 //using SharpHound3.Enums; - yep, i gave up and just bolted this in.
