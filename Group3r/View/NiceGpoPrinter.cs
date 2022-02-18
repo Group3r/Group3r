@@ -92,9 +92,9 @@ namespace Group3r.View
             * Findings for GPO Attributes
             */
 
-            ConsoleTable gpoFindingTable = new ConsoleTable("Finding", "Placeholder");
-            gpoFindingTable.AddRow("This is where", "Findings about GPO ACLs will go.");
-            sb.Append(IndentPara(gpoFindingTable.ToMarkDownString(), 1));
+            //ConsoleTable gpoFindingTable = new ConsoleTable("Finding", "Placeholder");
+            //gpoFindingTable.AddRow("This is where", "Findings about GPO ACLs will go.");
+            //sb.Append(IndentPara(gpoFindingTable.ToMarkDownString(), 1));
             //sb.AppendLine("Findings for GPO Attributes will go here.");
             /*
             if (gpoResult.GpoAttributeFindings.Count >= 1)
@@ -428,11 +428,11 @@ namespace Group3r.View
                                 SchedTaskExecAction ca = (SchedTaskExecAction)action;
 
                                 ConsoleTable aTable = new ConsoleTable("Execute Action", "");
-                                sTable = TableAdd(sTable, "Command", ca.Command);
-                                sTable = TableAdd(sTable, "Args", ca.Args);
-                                sTable = TableAdd(sTable, "Working Directory", ca.WorkingDir);
+                                sTable = TableAdd(aTable, "Command", ca.Command);
+                                sTable = TableAdd(aTable, "Args", ca.Args);
+                                sTable = TableAdd(aTable, "Working Directory", ca.WorkingDir);
 
-                                sb.Append(IndentPara(sTable.ToMarkDownString(), 2));
+                                sb.Append(IndentPara(aTable.ToMarkDownString(), 2));
                             }
                             else if (action.GetType() == typeof(SchedTaskShowMessageAction))
                             {
@@ -440,9 +440,9 @@ namespace Group3r.View
 
                                 ConsoleTable aTable = new ConsoleTable("Message Action", "");
 
-                                sTable = TableAdd(sTable, "Title", ca.Title);
-                                sTable = TableAdd(sTable, "Body", ca.Body);
-                                sb.Append(IndentPara(sTable.ToMarkDownString(), 2));
+                                sTable = TableAdd(aTable, "Title", ca.Title);
+                                sTable = TableAdd(aTable, "Body", ca.Body);
+                                sb.Append(IndentPara(aTable.ToMarkDownString(), 2));
                             }
                         }
                     }

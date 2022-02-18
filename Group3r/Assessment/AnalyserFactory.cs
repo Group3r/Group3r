@@ -8,11 +8,11 @@ namespace Group3r.Assessment
         public Analyser GetAnalyser(GpoSetting setting)
         {
 
-            //           if (setting.GetType() == typeof(DataSourceSetting))
-            //           {
-            //               DataSourceSetting castSetting = (DataSourceSetting)setting;
-            //               return new DataSourceAnalyser() { setting = castSetting };
-            //           }
+            if (setting.GetType() == typeof(DataSourceSetting))
+            {
+                DataSourceSetting castSetting = (DataSourceSetting)setting;
+                return new DataSourceAnalyser() { setting = castSetting };
+            }
             /*
             else if (setting.GetType() == typeof(DeviceSetting))
             {
@@ -40,7 +40,7 @@ namespace Group3r.Assessment
             }
             */
             //else if (setting.GetType() == typeof(FileSetting))
-            if (setting.GetType() == typeof(FileSetting))
+            else if (setting.GetType() == typeof(FileSetting))
             {
                 FileSetting castSetting = (FileSetting)setting;
                 return new FileAnalyser() { setting = castSetting };
@@ -52,11 +52,11 @@ namespace Group3r.Assessment
                 return new FolderAnalyser() { setting = castSetting };
             }
             */
-            //           else if (setting.GetType() == typeof(GroupSetting))
-            //           {
-            //               GroupSetting castSetting = (GroupSetting)setting;
-            //               return new GroupAnalyser() { setting = castSetting };
-            //           }
+            else if (setting.GetType() == typeof(GroupSetting))
+            {
+                GroupSetting castSetting = (GroupSetting)setting;
+                return new GroupAnalyser() { setting = castSetting };
+            }
             /*
             else if (setting.GetType() == typeof(IniFileSetting))
             {
@@ -64,20 +64,20 @@ namespace Group3r.Assessment
                 return new IniFileAnalyser() { setting = castSetting };
             }
             */
-            //           else if (setting.GetType() == typeof(KerbPolicySetting))
-            //           {
-            //               KerbPolicySetting castSetting = (KerbPolicySetting)setting;
-            //               return new KerbPolicyAnalyser() { setting = castSetting };
-            //           }            else if (setting.GetType() == typeof(NetOptionSetting))
-            //           {
-            //               NetOptionSetting castSetting = (NetOptionSetting)setting;
-            //               return new NetOptionAnalyser() { setting = castSetting };
-            //           }
-            //           else if (setting.GetType() == typeof(NetworkShareSetting))
-            //           {
-            //               NetworkShareSetting castSetting = (NetworkShareSetting) setting;
-            //               return new NetworkShareAnalyser() {setting = castSetting};
-            //           }
+            else if (setting.GetType() == typeof(KerbPolicySetting))
+            {
+                KerbPolicySetting castSetting = (KerbPolicySetting)setting;
+                return new KerbPolicyAnalyser() { setting = castSetting };
+            }            else if (setting.GetType() == typeof(NetOptionSetting))
+            {
+                NetOptionSetting castSetting = (NetOptionSetting)setting;
+                return new NetOptionAnalyser() { setting = castSetting };
+            }
+            else if (setting.GetType() == typeof(NetworkShareSetting))
+            {
+                NetworkShareSetting castSetting = (NetworkShareSetting) setting;
+                return new NetworkShareAnalyser() {setting = castSetting};
+            }
             else if (setting.GetType() == typeof(NtServiceSetting))
             {
                 NtServiceSetting castSetting = (NtServiceSetting)setting;
@@ -88,21 +88,21 @@ namespace Group3r.Assessment
                 PackageSetting castSetting = (PackageSetting)setting;
                 return new PackageAnalyser() { setting = castSetting };
             }
-            //           else if (setting.GetType() == typeof(PrinterSetting))
-            //           {
-            //               PrinterSetting castSetting = (PrinterSetting)setting;
-            //               return new PrinterAnalyser() { setting = castSetting };
-            //           }
-            //           else if (setting.GetType() == typeof(PrivRightSetting))
-            //           {
-            //               PrivRightSetting castSetting = (PrivRightSetting)setting;
-            //               return new PrivRightAnalyser() { setting = castSetting };
-            //           }
-            //           else if (setting.GetType() == typeof(RegistrySetting))
-            //           {
-            //               RegistrySetting castSetting = (RegistrySetting)setting;
-            //               return new RegistryAnalyser() { setting = castSetting };
-            //           }
+            else if (setting.GetType() == typeof(PrinterSetting))
+            {
+                PrinterSetting castSetting = (PrinterSetting)setting;
+                return new PrinterAnalyser() { setting = castSetting };
+            }
+            else if (setting.GetType() == typeof(PrivRightSetting))
+            {
+                PrivRightSetting castSetting = (PrivRightSetting)setting;
+                return new PrivRightAnalyser() { setting = castSetting };
+            }
+            else if (setting.GetType() == typeof(RegistrySetting))
+            {
+                RegistrySetting castSetting = (RegistrySetting)setting;
+                return new RegistryAnalyser() { setting = castSetting };
+            }
             else if (setting.GetType() == typeof(SchedTaskSetting))
             {
                 SchedTaskSetting castSetting = (SchedTaskSetting)setting;
