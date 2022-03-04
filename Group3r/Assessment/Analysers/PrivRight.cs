@@ -49,6 +49,10 @@ namespace Group3r.Assessment.Analysers
                                         {
                                             break;
                                         }
+                                        if (setting.Privilege == "SeImpersonatePrivilege")
+                                        {
+                                            break;
+                                        }
                                     }
 
                                     // finding
