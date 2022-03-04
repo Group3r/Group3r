@@ -259,6 +259,35 @@ namespace Group3r.Assessment.Analysers
                                     }
                                 }
                                 break;
+                            case InterestingIf.LessThanGood:
+                                if (regValue.ValueName.IndexOf(ruleKey.ValueName, StringComparison.OrdinalIgnoreCase) >= 0)
+                                {
+                                    bool interesting = false;
+                                    switch (ruleKey.ValueType)
+                                    {
+                                        case RegKeyValType.REG_DWORD:
+                                            int dword;
+                                            Int32.TryParse(Encoding.UTF8.GetString(regValue.ValueBytes, 0,
+                                                regValue.ValueBytes.Length), out dword); interesting = IsInterestingBecauseLessThanGood(ruleKey.GoodDword, dword);
+                                            break;
+                                        default:
+                                            throw new NotImplementedException("No code to handle rules around " +
+                                                                              ruleKey.ValueType.ToString() + " keys.");
+                                    }
+                                    if (interesting)
+                                    {
+                                        if ((int)MinTriage < (int)ruleKey.Triage)
+                                        {
+                                            findings.Add(new GpoFinding()
+                                            {
+                                                FindingReason = "This registry key was set to a non-default value, which was interesting enough for me.",
+                                                FindingDetail = ruleKey.FriendlyDescription + " " + ruleKey.MsDesc,
+                                                Triage = ruleKey.Triage
+                                            });
+                                        }
+                                    }
+                                }
+                                break;
                         }
                     }
                 }
@@ -334,7 +363,14 @@ namespace Group3r.Assessment.Analysers
             return cleanSetting;
         }
 
-
+        private bool IsInterestingBecauseLessThanGood(int goodVal, int settingVal)
+        {
+            if (settingVal < goodVal)
+            {
+                return true;
+            }
+            return false;
+        }
         private bool IsInterestingBecauseNotDefault(int defaultVal, int settingVal)
         {
             if (defaultVal != settingVal)

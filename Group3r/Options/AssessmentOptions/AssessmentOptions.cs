@@ -96,7 +96,8 @@ namespace Group3r.Options.AssessmentOptions
         Present,
         Bad,
         NotGood,
-        NotDefault
+        NotDefault,
+        LessThanGood
     }
 
     public class RegKey
