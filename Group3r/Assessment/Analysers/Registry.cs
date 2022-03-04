@@ -280,7 +280,7 @@ namespace Group3r.Assessment.Analysers
                                         {
                                             findings.Add(new GpoFinding()
                                             {
-                                                FindingReason = "This registry key was set to a non-default value, which was interesting enough for me.",
+                                                FindingReason = "This registry key was set to a 'less-than-good' value, which made it interesting.",
                                                 FindingDetail = ruleKey.FriendlyDescription + " " + ruleKey.MsDesc,
                                                 Triage = ruleKey.Triage
                                             });
