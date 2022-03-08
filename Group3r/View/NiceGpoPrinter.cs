@@ -165,6 +165,7 @@ namespace Group3r.View
                     poltype = "Package Policy";
                 }
 
+                // big ol' list of output formatters that should be their own methods but i'm a MANIAC AND YOU CAN'T STOP ME!
                 if (sr.Setting.GetType() == typeof(DataSourceSetting))
                 {
                     DataSourceSetting cs = (DataSourceSetting)sr.Setting;
@@ -294,9 +295,7 @@ namespace Group3r.View
 
                     ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Kerberos Policy");
 
-                    sTable = TableAdd(sTable, "No Output Formatter For This Setting Type", "");
-
-                    //sTable = TableAdd(sTable, "Action", cs.FileAction);
+                    sTable = TableAdd(sTable, cs.Key, cs.Value);
 
                     sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
                 }
@@ -405,7 +404,7 @@ namespace Group3r.View
 
                     ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "User Rights Assignment");
 
-                    sTable = TableAdd(sTable, " Privilege Name", cs.Privilege);
+                    sTable = TableAdd(sTable, "Privilege Name", cs.Privilege);
 
                     bool first = true;
                     string t = "Trustee";
@@ -600,7 +599,7 @@ namespace Group3r.View
                 }
                 else
                 {
-
+                    throw new NotImplementedException("Trying to output a setting type with no output formatter: " + sr.Setting.GetType().ToString());
                 }
 
                 if (sr.Findings.Count >= 1)
