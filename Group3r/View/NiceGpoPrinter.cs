@@ -160,6 +160,10 @@ namespace Group3r.View
                     }
                     poltype = "User Policy";
                 }
+                else if (sr.Setting.PolicyType == PolicyType.Package)
+                {
+                    poltype = "Package Policy";
+                }
 
                 if (sr.Setting.GetType() == typeof(DataSourceSetting))
                 {
@@ -182,6 +186,7 @@ namespace Group3r.View
                     DeviceSetting cs = (DeviceSetting)sr.Setting;
 
                     ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Devices");
+                    sTable = TableAdd(sTable, "No Output Formatter For This Setting Type", "");
 
                     //sTable = TableAdd(sTable, "Action", cs.FileAction);
 
@@ -209,6 +214,7 @@ namespace Group3r.View
                     EnvVarSetting cs = (EnvVarSetting)sr.Setting;
 
                     ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Env Variable");
+                    sTable = TableAdd(sTable, "No Output Formatter For This Setting Type", "");
 
                     //sTable = TableAdd(sTable, "Action", cs.FileAction);
 
@@ -219,6 +225,7 @@ namespace Group3r.View
                     EventAuditSetting cs = (EventAuditSetting)sr.Setting;
 
                     ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Audit Policy");
+                    sTable = TableAdd(sTable, "No Output Formatter For This Setting Type", "");
 
                     //sTable = TableAdd(sTable, "Action", cs.FileAction);
 
@@ -276,6 +283,7 @@ namespace Group3r.View
 
                     ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Ini File");
 
+                    sTable = TableAdd(sTable, "No Output Formatter For This Setting Type", "");
                     //sTable = TableAdd(sTable, "Action", cs.FileAction);
 
                     sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
@@ -286,14 +294,18 @@ namespace Group3r.View
 
                     ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Kerberos Policy");
 
+                    sTable = TableAdd(sTable, "No Output Formatter For This Setting Type", "");
+
                     //sTable = TableAdd(sTable, "Action", cs.FileAction);
-                    
+
                     sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(NetOptionSetting))
                 {
                     NetOptionSetting cs = (NetOptionSetting)sr.Setting;
                     ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Network Options");
+
+                    sTable = TableAdd(sTable, "No Output Formatter For This Setting Type", "");
 
                     //sTable = TableAdd(sTable, "Action", cs.FileAction);
 
@@ -302,7 +314,9 @@ namespace Group3r.View
                 else if (sr.Setting.GetType() == typeof(NetworkShareSetting))
                 {
                     NetworkShareSetting cs = (NetworkShareSetting)sr.Setting;
-                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Kerberos Policy");
+                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Network Share");
+
+                    sTable = TableAdd(sTable, "No Output Formatter For This Setting Type", "");
 
                     //sTable = TableAdd(sTable, "Action", cs.FileAction);
 
