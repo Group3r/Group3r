@@ -37,6 +37,7 @@ namespace Group3r.Options
             parser.Arguments.Add(new SwitchArgument('w', "findingsonly", "Only displays settings that had an associated finding.", false));
             parser.Arguments.Add(new ValueArgument<int>('a', "mintriage", "Minimum severity of findings to show where 1 is lowest severity and 4 is highest."));
             parser.Arguments.Add(new ValueArgument<string>('u', "testuser", "Permission checks will focus on what access is available to this user. Format as domain\\user"));
+            parser.Arguments.Add(new SwitchArgument('e', "enabled", "Only displays policy types and settings that are enabled.", false));
             return parser;
         }
 
@@ -136,6 +137,10 @@ namespace Group3r.Options
                             options.TargetDomain = value;
                             mq.Degub("Target domain is " + value);
                         }
+                        break;
+                    case "enabled":
+                        options.EnabledPolOnly = true;
+                        mq.Degub("Limiting output to enabled policy only.");
                         break;
                     /*
                 case "username":

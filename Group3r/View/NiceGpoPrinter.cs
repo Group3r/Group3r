@@ -45,6 +45,14 @@ namespace Group3r.View
             {
                 return "";
             }
+            // bail out entirely if both pol types are disabled and we are running with the -e flag.
+            if (grouperOptions.EnabledPolOnly == true)
+            {
+                if (!gpoResult.Attributes.ComputerPolicyEnabled && !gpoResult.Attributes.UserPolicyEnabled)
+                {
+                    return "";
+                }
+            }
 
             /*
              * GPO NAME AND ATTRIBUTES
@@ -79,13 +87,26 @@ namespace Group3r.View
                 userPolicy = "Enabled";
             }
 
+
             gpoTable.AddRow("Computer Policy", computerPolicy);
             gpoTable.AddRow("User Policy", userPolicy);
 
-            foreach (GPOLink gpoLink in gpoResult.Attributes.GpoLinks)
+            // if there are links, add them
+            if (gpoResult.Attributes.GpoLinks.Count >= 1)
             {
-                string linkPath = String.Format("{0} ({1})", gpoLink.LinkPath, gpoLink.LinkEnforced);
-                gpoTable.AddRow("Link", linkPath);
+                foreach (GPOLink gpoLink in gpoResult.Attributes.GpoLinks)
+                {
+                    string linkPath = String.Format("{0} ({1})", gpoLink.LinkPath, gpoLink.LinkEnforced);
+                    gpoTable.AddRow("Link", linkPath);
+                }
+            }
+            else
+            {
+                // if there aren't any, and we're only showing enabled policy, bail out.
+                if (grouperOptions.EnabledPolOnly)
+                {
+                    return "";
+                }
             }
             sb.Append(gpoTable.ToMarkDownString());
             /*
@@ -124,12 +145,20 @@ namespace Group3r.View
 
                 if (sr.Setting.PolicyType == PolicyType.Computer)
                 {
+                    // if computer policy is disabled on this GPO, skip it.
+                    if (grouperOptions.EnabledPolOnly && !gpoResult.Attributes.ComputerPolicyEnabled)
+                    {
+                        continue;
+                    }
                     poltype = "Computer Policy";
                 }
                 else if (sr.Setting.PolicyType == PolicyType.User)
                 {
+                    if (grouperOptions.EnabledPolOnly && !gpoResult.Attributes.UserPolicyEnabled)
+                    {
+                        continue;
+                    }
                     poltype = "User Policy";
-
                 }
 
                 if (sr.Setting.GetType() == typeof(DataSourceSetting))
@@ -151,6 +180,12 @@ namespace Group3r.View
                 else if (sr.Setting.GetType() == typeof(DeviceSetting))
                 {
                     DeviceSetting cs = (DeviceSetting)sr.Setting;
+
+                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Devices");
+
+                    //sTable = TableAdd(sTable, "Action", cs.FileAction);
+
+                    sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(DriveSetting))
                 {
@@ -173,11 +208,21 @@ namespace Group3r.View
                 {
                     EnvVarSetting cs = (EnvVarSetting)sr.Setting;
 
+                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Env Variable");
+
+                    //sTable = TableAdd(sTable, "Action", cs.FileAction);
+
+                    sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(EventAuditSetting))
                 {
                     EventAuditSetting cs = (EventAuditSetting)sr.Setting;
 
+                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Audit Policy");
+
+                    //sTable = TableAdd(sTable, "Action", cs.FileAction);
+
+                    sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(FileSetting))
                 {
@@ -195,6 +240,12 @@ namespace Group3r.View
                 else if (sr.Setting.GetType() == typeof(FolderSetting))
                 {
                     FolderSetting cs = (FolderSetting)sr.Setting;
+
+                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Folder");
+
+                    //sTable = TableAdd(sTable, "Action", cs.FileAction);
+
+                    sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(GroupSetting))
                 {
@@ -223,26 +274,43 @@ namespace Group3r.View
                 {
                     IniFileSetting cs = (IniFileSetting)sr.Setting;
 
+                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Ini File");
+
+                    //sTable = TableAdd(sTable, "Action", cs.FileAction);
+
+                    sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(KerbPolicySetting))
                 {
                     KerbPolicySetting cs = (KerbPolicySetting)sr.Setting;
 
+                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Kerberos Policy");
+
+                    //sTable = TableAdd(sTable, "Action", cs.FileAction);
+                    
+                    sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(NetOptionSetting))
                 {
                     NetOptionSetting cs = (NetOptionSetting)sr.Setting;
+                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Network Options");
 
+                    //sTable = TableAdd(sTable, "Action", cs.FileAction);
+
+                    sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(NetworkShareSetting))
                 {
                     NetworkShareSetting cs = (NetworkShareSetting)sr.Setting;
+                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Kerberos Policy");
 
+                    //sTable = TableAdd(sTable, "Action", cs.FileAction);
+
+                    sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
                 }
                 else if (sr.Setting.GetType() == typeof(NtServiceSetting))
                 {
                     NtServiceSetting cs = (NtServiceSetting)sr.Setting;
-
 
                     ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Service");
 

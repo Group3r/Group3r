@@ -11,7 +11,8 @@ namespace Group3r.Options
         public string TargetDc { get; set; }
         public string Password { get; set; }
         public string Username { get; set; }
-        public bool CurrentPolOnly { get; set; }
+        public bool CurrentPolOnly { get; set; } = false;
+        public bool EnabledPolOnly { get; set; } = false;
         public bool QuietMode { get; set; }
 
         // Concurrency Options
