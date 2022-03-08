@@ -87,7 +87,6 @@ namespace Group3r.View
                 userPolicy = "Enabled";
             }
 
-
             gpoTable.AddRow("Computer Policy", computerPolicy);
             gpoTable.AddRow("User Policy", userPolicy);
 
@@ -153,6 +152,17 @@ namespace Group3r.View
                     continue;
                 }
 
+                string settingMorphed = "";
+                if (sr.Setting.IsMorphed)
+                {
+                    if (grouperOptions.CurrentPolOnly)
+                    {
+                        //bail out because this is a morphed setting.
+                        continue;
+                    }
+                    settingMorphed = " - Morphed";
+                }
+
                 string poltype = "";
 
                 if (sr.Setting.PolicyType == PolicyType.Computer)
@@ -162,7 +172,7 @@ namespace Group3r.View
                     {
                         continue;
                     }
-                    poltype = "Computer Policy";
+                    poltype = "Computer Policy" + settingMorphed;
                 }
                 else if (sr.Setting.PolicyType == PolicyType.User)
                 {
@@ -170,11 +180,11 @@ namespace Group3r.View
                     {
                         continue;
                     }
-                    poltype = "User Policy";
+                    poltype = "User Policy" + settingMorphed;
                 }
                 else if (sr.Setting.PolicyType == PolicyType.Package)
                 {
-                    poltype = "Package Policy";
+                    poltype = "Package Policy" + settingMorphed;
                 }
 
                 // big ol' list of output formatters that should be their own methods but i'm a MANIAC AND YOU CAN'T STOP ME!

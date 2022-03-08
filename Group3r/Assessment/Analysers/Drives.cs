@@ -27,6 +27,11 @@ namespace Group3r.Assessment.Analysers
                 });
             }
 
+            if (setting.Source.Contains("NTFRS"))
+            {
+                setting.IsMorphed = true;
+            }
+
             // put findings in settingResult
             SettingResult.Findings = findings;
 

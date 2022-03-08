@@ -36,11 +36,14 @@ namespace Group3r.Assessment.Analysers
                 });
             }
 
+            if (setting.Source.Contains("NTFRS"))
+            {
+                setting.IsMorphed = true;
+            }
+
             // put findings in settingResult
             SettingResult.Findings = findings;
 
-            // make a new setting object minus the ugly bits we don't care about.
-            //SettingResult.Setting = CleanupSetting(setting);
             SettingResult.Setting = setting;
 
             return SettingResult;

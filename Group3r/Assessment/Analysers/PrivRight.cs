@@ -102,42 +102,17 @@ namespace Group3r.Assessment.Analysers
                 }
             }
 
+            if (setting.Source.Contains("NTFRS"))
+            {
+                setting.IsMorphed = true;
+            }
+
             // put findings in settingResult
             SettingResult.Findings = findings;
 
-            // make a new setting object minus the ugly bits we don't care about.
-            SettingResult.Setting = CleanupSetting(setting);
-            //SettingResult.Setting = setting;
+            SettingResult.Setting = setting;
 
             return SettingResult;
         }
-
-
-        public PrivRightSetting CleanupSetting(PrivRightSetting setting)
-        {
-            PrivRightSetting cleanSetting = new PrivRightSetting();
-
-            if (!String.IsNullOrWhiteSpace(setting.Source))
-            {
-                cleanSetting.Source = setting.Source;
-            }
-
-            cleanSetting.PolicyType = setting.PolicyType;
-
-            if (!String.IsNullOrWhiteSpace(setting.Privilege))
-            {
-                cleanSetting.Privilege = setting.Privilege;
-            }
-
-            cleanSetting.TrusteeSids = null;
-
-            if (setting.Trustees.Count > 0)
-            {
-                cleanSetting.Trustees = setting.Trustees;
-            }
-
-            return cleanSetting;
-        }
-
     }
 }

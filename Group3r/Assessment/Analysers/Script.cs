@@ -141,35 +141,14 @@ namespace Group3r.Assessment.Analysers
             // put findings in settingResult
             SettingResult.Findings = findings;
 
-            // make a new setting object minus the ugly bits we don't care about.
-            SettingResult.Setting = CleanupSetting(setting);
+            if (setting.Source.Contains("NTFRS"))
+            {
+                setting.IsMorphed = true;
+            }
+
+            SettingResult.Setting = setting;
 
             return SettingResult;
-        }
-        public ScriptSetting CleanupSetting(ScriptSetting setting)
-        {
-            ScriptSetting cleanSetting = new ScriptSetting();
-
-            if (!String.IsNullOrWhiteSpace(setting.Source))
-            {
-                cleanSetting.Source = setting.Source;
-            }
-
-            cleanSetting.PolicyType = setting.PolicyType;
-
-            cleanSetting.ScriptType = setting.ScriptType;
-
-            if (!String.IsNullOrWhiteSpace(setting.CmdLine))
-            {
-                cleanSetting.CmdLine = setting.CmdLine;
-            }
-
-            if (!String.IsNullOrWhiteSpace(setting.Parameters))
-            {
-                cleanSetting.Parameters = setting.Parameters;
-            }
-
-            return cleanSetting;
         }
     }
 }

@@ -297,70 +297,9 @@ namespace Group3r.Assessment.Analysers
             SettingResult.Findings = findings;
 
             // make a new setting object minus the ugly bits we don't care about.
-            SettingResult.Setting = CleanupSetting(setting);
+            SettingResult.Setting = setting;
 
             return SettingResult;
-        }
-
-
-        public RegistrySetting CleanupSetting(RegistrySetting setting)
-        {
-            RegistrySetting cleanSetting = new RegistrySetting
-            {
-                PolicyType = setting.PolicyType
-            };
-
-            if (!String.IsNullOrWhiteSpace(setting.Name))
-            {
-                cleanSetting.Name = setting.Name;
-            }
-
-            if (!String.IsNullOrWhiteSpace(setting.Status))
-            {
-                cleanSetting.Status = setting.Status;
-            }
-
-            cleanSetting.Action = setting.Action;
-            cleanSetting.Hive = setting.Hive;
-            cleanSetting.Key = setting.Key;
-
-            if (setting.ParsedKeySddl != null)
-            {
-                cleanSetting.ParsedKeySddl = setting.ParsedKeySddl;
-            }
-
-            if (!String.IsNullOrWhiteSpace(setting.Inheritance))
-            {
-                cleanSetting.Inheritance = setting.Inheritance;
-            }
-
-            if (setting.Values.Count > 0)
-            {
-                List<RegistryValue> cleanValues = new List<RegistryValue>();
-                foreach (RegistryValue regValue in setting.Values)
-                {
-                    RegistryValue cleanValue = new RegistryValue();
-                    if (!String.IsNullOrWhiteSpace(regValue.ValueName))
-                    {
-                        cleanValue.ValueName = regValue.ValueName;
-                    }
-                    cleanValue.RegKeyValType = regValue.RegKeyValType;
-                    if (!String.IsNullOrWhiteSpace(regValue.ValueString))
-                    {
-                        cleanValue.ValueString = regValue.ValueString;
-                    }
-                    if (cleanValue.ValueName != null)
-                    {
-                        cleanValues.Add(cleanValue);
-                    }
-                }
-                if (cleanValues.Count > 0)
-                {
-                    cleanSetting.Values = cleanValues;
-                }
-            }
-
-            return cleanSetting;
         }
 
         private bool IsInterestingBecauseLessThanGood(int goodVal, int settingVal)

@@ -10,6 +10,11 @@ namespace Group3r.Assessment.Analysers
         {
             // Nothing particularly sexy or exciting in here.
 
+            if (setting.Source.Contains("NTFRS"))
+            {
+                setting.IsMorphed = true;
+            }
+
             SettingResult.Setting = setting;
 
             return SettingResult;

@@ -26,6 +26,11 @@ namespace Group3r.Assessment.Analysers
             // make a new setting object minus the ugly bits we don't care about.
             SettingResult.Setting = new NetworkShareSetting();
             */
+            if (setting.Source.Contains("NTFRS"))
+            {
+                setting.IsMorphed = true;
+            }
+
             SettingResult.Setting = setting;
 
             return SettingResult;

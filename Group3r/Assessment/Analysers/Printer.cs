@@ -28,62 +28,14 @@ namespace Group3r.Assessment.Analysers
             // put findings in settingResult
             SettingResult.Findings = findings;
 
-            // make a new setting object minus the ugly bits we don't care about.
-            SettingResult.Setting = CleanupSetting(setting);
+            if (setting.Source.Contains("NTFRS"))
+            {
+                setting.IsMorphed = true;
+            }
+
+            SettingResult.Setting = setting;
 
             return SettingResult;
         }
-
-        public PrinterSetting CleanupSetting(PrinterSetting setting)
-        {
-            PrinterSetting cleanSetting = new PrinterSetting();
-
-            if (!String.IsNullOrWhiteSpace(setting.Source))
-            {
-                cleanSetting.Source = setting.Source;
-            }
-
-            cleanSetting.PolicyType = setting.PolicyType;
-
-            if (!String.IsNullOrWhiteSpace(setting.Name))
-            {
-                cleanSetting.Name = setting.Name;
-            }
-
-            cleanSetting.Action = setting.Action;
-
-            if (!String.IsNullOrWhiteSpace(setting.Path))
-            {
-                cleanSetting.Path = setting.Path;
-            }
-
-            if (!String.IsNullOrWhiteSpace(setting.Comment))
-            {
-                cleanSetting.Comment = setting.Comment;
-            }
-
-            if (!String.IsNullOrWhiteSpace(setting.UserName))
-            {
-                cleanSetting.UserName = setting.UserName;
-            }
-
-            if (!String.IsNullOrWhiteSpace(setting.Cpassword))
-            {
-                cleanSetting.Cpassword = setting.Cpassword;
-            }
-
-            if (!String.IsNullOrWhiteSpace(setting.Password))
-            {
-                cleanSetting.Password = setting.Password;
-            }
-
-            if (!String.IsNullOrWhiteSpace(setting.Port))
-            {
-                cleanSetting.Port = setting.Port;
-            }
-
-            return cleanSetting;
-        }
-
     }
 }
