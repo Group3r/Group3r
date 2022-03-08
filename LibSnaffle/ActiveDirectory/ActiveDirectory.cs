@@ -231,7 +231,7 @@ namespace LibSnaffle.ActiveDirectory
         private void EnumerateDomainGpoLinks()
         {
 
-            var ldapProperties = new string[] { "gplink, gpoptions, name, displayname" };
+            var ldapProperties = new string[] { "gplink", "gpoptions", "name", "displayname" };
 
             string ldapFilter = "(|(objectClass=organizationalUnit)(objectClass=site)(objectClass=domain))";
 
@@ -272,6 +272,7 @@ namespace LibSnaffle.ActiveDirectory
                                     distinguishedName =
                                         distinguishedName.Substring(distinguishedName.IndexOf("CN=",
                                             StringComparison.OrdinalIgnoreCase));
+                                    gpoLinkResult.LinkPath = distinguishedName;
 
                                     var status = splitLink[1];
 

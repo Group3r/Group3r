@@ -94,10 +94,22 @@ namespace Group3r.View
             // if there are links, add them
             if (gpoResult.Attributes.GpoLinks.Count >= 1)
             {
+                bool linkenabled = false;
                 foreach (GPOLink gpoLink in gpoResult.Attributes.GpoLinks)
                 {
                     string linkPath = String.Format("{0} ({1})", gpoLink.LinkPath, gpoLink.LinkEnforced);
+                    // if at least one link isn't enabled...
+                    if (gpoLink.LinkEnforced.Contains("Enabled"))
+                    {
+                        linkenabled = true;
+                    }
                     gpoTable.AddRow("Link", linkPath);
+                }
+                // and we're only showing enabled policies...
+                if (!linkenabled && grouperOptions.EnabledPolOnly)
+                {
+                    // bail out.
+                    return "";
                 }
             }
             else
