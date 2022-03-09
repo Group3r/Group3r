@@ -192,7 +192,7 @@ namespace Group3r.View
                 {
                     DataSourceSetting cs = (DataSourceSetting)sr.Setting;
 
-                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Data Source");
+                    ConsoleTable sTable = new ConsoleTable("Setting - " + poltype, "Data Source");
 
                     sTable = TableAdd(sTable, "Name", cs.Name);
                     sTable = TableAdd(sTable, "Action", cs.Action.ToString());
@@ -208,7 +208,7 @@ namespace Group3r.View
                 {
                     DeviceSetting cs = (DeviceSetting)sr.Setting;
 
-                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Devices");
+                    ConsoleTable sTable = new ConsoleTable("Setting - " + poltype, "Devices");
                     sTable = TableAdd(sTable, "No Output Formatter For This Setting Type", "");
 
                     //sTable = TableAdd(sTable, "Action", cs.FileAction);
@@ -219,7 +219,7 @@ namespace Group3r.View
                 {
                     DriveSetting cs = (DriveSetting)sr.Setting;
 
-                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Drive");
+                    ConsoleTable sTable = new ConsoleTable("Setting - " + poltype, "Drive");
 
                     sTable = TableAdd(sTable, "Name", cs.Name);
                     sTable = TableAdd(sTable, "Action", cs.Action.ToString());
@@ -236,7 +236,7 @@ namespace Group3r.View
                 {
                     EnvVarSetting cs = (EnvVarSetting)sr.Setting;
 
-                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Env Variable");
+                    ConsoleTable sTable = new ConsoleTable("Setting - " + poltype, "Env Variable");
                     sTable = TableAdd(sTable, "No Output Formatter For This Setting Type", "");
 
                     //sTable = TableAdd(sTable, "Action", cs.FileAction);
@@ -247,7 +247,7 @@ namespace Group3r.View
                 {
                     EventAuditSetting cs = (EventAuditSetting)sr.Setting;
 
-                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Audit Policy");
+                    ConsoleTable sTable = new ConsoleTable("Setting - " + poltype, "Audit Policy");
                     sTable = TableAdd(sTable, "No Output Formatter For This Setting Type", "");
 
                     //sTable = TableAdd(sTable, "Action", cs.FileAction);
@@ -258,7 +258,7 @@ namespace Group3r.View
                 {
                     FileSetting cs = (FileSetting)sr.Setting;
 
-                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "File");
+                    ConsoleTable sTable = new ConsoleTable("Setting - " + poltype, "File");
 
                     sTable = TableAdd(sTable, "Action", cs.FileAction);
                     sTable = TableAdd(sTable, "FileName", cs.FileName);
@@ -271,7 +271,7 @@ namespace Group3r.View
                 {
                     FolderSetting cs = (FolderSetting)sr.Setting;
 
-                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Folder");
+                    ConsoleTable sTable = new ConsoleTable("Setting - " + poltype, "Folder");
 
                     //sTable = TableAdd(sTable, "Action", cs.FileAction);
 
@@ -281,7 +281,7 @@ namespace Group3r.View
                 {
                     GroupSetting cs = (GroupSetting)sr.Setting;
 
-                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Group");
+                    ConsoleTable sTable = new ConsoleTable("Setting - " + poltype, "Group");
 
                     sTable = TableAdd(sTable, "Name", cs.Name);
                     sTable = TableAdd(sTable, "Action", cs.Action.ToString());
@@ -304,7 +304,7 @@ namespace Group3r.View
                 {
                     IniFileSetting cs = (IniFileSetting)sr.Setting;
 
-                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Ini File");
+                    ConsoleTable sTable = new ConsoleTable("Setting - " + poltype, "Ini File");
 
                     sTable = TableAdd(sTable, "No Output Formatter For This Setting Type", "");
                     //sTable = TableAdd(sTable, "Action", cs.FileAction);
@@ -315,7 +315,7 @@ namespace Group3r.View
                 {
                     KerbPolicySetting cs = (KerbPolicySetting)sr.Setting;
 
-                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Kerberos Policy");
+                    ConsoleTable sTable = new ConsoleTable("Setting - " + poltype, "Kerberos Policy");
 
                     sTable = TableAdd(sTable, cs.Key, cs.Value);
 
@@ -324,7 +324,7 @@ namespace Group3r.View
                 else if (sr.Setting.GetType() == typeof(NetOptionSetting))
                 {
                     NetOptionSetting cs = (NetOptionSetting)sr.Setting;
-                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Network Options");
+                    ConsoleTable sTable = new ConsoleTable("Setting - " + poltype, "Network Options");
 
                     sTable = TableAdd(sTable, "No Output Formatter For This Setting Type", "");
 
@@ -335,7 +335,7 @@ namespace Group3r.View
                 else if (sr.Setting.GetType() == typeof(NetworkShareSetting))
                 {
                     NetworkShareSetting cs = (NetworkShareSetting)sr.Setting;
-                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Network Share");
+                    ConsoleTable sTable = new ConsoleTable("Setting - " + poltype, "Network Share");
 
                     sTable = TableAdd(sTable, "No Output Formatter For This Setting Type", "");
 
@@ -347,7 +347,7 @@ namespace Group3r.View
                 {
                     NtServiceSetting cs = (NtServiceSetting)sr.Setting;
 
-                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Service");
+                    ConsoleTable sTable = new ConsoleTable("Setting - " + poltype, "Service");
 
                     sTable = TableAdd(sTable, "Name", cs.Name);
                     sTable = TableAdd(sTable, "Service Name", cs.ServiceName);
@@ -389,7 +389,7 @@ namespace Group3r.View
                 {
                     PackageSetting cs = (PackageSetting)sr.Setting;
 
-                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Package");
+                    ConsoleTable sTable = new ConsoleTable("Setting - " + poltype, "Package");
 
                     sTable = TableAdd(sTable, "Display Name", cs.DisplayName);
                     sTable = TableAdd(sTable, "CreatedDate", cs.CreatedDate.ToString());
@@ -408,7 +408,7 @@ namespace Group3r.View
                 {
                     PrinterSetting cs = (PrinterSetting)sr.Setting;
 
-                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Printer");
+                    ConsoleTable sTable = new ConsoleTable("Setting - " + poltype, "Printer");
 
                     sTable = TableAdd(sTable, "Name", cs.Name);
                     sTable = TableAdd(sTable, "Action", cs.Action.ToString());
@@ -424,7 +424,7 @@ namespace Group3r.View
                 {
                     PrivRightSetting cs = (PrivRightSetting)sr.Setting;
 
-                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "User Rights Assignment");
+                    ConsoleTable sTable = new ConsoleTable("Setting - " + poltype, "User Rights Assignment");
 
                     sTable = TableAdd(sTable, "Privilege Name", cs.Privilege);
 
@@ -455,7 +455,7 @@ namespace Group3r.View
                 {
                     RegistrySetting cs = (RegistrySetting)sr.Setting;
 
-                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Registry");
+                    ConsoleTable sTable = new ConsoleTable("Setting - " + poltype, "Registry");
 
                     sTable = TableAdd(sTable, "Name", cs.Name);
                     sTable = TableAdd(sTable, "Action", cs.Action.ToString());
@@ -475,7 +475,7 @@ namespace Group3r.View
                 {
                     SchedTaskSetting cs = (SchedTaskSetting)sr.Setting;
 
-                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Scheduled Task");
+                    ConsoleTable sTable = new ConsoleTable("Setting - " + poltype, "Scheduled Task");
 
                     sTable = TableAdd(sTable, "Name", cs.Name);
                     sTable = TableAdd(sTable, "Task Type", cs.TaskType.ToString());
@@ -565,7 +565,7 @@ namespace Group3r.View
                 {
                     ScriptSetting cs = (ScriptSetting)sr.Setting;
 
-                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Script");
+                    ConsoleTable sTable = new ConsoleTable("Setting - " + poltype, "Script");
 
                     sTable = TableAdd(sTable, "Script Type", cs.ScriptType.ToString());
                     sTable = TableAdd(sTable, "CmdLine", cs.CmdLine);
@@ -577,7 +577,7 @@ namespace Group3r.View
                 {
                     ShortcutSetting cs = (ShortcutSetting)sr.Setting;
 
-                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "Shortcut");
+                    ConsoleTable sTable = new ConsoleTable("Setting - " + poltype, "Shortcut");
 
                     sTable = TableAdd(sTable, "Name", cs.Name);
                     sTable = TableAdd(sTable, "Action", cs.Action.ToString());
@@ -596,7 +596,7 @@ namespace Group3r.View
                 {
                     SystemAccessSetting cs = (SystemAccessSetting)sr.Setting;
 
-                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "System Access");
+                    ConsoleTable sTable = new ConsoleTable("Setting - " + poltype, "System Access");
                     sTable = TableAdd(sTable, cs.SettingName, cs.ValueString);
                     sb.Append(IndentPara(sTable.ToMarkDownString(), 1));
 
@@ -605,7 +605,7 @@ namespace Group3r.View
                 {
                     UserSetting cs = (UserSetting)sr.Setting;
 
-                    ConsoleTable sTable = new ConsoleTable(poltype + " | Setting", "User");
+                    ConsoleTable sTable = new ConsoleTable("Setting - " + poltype, "User");
 
                     sTable = TableAdd(sTable, "Name", cs.Name);
                     sTable = TableAdd(sTable, "Action", cs.Action.ToString());

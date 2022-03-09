@@ -12,8 +12,6 @@ namespace Group3r.Assessment.Analysers
         public GroupSetting setting { get; set; }
         public override SettingResult Analyse(AssessmentOptions assessmentOptions)
         {
-            // Need to write logic to figure out when a group membership is good/fun/interesting and not extremely boring.
-
 
             List<GpoFinding> findings = new List<GpoFinding>();
 
@@ -23,8 +21,7 @@ namespace Group3r.Assessment.Analysers
             If 'removeaccounts' - that doesn't give us access.
             If the group name is a privileged one and they're renaming it - green finding
             if the group name is a privileged one and they're adding a big group or a group we're in - red finding
-            
-            //
+            if the group name is administrators and they're adding a big group or a group we're in, black finding
              */
 
             TrusteeOption group = new TrusteeOption();
@@ -42,7 +39,8 @@ namespace Group3r.Assessment.Analysers
             }
             catch (Exception e)
             {
-                // Mq.Trace("Group didn't parse to a well known name or well known sid")
+                Mq.Trace("Group " + setting.Name + " threw an error trying to match it to a well known name or well known sid." + e.ToString());
+                group.DisplayName = setting.Name;
             }
 
             // if it's not one of these it's not a finding
@@ -88,7 +86,7 @@ namespace Group3r.Assessment.Analysers
                             }
                             catch (Exception e)
                             {
-                                // Mq.Trace("Something else went fucky with parsing " + gsMember.Name)
+                                Mq.Trace("Something else went fucky with parsing " + gsMember.Name);
                             }
                             // if it's a high priv group and we're adding a low priv trustee, that's a red
                             bool alreadyred = false;
