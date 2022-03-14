@@ -69,7 +69,20 @@ namespace LibSnaffle.ActiveDirectory
                     UInt32 settingSize = reader.ReadUInt32();
                     reader.ReadChar();
                     regVal.ValueBytes = reader.ReadBytes((int)settingSize);
-                    regVal.ValueString = Encoding.Unicode.GetString(regVal.ValueBytes, 0, regVal.ValueBytes.Length);
+                    if (regVal.RegKeyValType == RegKeyValType.REG_DWORD)
+                    {
+                        int keyInt = BitConverter.ToInt32(regVal.ValueBytes, 0);
+                        regVal.ValueString = keyInt.ToString();
+                    }
+                    else if ((regVal.RegKeyValType == RegKeyValType.REG_SZ) || (regVal.RegKeyValType == RegKeyValType.REG_MULTI_SZ))
+                    {
+                        string dirtystring = Encoding.Unicode.GetString(regVal.ValueBytes, 0, regVal.ValueBytes.Length);
+                        regVal.ValueString = dirtystring.Replace('\0', ' ');
+                    }
+                    else
+                    {
+                        regVal.ValueString = Encoding.Unicode.GetString(regVal.ValueBytes, 0, regVal.ValueBytes.Length);
+                    }
                     reader.ReadChar();
                     setting.Values.Add(regVal);
                     Settings.Add(setting);

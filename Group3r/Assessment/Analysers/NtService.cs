@@ -12,6 +12,7 @@ namespace Group3r.Assessment.Analysers
         {
             List<GpoFinding> findings = new List<GpoFinding>();
 
+
             /*
             findings.Add(new GpoFinding()
             {
