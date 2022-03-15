@@ -72,6 +72,8 @@ Like Grouper2, if you have an offline copy of SYSVOL you can have Group3r run ag
 
 OK here's an example:
 
+![group3routput2](https://user-images.githubusercontent.com/24580473/158324355-6f67a413-ddad-4c25-bbf1-e361a2d7ca32.png)
+
 The bit highlighted in red is a Group Policy Object (GPO). The top bar of that section tells you it's a GPO, the display name of the GPO (`testgpo123`), the unique identifier of the GPO (the bit in braces), and whether the GPO is current or "Morphed". Under that you've got some basic info on the GPO itself, including which OUs (if any) it's linked to.
 
 The bit highlighted in magenta is a setting. The indent and little ASCII "tail" off the side of the block is meant to make it easier to see that it's associated with the GPO above. The top bar tells you that it's a setting, and what type of setting it is. In this instance it's an MSI package being pushed to computers to install PuTTY.
