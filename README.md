@@ -72,7 +72,7 @@ Like Grouper2, if you have an offline copy of SYSVOL you can have Group3r run ag
 
 OK here's an example:
 
-![group3routput2](https://user-images.githubusercontent.com/24580473/158324355-6f67a413-ddad-4c25-bbf1-e361a2d7ca32.png)
+![group3routput2](https://user-images.githubusercontent.com/24580473/158324640-196d00e5-e441-4c84-a60b-3e818137124e.png)
 
 The bit highlighted in red is a Group Policy Object (GPO). The top bar of that section tells you it's a GPO, the display name of the GPO (`testgpo123`), the unique identifier of the GPO (the bit in braces), and whether the GPO is current or "Morphed". Under that you've got some basic info on the GPO itself, including which OUs (if any) it's linked to.
 
