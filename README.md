@@ -2,9 +2,12 @@
 
 <div align="center">
 <img src="./Group3r-Banner.png" alt="Group3r Banner">
+
 by Mike Loss (@mikeloss)
 
 with help from @LukeHealy, @Sh3r4, and @LegendOfLynkle
+
+[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/T6T31VEVJ)  
 
 Development of Group3r was generously supported by my previous employer:
   
