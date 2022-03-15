@@ -70,6 +70,7 @@
     <Compile Include="ActiveDirectory\GPO\GpoSettings\DriveSetting.cs" />
     <Compile Include="ActiveDirectory\GPO\GpoSettings\EnvVarSetting.cs" />
     <Compile Include="ActiveDirectory\GPO\GpoSettings\EventAuditSetting.cs" />
+    <Compile Include="ActiveDirectory\GPO\GpoSettings\FileSecurity.cs" />
     <Compile Include="ActiveDirectory\GPO\GpoSettings\FileSetting.cs" />
     <Compile Include="ActiveDirectory\GPO\GpoSettings\FolderSetting.cs" />
     <Compile Include="ActiveDirectory\GPO\GpoSettings\GroupSetting.cs" />

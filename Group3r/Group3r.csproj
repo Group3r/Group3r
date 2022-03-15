@@ -65,6 +65,7 @@
     <Compile Include="Assessment\Analysers\EnvVar.cs" />
     <Compile Include="Assessment\Analysers\EventAudit.cs" />
     <Compile Include="Assessment\Analysers\File.cs" />
+    <Compile Include="Assessment\Analysers\FileSec.cs" />
     <Compile Include="Assessment\Analysers\Folder.cs" />
     <Compile Include="Assessment\Analysers\Group.cs" />
     <Compile Include="Assessment\Analysers\IniFile.cs" />

@@ -226,10 +226,17 @@ namespace LibSnaffle.ActiveDirectory
                                 {
                                     eventAuditSetting.AuditLevel = auditLevel;
                                 }
-
                                 break;
                             case "File Security ":
-                                Logger.Error("TODO: File Security settings in inf files.");
+                                FileSecuritySetting fileSecSetting = new FileSecuritySetting
+                                {
+                                    Source = FilePath,
+                                    FileSecPath = splitLine[0].Trim(),
+                                    Sddl = splitLine[1].Trim()
+                                };
+                                fileSecSetting.ParsedSddl = new Sddl.Parser.Sddl(fileSecSetting.Sddl,
+                                        SecurableObjectType.File);
+                                Settings.Add(fileSecSetting);
                                 break;
                             case "Group Membership":
                                 if (lineKey.EndsWith("Memberof"))

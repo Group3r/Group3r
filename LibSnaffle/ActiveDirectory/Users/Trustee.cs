@@ -11,7 +11,6 @@ namespace LibSnaffle.ActiveDirectory
     {
         public string Sid { get; set; }
         public string DisplayName { get; set; }
-        public string WkHighOrLowPriv { get; set; }
         public string DistinguishedName { get; set; }
 
         public Trustee() { }
@@ -31,16 +30,6 @@ namespace LibSnaffle.ActiveDirectory
                 {
                     DisplayName = "Failed SID resolution";
                     //throw new UserException("Failed to resolve SID: " + input, e);
-                }
-                // try to see if it's a well-known high or low privileged group/user
-                try
-                {
-                    WkHighOrLowPriv = GetWKSidHighOrLow(input);
-                }
-                catch (Exception e)
-                {
-                    WkHighOrLowPriv = "Unknown";
-                    //throw new UserException("Failed to check high/low priv status on SID: " + input, e);
                 }
             }
             else

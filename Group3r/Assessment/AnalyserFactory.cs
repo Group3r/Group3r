@@ -13,6 +13,11 @@ namespace Group3r.Assessment
                 DataSourceSetting castSetting = (DataSourceSetting)setting;
                 return new DataSourceAnalyser() { setting = castSetting };
             }
+            if (setting.GetType() == typeof(FileSecuritySetting))
+            {
+                FileSecuritySetting castSetting = (FileSecuritySetting)setting;
+                return new FileSecAnalyser() { setting = castSetting };
+            }
             /*
             else if (setting.GetType() == typeof(DeviceSetting))
             {
