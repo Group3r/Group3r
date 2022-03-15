@@ -53,29 +53,31 @@ namespace Group3r.Assessment.Analysers
                                 PathResult pathResult = pathAnalyser.AnalysePath(schedTaskExecAction.WorkingDir);
 
                                 // schedtask uses a startin directory on a network share, we need to look at that.
-
-                                if (pathResult.DirectoryExists && pathResult.DirectoryWritable)
+                                if (pathResult != null)
                                 {
-                                    if ((int)MinTriage < 3)
+                                    if (pathResult.DirectoryExists && pathResult.DirectoryWritable)
                                     {
-                                        findings.Add(new GpoFinding()
+                                        if ((int)MinTriage < 3)
                                         {
-                                            FindingReason = "Scheduled task exec action is configured to use a working directory that you can write to.",
-                                            FindingDetail = "You might be able to pull some DLL sideloading shenanigans in " + schedTaskExecAction.WorkingDir,
-                                            Triage = Constants.Triage.Yellow
-                                        });
+                                            findings.Add(new GpoFinding()
+                                            {
+                                                FindingReason = "Scheduled task exec action is configured to use a working directory that you can write to.",
+                                                FindingDetail = "You might be able to pull some DLL sideloading shenanigans in " + schedTaskExecAction.WorkingDir,
+                                                Triage = Constants.Triage.Yellow
+                                            });
+                                        }
                                     }
-                                }
-                                else if (!pathResult.FileExists && !pathResult.DirectoryExists && !String.IsNullOrWhiteSpace(pathResult.ParentDirectoryExists) && pathResult.ParentDirectoryWritable)
-                                {
-                                    if ((int)MinTriage < 3)
+                                    else if (!pathResult.FileExists && !pathResult.DirectoryExists && !String.IsNullOrWhiteSpace(pathResult.ParentDirectoryExists) && pathResult.ParentDirectoryWritable)
                                     {
-                                        findings.Add(new GpoFinding()
+                                        if ((int)MinTriage < 3)
                                         {
-                                            FindingReason = "Scheduled task exec action is configured to use a working directory that doesn't exist, but one of its parent directories DOES, and you can write to it.",
-                                            FindingDetail = "You might be able to pull some DLL sideloading shenanigans in " + schedTaskExecAction.WorkingDir + " if you create it.",
-                                            Triage = Constants.Triage.Yellow
-                                        });
+                                            findings.Add(new GpoFinding()
+                                            {
+                                                FindingReason = "Scheduled task exec action is configured to use a working directory that doesn't exist, but one of its parent directories DOES, and you can write to it.",
+                                                FindingDetail = "You might be able to pull some DLL sideloading shenanigans in " + schedTaskExecAction.WorkingDir + " if you create it.",
+                                                Triage = Constants.Triage.Yellow
+                                            });
+                                        }
                                     }
                                 }
                             }
