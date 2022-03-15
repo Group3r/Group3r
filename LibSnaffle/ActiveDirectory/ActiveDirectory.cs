@@ -272,8 +272,8 @@ namespace LibSnaffle.ActiveDirectory
                                     distinguishedName =
                                         distinguishedName.Substring(distinguishedName.IndexOf("CN=",
                                             StringComparison.OrdinalIgnoreCase));
-                                    gpoLinkResult.LinkPath = distinguishedName;
-
+                                    gpoLinkResult.LinkPath = searchResultEntry.DistinguishedName;
+                               
                                     var status = splitLink[1];
 
                                     switch (status)
