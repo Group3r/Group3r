@@ -376,7 +376,7 @@ namespace Group3r.View
                         sTable = TableAdd(sTable, "Startup Type", startupType);
                     }
 
-                    sTable = TableAdd(sTable, "Sddl", cs.Sddl);
+                    //sTable = TableAdd(sTable, "Sddl", cs.Sddl);
                     sTable = TableAdd(sTable, "Program", cs.Program);
                     sTable = TableAdd(sTable, "Args", cs.Args);
                     sTable = TableAdd(sTable, "UserName", cs.UserName);

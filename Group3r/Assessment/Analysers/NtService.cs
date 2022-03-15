@@ -14,6 +14,8 @@ namespace Group3r.Assessment.Analysers
         {
             List<GpoFinding> findings = new List<GpoFinding>();
 
+            List<string> modRights = new List<string>() { "WRITE_DAC", "WRITE_OWNER", "SERVICE_CHANGE_CONFIG" };
+
             if (setting.ParsedSddl != null)
             {
                 // Parse the SDDL into a workable format
@@ -21,21 +23,15 @@ namespace Group3r.Assessment.Analysers
 
                 foreach (SimpleAce simpleAce in analysedSddl)
                 {
-                    //bool grantsRead = false;
                     bool grantsWrite = false;
-                    bool grantsModify = false;
                     bool denyRight = false;
-                    //see if any of the rights are interesting
+
                     foreach (string right in simpleAce.Rights)
                     {
-                        /*
-                        //if (ReadRights.Contains(right)) { grantsRead = true; }
-                        if (WriteRights.Contains(right))
+                        if (modRights.Contains(right))
                         {
                             grantsWrite = true;
                         }
-                        if (ModifyRights.Contains(right)) { grantsModify = true; }
-                        */
                     }
 
                     // check if it's allow or deny
@@ -57,7 +53,7 @@ namespace Group3r.Assessment.Analysers
                                 trusteeopt.SID == simpleAce.Trustee.Sid);
                         if (sidMatches.Any()) { match = sidMatches.First(); }
                     }
-                    /*
+                    
                     if (match.DisplayName != null)
                     {
                         // check if it's one of the aggravating principals that are both local and domain and windows struggles to distinguish between:
@@ -74,57 +70,31 @@ namespace Group3r.Assessment.Analysers
                         {
                             
                             // and it's either canonically low-priv or we are a member of it
-                            //set rwStatus based on it.
-                            if (grantsModify)
-                            {
-                                rwStatus.CanModify = true;
-                            }
                             if (grantsWrite)
                             {
-                                rwStatus.CanWrite = true;
-                            }
-                            if (grantsModify || grantsWrite)
-                            {
-                                fsAclResult.InterestingAces.Add(simpleAce);
-                            }
-                            
-                        }
-                        else if (!match.HighPriv)
-                        {
-                            fsAclResult.InterestingAces.Add(simpleAce);
-                            if (grantsModify || grantsWrite)
-                            {
-                                fsAclResult.InterestingAces.Add(simpleAce);
+                                findings.Add(new GpoFinding()
+                                {
+                                    FindingReason = "A Windows service's ACL is being configured to grant abusable permissions to a target trustee.",
+                                    FindingDetail = "This should allow local privilege escalation on affected hosts. Service: " + setting.ServiceName.Replace("\\", "").Replace("\"","") + ", Trustee: " +  match.DisplayName + " - " + match.SID,
+                                    Triage = LibSnaffle.Classifiers.Rules.Constants.Triage.Red
+                                });
                             }
                         }
                     }
-                    else
-                    {
-                        // otherwise there's no match.
-                        if (grantsModify || grantsWrite)
-                        {
-                            fsAclResult.InterestingAces.Add(simpleAce);
-                        }
-                    }
-                    */
                 }
-                //fsAclResult.RwStatus = rwStatus;
-                //return fsAclResult;
-            }
-            else
-            {
-                throw new Exception("NT Service ACL not read/parsed properly.");
             }
 
-            /*
-            findings.Add(new GpoFinding()
+            if (!String.IsNullOrWhiteSpace(setting.Cpassword))
             {
-                //GpoSetting = setting,
-                FindingReason = "NtService analyser not implemented.",
-                FindingDetail = "NtService analyser not implemented.",
-                Triage = Constants.Triage.Green
-            });
-            */
+                string password = setting.DecryptCpassword(setting.Cpassword);
+                setting.Password = password;
+                findings.Add(new GpoFinding()
+                {
+                    FindingReason = "Group Policy Preferences password found:" + password,
+                    FindingDetail = "Refer to MS14-025 and https://adsecurity.org/?p=63",
+                    Triage = LibSnaffle.Classifiers.Rules.Constants.Triage.Black
+                });
+            }
 
             // put findings in settingResult
             SettingResult.Findings = findings;

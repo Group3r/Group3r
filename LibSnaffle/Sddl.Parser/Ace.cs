@@ -66,12 +66,22 @@ namespace Sddl.Parser
                 }
                 else
                 {
-                    var rights = Match.ManyByPrefix(parts[2], AceAliasRightsDict, out var reminder);
+                    if (type == SecurableObjectType.WindowsService)
+                    {
+                        var rights = Match.ManyByPrefix(parts[2], NtServiceAceAliasRightsDict, out var reminder);
+                        if (!string.IsNullOrEmpty(reminder))
+                            rights.AddLast(Format.Unknown(reminder));
 
-                    if (!string.IsNullOrEmpty(reminder))
-                        rights.AddLast(Format.Unknown(reminder));
+                        Rights = rights.ToArray();
+                    }
+                    else
+                    {
+                        var rights = Match.ManyByPrefix(parts[2], AceAliasRightsDict, out var reminder);
+                        if (!string.IsNullOrEmpty(reminder))
+                            rights.AddLast(Format.Unknown(reminder));
 
-                    Rights = rights.ToArray();
+                        Rights = rights.ToArray();
+                    }
                 }
             }
 
@@ -201,6 +211,24 @@ namespace Sddl.Parser
             { "NR", "NO_READ_UP" },
             { "NW", "NO_WRITE_UP" },
             { "NX", "NO_EXECUTE_UP" },
+        };
+
+        internal static Dictionary<string, string> NtServiceAceAliasRightsDict = new Dictionary<string, string>
+        {
+            // Generic access rights
+            { "CC", "SERVICE_QUERY_CONFIG" },
+            { "LC", "SERVICE_QUERY_STATUS" },
+            { "SW", "SERVICE_ENUMERATE_DEPENDENTS" },
+            { "LO", "SERVICE_INTERROGATE" },
+            { "RC", "READ_CONTROL" },
+            { "RP", "SERVICE_START" },
+            { "DT", "SERVICE_PAUSE_CONTINUE" },
+            { "CR", "SERVICE_USER_DEFINED_CONTROL" },
+            { "WD", "WRITE_DAC" },
+            { "WO", "WRITE_OWNER" },
+            { "WP", "SERVICE_STOP" },
+            { "DC", "SERVICE_CHANGE_CONFIG" },
+            { "SD", "DELETE" }
         };
 
         /// <summary>
