@@ -249,7 +249,6 @@ namespace LibSnaffle.ActiveDirectory
                                     if (member.StartsWith("S-"))
                                     {
                                         groupSettingMember.Sid = member;
-                                        string membername;
                                         try
                                         {
                                             Trustee trustee = new Trustee(member);
@@ -338,7 +337,6 @@ namespace LibSnaffle.ActiveDirectory
                                         if (trimmedMember.StartsWith("S-"))
                                         {
                                             groupSettingMember.Sid = trimmedMember;
-                                            string membername;
                                             try
                                             {
                                                 Trustee trustee = new Trustee(trimmedMember);
