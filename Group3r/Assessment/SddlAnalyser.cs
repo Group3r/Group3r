@@ -33,32 +33,35 @@ namespace Group3r.Assessment
                     SimpleAcl.Add(new SimpleAce() { ACEType = ACEType.Allow, Rights = new string[1] { "Owner" }, Trustee = new Trustee() { DisplayName = sddl.Owner.Alias } });
                 }
             }
-            if (sddl.Dacl.Aces.Length > 0)
+            if (sddl.Dacl != null)
             {
-                foreach (Ace ace in sddl.Dacl.Aces)
+                if (sddl.Dacl.Aces.Length > 0)
                 {
-                    SimpleAce simpleAce = new SimpleAce
+                    foreach (Ace ace in sddl.Dacl.Aces)
                     {
-                        Trustee = new Trustee()
+                        SimpleAce simpleAce = new SimpleAce
                         {
-                            DisplayName = ace.AceSid.Alias,
-                            Sid = ace.AceSid.Raw
+                            Trustee = new Trustee()
+                            {
+                                DisplayName = ace.AceSid.Alias,
+                                Sid = ace.AceSid.Raw
+                            }
+                        };
+                        switch (ace.AceType)
+                        {
+                            case "OBJECT_ACCESS_ALLOWED":
+                                simpleAce.ACEType = ACEType.Allow;
+                                break;
+                            case "OBJECT_ACCESS_DENIED":
+                                simpleAce.ACEType = ACEType.Deny;
+                                break;
+                            default:
+                                break;
                         }
-                    };
-                    switch (ace.AceType)
-                    {
-                        case "OBJECT_ACCESS_ALLOWED":
-                            simpleAce.ACEType = ACEType.Allow;
-                            break;
-                        case "OBJECT_ACCESS_DENIED":
-                            simpleAce.ACEType = ACEType.Deny;
-                            break;
-                        default:
-                            break;
-                    }
-                    simpleAce.Rights = SimplifyRights(ace.Rights);
+                        simpleAce.Rights = SimplifyRights(ace.Rights);
 
-                    SimpleAcl.Add(simpleAce);
+                        SimpleAcl.Add(simpleAce);
+                    }
                 }
             }
             return SimpleAcl;

@@ -22,40 +22,44 @@ namespace Group3r.Assessment.Analysers
                 // shortcut targets a network share, we need to look at that
                 PathResult pathResult = pathAnalyser.AnalysePath(setting.TargetPath);
 
-                if (pathResult.FileExists && pathResult.FileWritable)
+                if (pathResult != null)
                 {
-                    if ((int)MinTriage < 4)
+
+                    if (pathResult.FileExists && pathResult.FileWritable)
                     {
-                        findings.Add(new GpoFinding()
+                        if ((int)MinTriage < 4)
                         {
-                            FindingReason = "Shortcut points at a file that you can modify.",
-                            FindingDetail = "It points to " + setting.TargetPath + " so maybe see what happens if you modify that file.",
-                            Triage = Constants.Triage.Red
-                        });
+                            findings.Add(new GpoFinding()
+                            {
+                                FindingReason = "Shortcut points at a file that you can modify.",
+                                FindingDetail = "It points to " + setting.TargetPath + " so maybe see what happens if you modify that file.",
+                                Triage = Constants.Triage.Red
+                            });
+                        }
                     }
-                }
-                else if (!pathResult.FileExists && pathResult.DirectoryExists && pathResult.DirectoryWritable)
-                {
-                    if ((int)MinTriage < 4)
+                    else if (!pathResult.FileExists && pathResult.DirectoryExists && pathResult.DirectoryWritable)
                     {
-                        findings.Add(new GpoFinding()
+                        if ((int)MinTriage < 4)
                         {
-                            FindingReason = "Shortcut points to a file that doesn't exist, in a directory that you can write to.",
-                            FindingDetail = "It points to " + setting.TargetPath + " so maybe see what happens if you create that file.",
-                            Triage = Constants.Triage.Red
-                        });
+                            findings.Add(new GpoFinding()
+                            {
+                                FindingReason = "Shortcut points to a file that doesn't exist, in a directory that you can write to.",
+                                FindingDetail = "It points to " + setting.TargetPath + " so maybe see what happens if you create that file.",
+                                Triage = Constants.Triage.Red
+                            });
+                        }
                     }
-                }
-                else if (!pathResult.FileExists && !pathResult.DirectoryExists && !String.IsNullOrWhiteSpace(pathResult.ParentDirectoryExists) && pathResult.ParentDirectoryWritable)
-                {
-                    if ((int)MinTriage < 4)
+                    else if (!pathResult.FileExists && !pathResult.DirectoryExists && !String.IsNullOrWhiteSpace(pathResult.ParentDirectoryExists) && pathResult.ParentDirectoryWritable)
                     {
-                        findings.Add(new GpoFinding()
+                        if ((int)MinTriage < 4)
                         {
-                            FindingReason = "Shortcut points to a file that doesn't exist, in a directory that ALSO doesn't exist, but there's a parent directory that DOES exist that you can write to.",
-                            FindingDetail = "It points to " + setting.TargetPath + " so maybe see what happens if you create that file.",
-                            Triage = Constants.Triage.Red
-                        });
+                            findings.Add(new GpoFinding()
+                            {
+                                FindingReason = "Shortcut points to a file that doesn't exist, in a directory that ALSO doesn't exist, but there's a parent directory that DOES exist that you can write to.",
+                                FindingDetail = "It points to " + setting.TargetPath + " so maybe see what happens if you create that file.",
+                                Triage = Constants.Triage.Red
+                            });
+                        }
                     }
                 }
             }
