@@ -6,12 +6,12 @@ jobs:
 
   build:
     runs-on: windows-latest
-    steps:
-    - name: Get .NET SDK
-      run: ./dotnetinstall.ps1
-        
+    steps:   
     - uses: actions/checkout@v1
       name: Checkout Code
+
+    - name: Get .NET SDK
+      run: ./dotnetinstall.ps1
 
     - name: Setup MSBuild Path
       uses: microsoft/setup-msbuild@v1.0.2
