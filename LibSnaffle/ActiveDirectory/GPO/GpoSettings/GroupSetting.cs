@@ -7,6 +7,7 @@ namespace LibSnaffle.ActiveDirectory
         public string Name { get; set; } = "";
         public string NewName { get; set; } = "";
         public string Description { get; set; }
+        public string GroupSid { get; set; }
         public bool DeleteAllGroups { get; set; }
         public bool DeleteAllUsers { get; set; }
         public bool RemoveAccounts { get; set; }

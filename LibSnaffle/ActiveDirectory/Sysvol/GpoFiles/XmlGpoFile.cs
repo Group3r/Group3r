@@ -64,6 +64,7 @@ namespace LibSnaffle.ActiveDirectory
                                 groupSetting.RemoveAccounts = thing3;
                             }
                             groupSetting.Description = groupPropertiesAttributes?["description"]?.Value;
+                            groupSetting.GroupSid = groupPropertiesAttributes?["groupSid"]?.Value;
                             XmlNodeList groupMembers = groupProperties?["Members"]?.ChildNodes;
                             if (groupMembers != null)
                             {
