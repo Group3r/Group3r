@@ -8,7 +8,7 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: Get .NET SDK
-    - run: ./dotnetinstall.ps1
+      run: ./dotnetinstall.ps1
         
     - uses: actions/checkout@v1
       name: Checkout Code
