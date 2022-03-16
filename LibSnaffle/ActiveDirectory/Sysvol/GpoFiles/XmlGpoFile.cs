@@ -356,7 +356,7 @@ namespace LibSnaffle.ActiveDirectory
 
                         foreach (XmlNode rsNode in rsNodeList)
                         {
-                            RegistrySetting rs = new RegistrySetting() {Source = FilePath};
+                            RegistrySetting rs = new RegistrySetting() { Source = FilePath };
                             XmlAttributeCollection rsAttributes = rsNode.Attributes;
                             XmlNode rsProperties = rsNode.SelectSingleNode("Properties");
                             XmlAttributeCollection rsPropAtts = rsProperties.Attributes;

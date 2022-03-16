@@ -73,15 +73,16 @@ namespace Group3r.Assessment
             {
                 KerbPolicySetting castSetting = (KerbPolicySetting)setting;
                 return new KerbPolicyAnalyser() { setting = castSetting };
-            }            else if (setting.GetType() == typeof(NetOptionSetting))
+            }
+            else if (setting.GetType() == typeof(NetOptionSetting))
             {
                 NetOptionSetting castSetting = (NetOptionSetting)setting;
                 return new NetOptionAnalyser() { setting = castSetting };
             }
             else if (setting.GetType() == typeof(NetworkShareSetting))
             {
-                NetworkShareSetting castSetting = (NetworkShareSetting) setting;
-                return new NetworkShareAnalyser() {setting = castSetting};
+                NetworkShareSetting castSetting = (NetworkShareSetting)setting;
+                return new NetworkShareAnalyser() { setting = castSetting };
             }
             else if (setting.GetType() == typeof(NtServiceSetting))
             {

@@ -418,13 +418,13 @@ namespace LibSnaffle.ActiveDirectory
 
                         if (lineKey == "")
                         {
-                            Logger.Error("Something has gone wrong parsing .inf file " + this.FilePath);
+                            Logger.Error("Something has gone wrong parsing .inf file " + FilePath);
                         }
                     }
                 }
                 catch
                 {
-                    Logger.Error("Something has gone wrong parsing " + this.FilePath);
+                    Logger.Error("Something has gone wrong parsing " + FilePath);
                 }
             }
         }

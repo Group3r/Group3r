@@ -53,7 +53,7 @@ namespace Group3r.Assessment.Analysers
                                 trusteeopt.SID == simpleAce.Trustee.Sid);
                         if (sidMatches.Any()) { match = sidMatches.First(); }
                     }
-                    
+
                     if (match.DisplayName != null)
                     {
                         // check if it's one of the aggravating principals that are both local and domain and windows struggles to distinguish between:
@@ -64,18 +64,18 @@ namespace Group3r.Assessment.Analysers
                         {
                             continue;
                         }
-                        
+
                         // so if it's a user/group that we know about...
                         if (match.Target || match.LowPriv)
                         {
-                            
+
                             // and it's either canonically low-priv or we are a member of it
                             if (grantsWrite)
                             {
                                 findings.Add(new GpoFinding()
                                 {
                                     FindingReason = "A Windows service's ACL is being configured to grant abusable permissions to a target trustee.",
-                                    FindingDetail = "This should allow local privilege escalation on affected hosts. Service: " + setting.ServiceName.Replace("\\", "").Replace("\"","") + ", Trustee: " +  match.DisplayName + " - " + match.SID,
+                                    FindingDetail = "This should allow local privilege escalation on affected hosts. Service: " + setting.ServiceName.Replace("\\", "").Replace("\"", "") + ", Trustee: " + match.DisplayName + " - " + match.SID,
                                     Triage = LibSnaffle.Classifiers.Rules.Constants.Triage.Red
                                 });
                             }

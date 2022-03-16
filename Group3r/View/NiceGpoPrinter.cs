@@ -24,7 +24,7 @@ namespace Group3r.View
          */
         public NiceGpoPrinter(GrouperOptions options)
         {
-            this.grouperOptions = options;
+            grouperOptions = options;
             // set up the printer
         }
 
@@ -459,7 +459,7 @@ namespace Group3r.View
 
                     sTable = TableAdd(sTable, "Name", cs.Name);
                     sTable = TableAdd(sTable, "Action", cs.Action.ToString());
-                    sTable = TableAdd(sTable, "Key", cs.Hive.ToString() + cs.Key);
+                    sTable = TableAdd(sTable, "Key", cs.Hive.ToString() + "\\" + cs.Key);
 
                     foreach (RegistryValue value in cs.Values)
                     {
@@ -806,7 +806,7 @@ namespace Group3r.View
                 sb.Append(taildent + tail + "\r\n" + fullindent);
             }
             sb.Append(inString.Replace("\r\n", "\r\n" + fullindent));
-             return (sb.ToString().TrimEnd() + "\r\n");
+            return (sb.ToString().TrimEnd() + "\r\n");
         }
     }
 }
