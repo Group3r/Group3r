@@ -142,6 +142,10 @@ namespace Group3r.Options
                         options.EnabledPolOnly = true;
                         mq.Degub("Limiting output to enabled policy only.");
                         break;
+                    case "testuser":
+                        options.TargetUserName = value;
+                        break;
+
                     /*
                 case "username":
                     if (!String.IsNullOrEmpty(value))

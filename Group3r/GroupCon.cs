@@ -76,10 +76,10 @@ namespace Group3r
                 {
                     ad = new ActiveDirectory(Mq, Options.TargetDomain, Options.TargetDc);
 
-                    Mq.Trace("Enumerating current user's name and group memberships.");
-                    //if (Options.AssessmentOptions.TargetTrustees == null)
-                    //{
-                    string targetUserName = WindowsIdentity.GetCurrent().Name;
+                    Mq.Trace("Enumerating target/current user's name and group memberships.");
+
+                    string targetUserName = Options.TargetUserName;
+
                     if (targetUserName.Contains("\\"))
                     {
                         targetUserName = targetUserName.Split('\\')[1];

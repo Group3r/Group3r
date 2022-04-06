@@ -1,4 +1,5 @@
 ﻿using Group3r.View;
+using System.Security.Principal;
 
 namespace Group3r.Options
 {
@@ -14,6 +15,7 @@ namespace Group3r.Options
         public bool CurrentPolOnly { get; set; } = false;
         public bool EnabledPolOnly { get; set; } = false;
         public bool QuietMode { get; set; }
+        public string TargetUserName { get; set; } = WindowsIdentity.GetCurrent().Name;
 
         // Concurrency Options
         public int MaxThreads { get; set; } = 30;
