@@ -1,0 +1,15 @@
+version: 1.0.{build}
+configuration: Release
+platform: Any CPU
+before_build:
+- cmd: nuget restore
+build:
+  verbosity: minimal
+artifacts:
+- path: .\Group3r\bin\Release\Group3r.exe
+deploy:
+- provider: GitHub
+  auth_token:
+    secure: cVLy5gGQf5jKTG3+sZlvsY7LZdQ2wvKRJKp0AEZvguBlAD2GlYEHLeZz+To637fT
+  artifact: Group3r\bin\Release\Group3r.exe
+  prerelease: false
