@@ -73,7 +73,6 @@ namespace Group3r
                 }
             }
             // TODO: exit nicely by returning to calling context.
-            Environment.Exit(1);
         }
 
         /**
@@ -86,13 +85,14 @@ namespace Group3r
             // TODO: Implement option for output type when required. 
             IMessageProcessor processor = new CliMessageProcessor();
 
-            while (true)
+            bool exit = false;
+            while (exit == false)
             {
                 // mq.Pop blocks.
                 QueueMessage msg = mq.Pop();
                 lock (ConsoleWriterLock)
                 {
-                    processor.ProcessMessage(msg, options);
+                    exit = processor.ProcessMessage(msg, options);
                 }
             }
         }
