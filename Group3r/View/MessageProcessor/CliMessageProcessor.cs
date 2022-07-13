@@ -30,7 +30,7 @@ namespace Group3r.View
          * Arguments: Group3rMessage containing the message from the queue, GroupCoreOptions for config options
          * Returns: None
          */
-        public void ProcessMessage(QueueMessage message, GrouperOptions options)
+        public bool ProcessMessage(QueueMessage message, GrouperOptions options)
         {
             if (message is TraceMessage)
             {
@@ -64,7 +64,7 @@ namespace Group3r.View
                     Console.WriteLine("Press any key to exit.");
                     Console.ReadKey();
                 }
-                Environment.Exit(1);
+                return true;
             }
             else if (message is FinishMessage)
             {
@@ -74,8 +74,9 @@ namespace Group3r.View
                     Console.WriteLine("Press any key to exit.");
                     Console.ReadKey();
                 }
-                Environment.Exit(0);
+                return true;
             }
+            return false;
         }
     }
 }

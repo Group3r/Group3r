@@ -8,6 +8,6 @@ namespace Group3r.View
      */
     interface IMessageProcessor
     {
-        void ProcessMessage(QueueMessage message, GrouperOptions options);
+        bool ProcessMessage(QueueMessage message, GrouperOptions options);
     }
 }

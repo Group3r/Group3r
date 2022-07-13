@@ -57,7 +57,7 @@ namespace Group3r.Options
             {
                 parser.ShowUsage();
                 // TODO: avoid an exit like this, prefer to return to caller.
-                Environment.Exit(0);
+                return null;
             }
 
             //   TomlSettings settings = TomlSettings.Create(cfg => cfg
