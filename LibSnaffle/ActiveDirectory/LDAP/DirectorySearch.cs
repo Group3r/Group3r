@@ -32,7 +32,7 @@ namespace LibSnaffle.ActiveDirectory.LDAP
         public DirectorySearch(string domainName, string domainController, string ldapUserName = null, string ldapPassword = null, int ldapPort = 0, bool secureLdap = false)
         {
             _domain = GetDomain();
-            _domainName = _domain.Name;
+            _domainName = domainName;
             baseLdapPath = $"DC={_domainName.Replace(".", ",DC=")}";
             _domainController = domainController;
             _domainGuidMap = new Dictionary<string, string>();
