@@ -32,6 +32,10 @@ namespace Group3r.Assessment.Analysers
                 {
                     group = assessmentOptions.TrusteeOptions.Where(trusteeOption => trusteeOption.SID.Equals(setting.Name, StringComparison.OrdinalIgnoreCase)).First();
                 }
+                else if (setting.GroupSid.StartsWith("S-"))
+                {
+                    group = assessmentOptions.TrusteeOptions.Where(trusteeOption => trusteeOption.SID.Equals(setting.GroupSid, StringComparison.OrdinalIgnoreCase)).First();
+                }
                 else
                 {
                     group = assessmentOptions.TrusteeOptions.Where(trusteeOption => trusteeOption.DisplayName.Equals(setting.Name, StringComparison.OrdinalIgnoreCase)).First();
