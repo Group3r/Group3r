@@ -35,6 +35,10 @@ namespace Group3r
             try
             {
                 GrouperOptions options = OptionsParser.Parse(args, mq);
+                if (options == null)
+                {
+                    return;
+                }
                 SetupLogger(options.LogToFile, options.LogToConsole, mq, options.LogLevelString, options.LogFilePath);
                 GroupCon controller = new GroupCon(options, mq);
                 Task groupConThread = Task.Factory.StartNew(() => { controller.Execute(); });
