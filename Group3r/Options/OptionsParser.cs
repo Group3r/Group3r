@@ -27,7 +27,7 @@ namespace Group3r.Options
             parser.Arguments.Add(new ValueArgument<string>('c', "dc", "Target Domain controller"));
             parser.Arguments.Add(new ValueArgument<string>('d', "domain", "Domain to query."));
             parser.Arguments.Add(new SwitchArgument('h', "help", "Displays this help.", false));
-            parser.Arguments.Add(new SwitchArgument('o', "offline", "Disables checks that require LDAP comms with a DC or SMB comms with file shares found in policy settings. Requires that you define a value for -s.", false));
+            parser.Arguments.Add(new SwitchArgument('o', "offline", "Disables checks that require LDAP comms with a DC or SMB comms with file shares found in policy settings. Requires that you define a value for -y.", false));
             parser.Arguments.Add(new ValueArgument<string>('f', "outfile", "Path for output file. You probably want this if you're not using -s."));
             parser.Arguments.Add(new SwitchArgument('s', "stdout", "Enables outputting results to stdout as soon as they're found. You probably want this if you're not using -f.", false));
             parser.Arguments.Add(new ValueArgument<string>('y', "sysvol", "Set the path to a domain SYSVOL directory."));
