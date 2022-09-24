@@ -1,5 +1,3 @@
-# VERY BETA: IF YOU RUN THIS AND IT EATS YOUR DOG IT'S *STILL* NOT MY FAULT
-
 <div align="center">
 <img src="./Group3r-Banner.png" alt="Group3r Banner">
 
