@@ -48,7 +48,7 @@ namespace Group3r
 
             // Figure out how we're going to load up all our AD/Sysvol info:
             SysvolHelper svh = new SysvolHelper(Mq);
-            ActiveDirectory ad = null;
+            ActiveDirectory ad;
 
             if (Options.OfflineMode)
             {

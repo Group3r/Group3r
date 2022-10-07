@@ -91,7 +91,7 @@ namespace LibSnaffle.ActiveDirectory
             Mq = mq;
         }
 
-        public DirectorySearch DirectorySearch { get; set; }
+        private DirectorySearch _directorySearch { get; set; }
 
         /// <summary>
         /// This constructor assumes it's running online and populates fields through enumeration.
@@ -104,7 +104,7 @@ namespace LibSnaffle.ActiveDirectory
 
             try
             {
-                DirectorySearch = GetDirectorySearch();
+                SetDirectorySearch();
             }
             catch (ActiveDirectoryOperationException e)
             {
@@ -112,7 +112,8 @@ namespace LibSnaffle.ActiveDirectory
             }
         }
 
-        private DirectorySearch GetDirectorySearch()
+
+        private void SetDirectorySearch()
         {
             try
             {
@@ -130,7 +131,7 @@ namespace LibSnaffle.ActiveDirectory
                     TargetDC = TargetDomain;
                 }
 
-                return new DirectorySearch(TargetDomain, TargetDC);
+                _directorySearch = new DirectorySearch(TargetDomain, TargetDC);
 
             }
             // TODO: tidy up generic exception.
@@ -237,7 +238,7 @@ namespace LibSnaffle.ActiveDirectory
 
             // UH OH we might need to fix the naming context thing
 
-            IEnumerable<SearchResultEntry> searchResultEntries = DirectorySearch.QueryLdap(ldapFilter, ldapProperties, System.DirectoryServices.Protocols.SearchScope.Subtree);
+            IEnumerable<SearchResultEntry> searchResultEntries = _directorySearch.QueryLdap(ldapFilter, ldapProperties, System.DirectoryServices.Protocols.SearchScope.Subtree);
 
             int count = searchResultEntries.Count();
 
@@ -354,7 +355,7 @@ namespace LibSnaffle.ActiveDirectory
 
             string ldapFilter = "(objectClass=groupPolicyContainer)";
 
-            IEnumerable<SearchResultEntry> searchResultEntries = DirectorySearch.QueryLdap(ldapFilter, ldapProperties, System.DirectoryServices.Protocols.SearchScope.Subtree);
+            IEnumerable<SearchResultEntry> searchResultEntries = _directorySearch.QueryLdap(ldapFilter, ldapProperties, System.DirectoryServices.Protocols.SearchScope.Subtree);
 
             int count = searchResultEntries.Count();
 
@@ -468,7 +469,7 @@ namespace LibSnaffle.ActiveDirectory
 
             string ldapFilter = "(objectClass=packageRegistration)";
 
-            IEnumerable<SearchResultEntry> searchResultEntries = DirectorySearch.QueryLdap(ldapFilter, ldapProperties, System.DirectoryServices.Protocols.SearchScope.Subtree);
+            IEnumerable<SearchResultEntry> searchResultEntries = _directorySearch.QueryLdap(ldapFilter, ldapProperties, System.DirectoryServices.Protocols.SearchScope.Subtree);
 
             int count = searchResultEntries.Count();
 
@@ -588,9 +589,9 @@ namespace LibSnaffle.ActiveDirectory
         {
             List<Trustee> results = new List<Trustee>();
             // get user's distinguishedName
-            string userFilter = "(&(objectCategory=user)(objectClass=user)(|(userPrincipalName={0})(cn=" + domainUser + ")))";
+            string userFilter = "(samaccountname=" + domainUser + ")";//"(&(objectCategory=user)(objectClass=user)(|(userPrincipalName={0})(cn=" + domainUser + ")))";
             var ldapProperties = new string[] { "distinguishedName", "objectsid", "cn" };
-            IEnumerable<SearchResultEntry> userSearchResultEntries = DirectorySearch.QueryLdap(userFilter, ldapProperties, System.DirectoryServices.Protocols.SearchScope.Subtree);
+            IEnumerable<SearchResultEntry> userSearchResultEntries = _directorySearch.QueryLdap(userFilter, ldapProperties, System.DirectoryServices.Protocols.SearchScope.Subtree);
 
             // check we got something
             if (userSearchResultEntries.Count() > 0)
@@ -600,14 +601,14 @@ namespace LibSnaffle.ActiveDirectory
                 string groupFilter = "(&(objectClass=group)(member=" + userDn.GetProperty("distinguishedName") + "))";
                 // stick user in result list
                 results.Add(new Trustee() { DistinguishedName = userDn.DistinguishedName, Sid = userDn.GetSid(), DisplayName = userDn.GetProperty("cn") });
-                IEnumerable<SearchResultEntry> groupSearchResultEntries = DirectorySearch.QueryLdap(groupFilter, ldapProperties, System.DirectoryServices.Protocols.SearchScope.Subtree);
+                IEnumerable<SearchResultEntry> groupSearchResultEntries = _directorySearch.QueryLdap(groupFilter, ldapProperties, System.DirectoryServices.Protocols.SearchScope.Subtree);
 
                 ConcurrentBag<Trustee> workingGroups = new ConcurrentBag<Trustee>();
                 //add first round results into bag and list
                 foreach (SearchResultEntry srcGroup in groupSearchResultEntries)
                 {
                     Trustee groupDn = new Trustee() { DistinguishedName = srcGroup.DistinguishedName, DisplayName = srcGroup.GetProperty("cn"), Sid = srcGroup.GetSid() };
-                    Mq.Degub("Added " + groupDn + " to Target Trustees");
+                    Mq.Degub("Added " + groupDn.DisplayName + " to Target Trustees");
                     workingGroups.Add(groupDn);
                     results.Add(groupDn);
                 }
@@ -619,7 +620,7 @@ namespace LibSnaffle.ActiveDirectory
                     workingGroups.TryTake(out subGroupDn);
                     // find the groups it's a member of
                     string subGroupFilter = "(&(objectClass=group)(member=" + subGroupDn.DistinguishedName + "))";
-                    IEnumerable<SearchResultEntry> subGroupSearchResultEntries = DirectorySearch.QueryLdap(subGroupFilter, ldapProperties, System.DirectoryServices.Protocols.SearchScope.Subtree);
+                    IEnumerable<SearchResultEntry> subGroupSearchResultEntries = _directorySearch.QueryLdap(subGroupFilter, ldapProperties, System.DirectoryServices.Protocols.SearchScope.Subtree);
 
                     foreach (SearchResultEntry srcGroup in subGroupSearchResultEntries)
                     {
