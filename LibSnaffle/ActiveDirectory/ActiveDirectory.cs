@@ -534,29 +534,9 @@ namespace LibSnaffle.ActiveDirectory
                     //Next we need to find the GPO this app is in
                     string DN = package.DistinguishedName;
                     string[] arrFQDN = DN.Split(new Char[] { ',' });
-                    string FQDN = "";
-                    for (int i = 0; i != arrFQDN.Length; i++)
-                    {
-                        if (i > 3)
-                        {
-                            //if its the first one, don't put a comma in front of it
-                            if (i == 4)
-                                FQDN = arrFQDN[i];
-                            else
-                                FQDN = FQDN + "," + arrFQDN[i];
-                        }
-                    }
-
-                    FQDN = "LDAP://" + FQDN;
-                    try
-                    {
-                        DirectoryEntry GPOPath = new DirectoryEntry(FQDN);
-                        gpoPackage.ParentGpo = GPOPath.Properties["Name"][0].ToString();
-                    }
-                    catch (Exception e)
-                    {
-                        Mq.Error("That one thing with DirectoryEntry creation broke in the package enum method.");
-                    }
+                    int elementPos = arrFQDN.Length - 5;
+                    string parentGpoElement = arrFQDN[elementPos].Split('=')[1];
+                    gpoPackage.ParentGpo = parentGpoElement;
 
                     //now resolve whether the app is published or assigned
                     if (arrFQDN[3] == "CN=User")
