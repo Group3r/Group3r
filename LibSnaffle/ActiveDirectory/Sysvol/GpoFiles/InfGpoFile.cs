@@ -162,10 +162,6 @@ namespace LibSnaffle.ActiveDirectory
                                 // get the key
                                 string[] keyArray = regPathArray.Skip(1).Take(regPathArray.Length - 2).ToArray();
                                 regValSetting.Key = String.Join("\\", keyArray);
-                                RegistryValue regVal = new RegistryValue
-                                {
-                                    ValueName = regPathArray[regPathArray.Length - 1]
-                                };
 
                                 // figure out the value type
                                 int valType;
@@ -174,6 +170,10 @@ namespace LibSnaffle.ActiveDirectory
                                     // create value objects for each of them
                                     foreach (string value in splitValues.Skip(1))
                                     {
+                                        RegistryValue regVal = new RegistryValue
+                                        {
+                                            ValueName = regPathArray[regPathArray.Length - 1]
+                                        };
                                         regVal.RegKeyValType = (RegKeyValType)valType;
                                         regVal.ValueBytes = Encoding.Unicode.GetBytes(value);
                                         regVal.ValueString = value;
