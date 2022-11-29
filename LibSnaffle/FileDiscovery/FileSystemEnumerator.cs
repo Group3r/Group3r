@@ -82,12 +82,15 @@ namespace LibSnaffle.FileDiscovery
             }
             catch (UnauthorizedAccessException) { }
             catch (PathTooLongException) { }
+            catch (IOException) { }
 
             try
             {
                 foundFiles = foundFiles.Concat(Directory.EnumerateFiles(rootPath));
             }
             catch (UnauthorizedAccessException) { }
+            catch (PathTooLongException) { }
+            catch (IOException) { }
 
             return foundFiles;
         }
@@ -123,6 +126,7 @@ namespace LibSnaffle.FileDiscovery
                 }
                 catch (UnauthorizedAccessException) { }
                 catch (PathTooLongException) { }
+                catch (IOException) { }
 
                 try
                 {
@@ -135,6 +139,7 @@ namespace LibSnaffle.FileDiscovery
                 }
                 catch (UnauthorizedAccessException) { }
                 catch (PathTooLongException) { }
+                catch (IOException) { }
             }
             else // It's a file, just queue a task.
             {
@@ -165,6 +170,10 @@ namespace LibSnaffle.FileDiscovery
                 return false;
             }
             catch (DirectoryNotFoundException)
+            {
+                return false;
+            }
+            catch (IOException)
             {
                 return false;
             }

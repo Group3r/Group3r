@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.DirectoryServices.ActiveDirectory;
 using System.DirectoryServices.Protocols;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 //using SharpHound3.Enums; - yep, i gave up and just bolted this in.
@@ -17,33 +18,45 @@ namespace LibSnaffle.ActiveDirectory.LDAP
     {
         private readonly string _domainController;
         private readonly string _domainName;
-        private readonly Domain _domain;
+        private Domain _domain;
         private readonly string _ldapUsername;
         private readonly string _ldapPassword;
         private readonly int _ldapPort;
         private readonly bool _secureLdap;
         private Dictionary<string, string> _domainGuidMap;
         private bool _isFaulted;
+        private DirectoryContext _context;
 
-        private readonly string baseLdapPath;
+        private readonly string _baseLdapPath;
         //Thread-safe storage for our Ldap Connection Pool
         private readonly ConcurrentBag<LdapConnection> _connectionPool = new ConcurrentBag<LdapConnection>();
 
-        public DirectorySearch(string domainName, string domainController, string ldapUserName = null, string ldapPassword = null, int ldapPort = 0, bool secureLdap = false)
+        public DirectorySearch(string domainName, string domainController, string ldapUserName = null, string ldapPassword = null, int ldapPort = 0, bool secureLdap = false) :
+            this(domainName, domainController, $"DC={domainName.Replace(".", ",DC=")}", ldapUserName, ldapPassword, ldapPort, secureLdap)
+        { }
+
+        public DirectorySearch(string domainName, string domainController, string baseLdapPath, string ldapUserName = null, string ldapPassword = null, int ldapPort = 0, bool secureLdap = false)
         {
-            _domain = GetDomain();
             _domainName = domainName;
-            baseLdapPath = $"DC={_domainName.Replace(".", ",DC=")}";
+            _baseLdapPath = baseLdapPath;
             _domainController = domainController;
             _domainGuidMap = new Dictionary<string, string>();
             _ldapUsername = ldapUserName;
             _ldapPassword = ldapPassword;
             _ldapPort = ldapPort;
             _secureLdap = secureLdap;
-            CreateSchemaMap();
+            //CreateSchemaMap();
         }
 
+        public string GetDomainName()
+        {
+            if (_domainName == null)
+            {
+                SetDomainName();
+            }
 
+            return _domainName;
+        }
 
         /// <summary>
         /// Get a single LDAP entry for the specified filter
@@ -126,9 +139,9 @@ namespace LibSnaffle.ActiveDirectory.LDAP
                     }
                     catch (Exception e)
                     {
-                        //Console.WriteLine(ldapFilter);
-                        //Console.WriteLine("\nUnexpected exception occured:\n\t{0}: {1}",
-                        //    e.GetType().Name, e.Message);
+                        Console.WriteLine(ldapFilter);
+                        Console.WriteLine("\nUnexpected exception occured:\n\t{0}: {1}",
+                            e.GetType().Name, e.Message);
                         yield break;
                     }
 
@@ -253,25 +266,35 @@ namespace LibSnaffle.ActiveDirectory.LDAP
         }
 
         /// <summary>
-        /// Gets the domain object associated with the specified domain for this DirectorySearcher
+        /// Gets the System.DirectoryServices domain object associated with this DirectorySearcher
         /// </summary>
         /// <returns></returns>
-        private Domain GetDomain()
+        private void SetDomainName()
         {
             try
             {
                 if (_domainName == null)
-                    return Domain.GetCurrentDomain();
+                    _domain = Domain.GetCurrentDomain();
 
-                var context = new DirectoryContext(DirectoryContextType.Domain, _domainName);
-                return Domain.GetDomain(context);
+                if ((_ldapPassword != null) && (_ldapUsername != null))
+                {
+                    _context = new DirectoryContext(DirectoryContextType.Domain, _domainName, _ldapUsername,
+                        _ldapPassword);
+                }
+                else
+                {
+                    _context = new DirectoryContext(DirectoryContextType.Domain, _domainName);
+                }
+
+                _domain = Domain.GetDomain(_context);
             }
-            catch
+            catch (Exception e)
             {
+                //Console.WriteLine(e.ToString());
                 _isFaulted = true;
-                return null;
             }
         }
+
 
         /// <summary>
         /// Gets an LDAPConnection to the Global Catalog
@@ -334,22 +357,23 @@ namespace LibSnaffle.ActiveDirectory.LDAP
 
         private SearchRequest CreateSearchRequest(string ldapFilter, SearchScope scope, string[] props, string adsPath = null)
         {
-            var activeDirectorySearchPath = adsPath ?? baseLdapPath;
+            var activeDirectorySearchPath = adsPath ?? _baseLdapPath;
             var request = new SearchRequest(activeDirectorySearchPath, ldapFilter, scope, props);
             request.Controls.Add(new SearchOptionsControl(SearchOption.DomainScope));
 
             return request;
         }
 
+        /*
         private void CreateSchemaMap()
         {
+            Domain domain = GetDomain();
             var map = new Dictionary<string, string>();
             if (_isFaulted)
                 return;
-
             // AD Schema is defined at forest-level so we use forest DN as LDAP search base
-            var path = _domain.Forest.Schema.Name;
-
+            var path = domain.Forest.Schema.Name;
+            
             foreach (var result in QueryLdap("(schemaIDGUID=*)", new[] { "schemaidguid", "name" }, SearchScope.Subtree, path))
             {
                 var name = result.GetProperty("name");
@@ -362,11 +386,10 @@ namespace LibSnaffle.ActiveDirectory.LDAP
                 {
                     //pass
                 }
-
             }
-
             _domainGuidMap = map;
         }
+        */
 
         ~DirectorySearch()
         {
