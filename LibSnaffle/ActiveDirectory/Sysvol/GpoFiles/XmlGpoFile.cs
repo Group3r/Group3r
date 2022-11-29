@@ -29,11 +29,12 @@ namespace LibSnaffle.ActiveDirectory
         }
         public void GetSettings()
         {
-            // Load the document and set the root element.  
-            XmlDocument doc = ContentXML();
-            XmlNode root = doc.DocumentElement;
             try
             {
+                // Load the document and set the root element.  
+                XmlDocument doc = ContentXML();
+                XmlNode root = doc.DocumentElement;
+
                 switch (root.Name)
                 {
                     case "Groups":
