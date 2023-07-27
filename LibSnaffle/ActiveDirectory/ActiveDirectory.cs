@@ -4,8 +4,6 @@ using LibSnaffle.Errors;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
 using System.DirectoryServices.ActiveDirectory;
 using System.DirectoryServices.Protocols;
 using System.Globalization;
@@ -623,6 +621,10 @@ namespace LibSnaffle.ActiveDirectory
                 Mq.Error("Failed to find target user in domain, ACL checks are likely to be inaccurate.");
                 return new List<Trustee>() { new Trustee() { DisplayName = domainUser, Sid = "" } };
             }
+        }
+
+        public class PrincipalContext
+        {
         }
     }
 }
