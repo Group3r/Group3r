@@ -43,9 +43,9 @@ namespace Group3r.Options
 
         public GrouperOptions()
         {
-            Printer = GpoPrinterFactory.GetPrinter(PrinterType, this);
-
             AssessmentOptions = new AssessmentOptions.AssessmentOptions();
+
+            Printer = GpoPrinterFactory.GetPrinter(PrinterType, this);
         }
     }
 }

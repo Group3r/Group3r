@@ -1,4 +1,5 @@
 ﻿using Group3r.Options;
+using System;
 
 namespace Group3r.View
 {
@@ -16,7 +17,8 @@ namespace Group3r.View
         {
             IGpoPrinter processor;
             // Currently only JSON exists which is the default.
-            switch (setting)
+            Console.WriteLine("~~~~~~~~~Current printer setting: " + options.PrinterType);
+            switch (options.PrinterType)
             {
                 case "json":
                     processor = new JsonGpoPrinter(options);
@@ -25,10 +27,10 @@ namespace Group3r.View
                     processor = new NiceGpoPrinter(options);
                     break;
                 default:
-                    processor = new NiceGpoPrinter(options);
+                    processor = new JsonGpoPrinter(options);
                     break;
             }
-            // processor = new NiceGpoPrinter(options);
+            //processor = new NiceGpoPrinter(options);
 
             return processor;
         }

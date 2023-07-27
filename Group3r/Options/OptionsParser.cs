@@ -38,6 +38,8 @@ namespace Group3r.Options
             parser.Arguments.Add(new ValueArgument<int>('a', "mintriage", "Minimum severity of findings to show where 1 is lowest severity and 4 is highest."));
             parser.Arguments.Add(new ValueArgument<string>('u', "testuser", "Permission checks will focus on what access is available to this user. Format as domain\\user"));
             parser.Arguments.Add(new SwitchArgument('e', "enabled", "Only displays policy types and settings that are enabled.", false));
+            parser.Arguments.Add(new ValueArgument<string>('p', "printer", "Choose output format, either `json` or `nice` (default `json`)."));
+
             return parser;
         }
 
@@ -186,6 +188,7 @@ namespace Group3r.Options
                         break;
                     case "printer":
                         options.PrinterType = value;
+                        mq.Info("Set PrinterType to " + options.PrinterType);
                         break;
                     default:
                         throw new CommandLineArgumentException("Something went real squirrelly in the command line args.", value);
