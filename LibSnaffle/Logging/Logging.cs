@@ -38,6 +38,7 @@ namespace LibSnaffle.Logging
 
             if (logToFile)
             {
+                // TODO: raise log level to help prettify output
                 FileTarget logfile = new FileTarget("logfile") { FileName = logFilePath };
                 nlogConfig.AddRule(logLevel, LogLevel.Fatal, logfile);
                 logfile.Layout = "${message}";
@@ -91,7 +92,7 @@ namespace LibSnaffle.Logging
             {
                 case "debug":
                     logLevel = LogLevel.Debug;
-                    Mq.Degub("Set verbosity level to degub.");
+                    Mq.Degub("Set verbosity level to debug.");
                     break;
                 case "degub":
                     logLevel = LogLevel.Debug;

@@ -33,6 +33,10 @@ namespace Group3r.Options
         public string PrinterType { get; set; }
         public bool FindingsOnly { get; set; } = false;
 
+        // JSON output options
+        public bool JsonResults { get; set; } = false;
+        public string JsonFilePath { get; set; }
+
         public AssessmentOptions.AssessmentOptions AssessmentOptions { get; set; }
         /*
         public AutoMapper.ConfigurationStore AutoMapperConfig { get; set; }

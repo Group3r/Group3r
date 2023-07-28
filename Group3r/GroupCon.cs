@@ -9,7 +9,9 @@ using LibSnaffle.Errors;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Security.Principal;
 using System.Threading;
 using System.Timers;
@@ -169,7 +171,7 @@ namespace Group3r
         {
             // CliMessageProcessor is the only implementation
             // Enqueue all of the GPO tasks.
-
+            ReaderWriterLock rwl = new ReaderWriterLock();
             AnalyserFactory analyserFactory = new AnalyserFactory();
 
             foreach (GPO gpo in Ad.Gpos)
@@ -228,9 +230,28 @@ namespace Group3r
                                 Mq.Error("Failure processing setting from " + setting.Source + "/r/n" + e.ToString());
                             }
                         }
-
-                        // Enqueue the output of the analysis for output with both the raw object and the pretty string if we're building one
-                        Mq.GpoResult(gpoResult, Options.Printer.OutputGpoResult(gpoResult));
+                        if (Options.JsonResults)
+                        {
+                            try
+                            {
+                                rwl.AcquireWriterLock(1000);
+                                File.AppendAllText(Options.JsonFilePath, Options.Printer.OutputGpoResult(gpoResult));
+                                File.AppendAllText(Options.JsonFilePath, Environment.NewLine);
+                            }
+                            catch (System.IO.IOException)
+                            {
+                                Mq.Error("Encountered an IOException while trying to write to " + Options.JsonFilePath + ". Did your WriterLock time out?");
+                            }
+                            finally
+                            {
+                                rwl.ReleaseWriterLock();
+                            }
+                        }
+                        else
+                        {
+                            // Enqueue the output of the analysis for output with both the raw object and the pretty string if we're building one
+                            Mq.GpoResult(gpoResult, Options.Printer.OutputGpoResult(gpoResult));
+                        }
                     }
                     // TODO: Handle exceptions properly here, rethrow fatal ones.
                     catch (Exception e)
@@ -242,7 +263,7 @@ namespace Group3r
             }
         }
 
-        
+
         /**
          * Summary: This method calls statusUpdate every minute.
          */
