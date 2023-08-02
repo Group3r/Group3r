@@ -1,4 +1,4 @@
-﻿using LibSnaffle.FileDiscovery;
+using LibSnaffle.FileDiscovery;
 using System;
 using System.Collections.Generic;
 using System.Numerics;

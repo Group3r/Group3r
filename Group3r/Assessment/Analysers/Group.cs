@@ -1,11 +1,11 @@
-﻿using Group3r.Options.AssessmentOptions;
+using BigFish.Options.AssessmentOptions;
 using LibSnaffle.ActiveDirectory;
 using LibSnaffle.Classifiers.Rules;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Group3r.Assessment.Analysers
+namespace BigFish.Assessment.Analysers
 {
     public class GroupAnalyser : Analyser
     {

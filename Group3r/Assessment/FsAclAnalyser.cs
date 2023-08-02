@@ -1,4 +1,4 @@
-﻿using Group3r.Options.AssessmentOptions;
+using BigFish.Options.AssessmentOptions;
 using LibSnaffle.Classifiers.Results;
 using Sddl.Parser;
 using System;
@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
 
-namespace Group3r.Assessment
+namespace BigFish.Assessment
 {
     public class FsAclResult
     {

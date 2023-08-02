@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
-namespace Group3r.Options.AssessmentOptions
+namespace BigFish.Options.AssessmentOptions
 {
     public partial class AssessmentOptions
     {
@@ -234,7 +234,7 @@ namespace Group3r.Options.AssessmentOptions
                     GrantsRemoteAccess = false,
                     RemoteAccessDesc = "",
                     LocalPrivesc = true,
-                    LocalPrivescDesc = "Lets you do the mimikatz thing, you know, dump lsass.exe, cool stuff like that.",
+                    LocalPrivescDesc = "Lets you do the tinyfeline thing, you know, dump lsass.exe, cool stuff like that.",
                     MsDescription = "Debug programs"
                 },
                 new PrivRightOption()

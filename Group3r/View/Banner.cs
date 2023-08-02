@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace Group3r.View
+namespace BigFish.View
 {
     /**
      * Summary: Class for printing the all important ASCII art.
@@ -36,7 +36,7 @@ namespace Group3r.View
                 @"'$$c.    '$$ $$$$$$c    $$$,     $$$$$      $$$   $$$''      ``'$$$ $$$$$$c   ",
                 @" `Y8bo,,,o88o888b '88bo,'888,_ _,88P88    .d888   888o       ,,o888 888b'''8b,",
                 @"   `'YMUP'YMMMMMM  'W'   'YMMMMMP'  'YmmMMMM''   YMMMb      YMMP'  MMMM   'WM;",
-                @"                                                    github.com/Group3r/Group3r",
+                @"                                                    github.com/BigFish/BigFish",
                 @"                                                            @mikeloss         ",
                 @"                                                                              ",
                 @"Gaze not into the abyss, lest you become recognized as an abyss domain expert,",

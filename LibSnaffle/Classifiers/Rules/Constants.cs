@@ -1,4 +1,4 @@
-﻿namespace LibSnaffle.Classifiers.Rules
+namespace LibSnaffle.Classifiers.Rules
 {
     public static class Constants
     {

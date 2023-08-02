@@ -1,4 +1,4 @@
-﻿namespace LibSnaffle.ActiveDirectory
+namespace LibSnaffle.ActiveDirectory
 {
     public class FileSetting : GpoSetting
     {

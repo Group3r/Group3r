@@ -1,7 +1,7 @@
-﻿//using Newtonsoft.Json;
+//using Newtonsoft.Json;
 //using Newtonsoft.Json.Converters;
 
-namespace Group3r.View
+namespace BigFish.View
 {
     //   /*
     //    * Summary: Implementation of IGpoOutputter which just serializes the GPO as JSON and returns it.

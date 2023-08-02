@@ -1,7 +1,7 @@
-﻿using Group3r.Options.AssessmentOptions;
+using BigFish.Options.AssessmentOptions;
 using LibSnaffle.ActiveDirectory;
 
-namespace Group3r.Assessment.Analysers
+namespace BigFish.Assessment.Analysers
 {
     public class IniFileAnalyser : Analyser
     {
@@ -40,7 +40,7 @@ namespace Group3r.Assessment.Analysers
                                 {
                                     PathFindings = new List<PathResult>() { pathResult },
                                     FindingReason =
-                                        "The Snaffler engine deemed this directory path interesting on its own.",
+                                        "The Bridler engine deemed this directory path interesting on its own.",
                                     FindingDetail = "Matched Path: " + dr.ResultDirInfo.FullName + " Matched Rule: " + dr.MatchedRule.RuleName,
                                     Triage = dr.Triage
                                 });
@@ -60,7 +60,7 @@ namespace Group3r.Assessment.Analysers
                                 {
                                     PathFindings = new List<PathResult>() { pathResult },
                                     FindingReason =
-                                        "The Snaffler engine deemed this file path interesting on its own.",
+                                        "The Bridler engine deemed this file path interesting on its own.",
                                     FindingDetail = "Matched Path: " + fr.ResultFileInfo.FullName + " Matched Rule: " + fr.MatchedRule.RuleName + " Match Context: " + fr.TextResult.MatchContext,
                                     Triage = fr.Triage
                                 });

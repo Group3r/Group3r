@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.DirectoryServices.Protocols;
 using System.Linq;
 using System.Security.Principal;
-//using SharpHound3.Enums;
+//using SpikyDog3.Enums;
 
 namespace LibSnaffle.ActiveDirectory.LDAP
 {

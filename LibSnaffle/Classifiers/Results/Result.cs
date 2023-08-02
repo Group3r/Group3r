@@ -1,4 +1,4 @@
-﻿namespace LibSnaffle.Classifiers.Results
+namespace LibSnaffle.Classifiers.Results
 {
 
     public class Result

@@ -1,4 +1,4 @@
-﻿using LibSnaffle.Concurrency;
+using LibSnaffle.Concurrency;
 using NLog;
 using NLog.Config;
 using NLog.Targets;

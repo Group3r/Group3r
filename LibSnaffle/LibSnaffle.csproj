@@ -8,11 +8,13 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LibSnaffle</RootNamespace>
-    <AssemblyName>LibSnaffle</AssemblyName>
+    <AssemblyName>BoringAssemblyName3</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
+    <Product>Microsoft® .NET Framework</Product>
+    <PackageDescription>BoringPackageDesc3</PackageDescription>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

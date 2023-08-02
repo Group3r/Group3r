@@ -1,4 +1,4 @@
-﻿using LibSnaffle.Concurrency;
+using LibSnaffle.Concurrency;
 using System;
 using System.IO;
 

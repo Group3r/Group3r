@@ -1,7 +1,7 @@
-﻿using Group3r.View;
+using BigFish.View;
 using System.Security.Principal;
 
-namespace Group3r.Options
+namespace BigFish.Options
 {
     public class GrouperOptions
     {

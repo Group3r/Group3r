@@ -1,10 +1,10 @@
-﻿using Group3r.Options;
+using BigFish.Options;
 using LibSnaffle.Concurrency;
 using NLog;
 using System;
 using System.Diagnostics;
 
-namespace Group3r.View
+namespace BigFish.View
 {
     /**
      * Summary: Implementation of IMessageProcessor which prints to stdout/stderr via Nlog.
@@ -27,7 +27,7 @@ namespace Group3r.View
          * Summary: Implementation of ProcessMessage which sends strings to a logger.
          * TODO: Inspecting the type of an instance created via the template
          * pattern to decide behaviour is not awesome. Probaly should do a better thing.
-         * Arguments: Group3rMessage containing the message from the queue, GroupCoreOptions for config options
+         * Arguments: BigFishMessage containing the message from the queue, GroupCoreOptions for config options
          * Returns: None
          */
         public bool ProcessMessage(QueueMessage message, GrouperOptions options)

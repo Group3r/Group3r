@@ -1,4 +1,4 @@
-﻿using LibSnaffle.Classifiers.Results;
+using LibSnaffle.Classifiers.Results;
 using LibSnaffle.Concurrency;
 using System;
 

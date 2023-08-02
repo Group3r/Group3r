@@ -1,4 +1,4 @@
-﻿using LibSnaffle.Concurrency;
+using LibSnaffle.Concurrency;
 
 namespace LibSnaffle.FileDiscovery
 {

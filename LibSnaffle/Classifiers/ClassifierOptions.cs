@@ -1,4 +1,4 @@
-﻿namespace LibSnaffle.Classifiers
+namespace LibSnaffle.Classifiers
 {
     public class ClassifierOptions
     {

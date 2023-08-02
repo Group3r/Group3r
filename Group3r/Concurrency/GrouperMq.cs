@@ -1,9 +1,9 @@
-﻿using Group3r.Assessment;
+using BigFish.Assessment;
 using LibSnaffle.Classifiers.Results;
 using LibSnaffle.Concurrency;
 using System;
 
-namespace Group3r.Concurrency
+namespace BigFish.Concurrency
 {
     public class GrouperMq : BlockingMq
     {

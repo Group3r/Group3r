@@ -1,11 +1,11 @@
-﻿using Group3r.Options.AssessmentOptions;
+using BigFish.Options.AssessmentOptions;
 using LibSnaffle.Classifiers;
 using LibSnaffle.Classifiers.Results;
 using LibSnaffle.Concurrency;
 using System;
 using System.IO;
 
-namespace Group3r.Assessment
+namespace BigFish.Assessment
 {
     class PathAnalyser
     {

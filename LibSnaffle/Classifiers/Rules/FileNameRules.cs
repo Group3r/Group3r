@@ -1,4 +1,4 @@
-﻿using LibSnaffle.Classifiers.Rules;
+using LibSnaffle.Classifiers.Rules;
 using System.Collections.Generic;
 
 namespace LibSnaffle.Classifiers

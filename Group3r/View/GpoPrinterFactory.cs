@@ -1,6 +1,6 @@
-﻿using Group3r.Options;
+using BigFish.Options;
 
-namespace Group3r.View
+namespace BigFish.View
 {
     /**
      * Summary: Factory to create GpoPrinter given the control flag.

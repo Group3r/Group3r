@@ -1,4 +1,4 @@
-﻿using Group3r.Options.AssessmentOptions;
+using BigFish.Options.AssessmentOptions;
 using LibSnaffle.ActiveDirectory;
 using LibSnaffle.Classifiers.Results;
 using LibSnaffle.Classifiers.Rules;
@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Group3r.Assessment.Analysers
+namespace BigFish.Assessment.Analysers
 {
     public class FileAnalyser : Analyser
     {
@@ -56,7 +56,7 @@ namespace Group3r.Assessment.Analysers
                                 findings.Add(new GpoFinding()
                                 {
                                     PathFindings = new List<PathResult>() { pathResult },
-                                    FindingReason = "Honestly this looks like a misconfigured GPP File GPO setting, or a bug in Group3r.",
+                                    FindingReason = "Honestly this looks like a misconfigured GPP File GPO setting, or a bug in BigFish.",
                                     FindingDetail = "This setting type should be for moving a file, it should never point at a dir.",
                                     Triage = Constants.Triage.Green
                                 });
@@ -89,7 +89,7 @@ namespace Group3r.Assessment.Analysers
                                         {
                                             PathFindings = new List<PathResult>() { pathResult },
                                             FindingReason =
-                                                "The Snaffler engine deemed this directory path interesting on its own.",
+                                                "The Bridler engine deemed this directory path interesting on its own.",
                                             FindingDetail = "Matched Path: " + dr.ResultDirInfo.FullName + " Matched Rule: " + dr.MatchedRule.RuleName,
                                             Triage = dr.Triage
                                         });
@@ -109,7 +109,7 @@ namespace Group3r.Assessment.Analysers
                                         {
                                             PathFindings = new List<PathResult>() { pathResult },
                                             FindingReason =
-                                                "The Snaffler engine deemed this file path interesting on its own.",
+                                                "The Bridler engine deemed this file path interesting on its own.",
                                             FindingDetail = "Matched Path: " + fr.ResultFileInfo.FullName + " Matched Rule: " + fr.MatchedRule.RuleName + " Match Context: " + fr.TextResult.MatchContext,
                                             Triage = fr.Triage
                                         });

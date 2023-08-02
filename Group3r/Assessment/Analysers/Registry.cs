@@ -1,13 +1,13 @@
-﻿using Group3r.Options.AssessmentOptions;
+using BigFish.Options.AssessmentOptions;
 using LibSnaffle.ActiveDirectory;
 using LibSnaffle.Classifiers.Rules;
 using Sddl.Parser;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Trustee = Group3r.Options.AssessmentOptions.TrusteeOption;
+using Trustee = BigFish.Options.AssessmentOptions.TrusteeOption;
 
-namespace Group3r.Assessment.Analysers
+namespace BigFish.Assessment.Analysers
 {
     public class RegistryAnalyser : Analyser
     {

@@ -1,7 +1,7 @@
-﻿using LibSnaffle.Classifiers.Results;
+using LibSnaffle.Classifiers.Results;
 using LibSnaffle.Concurrency;
 
-namespace Group3r
+namespace BigFish
 {
     public class FileResultMessage : QueueMessage
     {

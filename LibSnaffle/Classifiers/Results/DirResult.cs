@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using static LibSnaffle.Classifiers.Rules.Constants;
 
 namespace LibSnaffle.Classifiers.Results

@@ -1,4 +1,4 @@
-﻿using LibSnaffle.Concurrency;
+using LibSnaffle.Concurrency;
 using LibSnaffle.Errors;
 using Sddl.Parser;
 using System;

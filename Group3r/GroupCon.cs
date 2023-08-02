@@ -1,8 +1,8 @@
-using Group3r.Assessment;
-using Group3r.Assessment.Analysers;
-using Group3r.Concurrency;
-using Group3r.Options;
-using Group3r.Options.AssessmentOptions;
+using BigFish.Assessment;
+using BigFish.Assessment.Analysers;
+using BigFish.Concurrency;
+using BigFish.Options;
+using BigFish.Options.AssessmentOptions;
 using LibSnaffle.ActiveDirectory;
 using LibSnaffle.Concurrency;
 using LibSnaffle.Errors;
@@ -15,7 +15,7 @@ using System.Threading;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
-namespace Group3r
+namespace BigFish
 {
     /**
      * Summary: 
@@ -157,7 +157,7 @@ namespace Group3r
             DateTime finished = DateTime.Now;
             TimeSpan runSpan = finished.Subtract(startTime);
             Mq.Info("Finished at " + finished.ToLocalTime());
-            Mq.Info("Group3rin' took " + runSpan);
+            Mq.Info("BigFishin' took " + runSpan);
             Mq.Finish();
         }
 

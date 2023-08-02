@@ -1,4 +1,4 @@
-﻿using static LibSnaffle.Classifiers.Rules.Constants;
+using static LibSnaffle.Classifiers.Rules.Constants;
 
 namespace LibSnaffle.Classifiers.Results
 {

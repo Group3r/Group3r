@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 
 namespace LibSnaffle.Concurrency
@@ -83,7 +83,7 @@ namespace LibSnaffle.Concurrency
         /// </param>
         public void Degub(string message)
         {
-            Q.Add(new TraceMessage
+            Q.Add(new DebugMessage
             {
                 MsgDateTime = DateTime.Now,
                 MessageString = message

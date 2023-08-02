@@ -1,9 +1,9 @@
-﻿using LibSnaffle.Classifiers.Results;
+using LibSnaffle.Classifiers.Results;
 using LibSnaffle.Classifiers.Rules;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Group3r.Assessment
+namespace BigFish.Assessment
 {
     public class GpoFinding
     {

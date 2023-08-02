@@ -1,8 +1,8 @@
-﻿using Group3r.Concurrency;
-using Group3r.Options.AssessmentOptions;
+using BigFish.Concurrency;
+using BigFish.Options.AssessmentOptions;
 using LibSnaffle.Classifiers.Rules;
 
-namespace Group3r.Assessment.Analysers
+namespace BigFish.Assessment.Analysers
 {
     public abstract class Analyser
     {

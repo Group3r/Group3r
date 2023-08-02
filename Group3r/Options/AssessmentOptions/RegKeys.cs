@@ -1,8 +1,8 @@
-﻿using LibSnaffle.ActiveDirectory;
+using LibSnaffle.ActiveDirectory;
 using LibSnaffle.Classifiers.Rules;
 using System.Collections.Generic;
 
-namespace Group3r.Options.AssessmentOptions
+namespace BigFish.Options.AssessmentOptions
 {
     public partial class AssessmentOptions
     {

@@ -1,7 +1,7 @@
-﻿using Group3r.Options;
+using BigFish.Options;
 using LibSnaffle.Concurrency;
 
-namespace Group3r.View
+namespace BigFish.View
 {
     /**
      * Summary: Defines the interface for msg processing behaviour.

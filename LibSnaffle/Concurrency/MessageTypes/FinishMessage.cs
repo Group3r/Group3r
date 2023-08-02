@@ -1,4 +1,4 @@
-﻿namespace LibSnaffle.Concurrency
+namespace LibSnaffle.Concurrency
 {
     public class FinishMessage : QueueMessage
     {

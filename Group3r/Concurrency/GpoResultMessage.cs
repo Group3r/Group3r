@@ -1,7 +1,7 @@
-﻿using Group3r.Assessment;
+using BigFish.Assessment;
 using LibSnaffle.Concurrency;
 
-namespace Group3r
+namespace BigFish
 {
     public class GpoResultMessage : QueueMessage
     {

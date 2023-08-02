@@ -1,6 +1,6 @@
-﻿using ConsoleTables;
-using Group3r.Assessment;
-using Group3r.Options;
+using ConsoleTables;
+using BigFish.Assessment;
+using BigFish.Options;
 using LibSnaffle.ActiveDirectory;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 
-namespace Group3r.View
+namespace BigFish.View
 {
     /**
      * Summary: Implementation of IGpoOutputter which just returns nice GPO output.

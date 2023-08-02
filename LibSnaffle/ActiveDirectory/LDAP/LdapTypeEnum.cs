@@ -1,4 +1,4 @@
-﻿namespace LibSnaffle.ActiveDirectory.LDAP
+namespace LibSnaffle.ActiveDirectory.LDAP
 {
     internal enum LdapTypeEnum
     {

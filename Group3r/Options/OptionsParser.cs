@@ -1,11 +1,11 @@
-﻿using CommandLineParser.Arguments;
+using CommandLineParser.Arguments;
 using CommandLineParser.Exceptions;
-using Group3r.Concurrency;
+using BigFish.Concurrency;
 //using Nett;
 using System;
 using System.Linq;
 
-namespace Group3r.Options
+namespace BigFish.Options
 {
     /**
      * Summary: Static class to house cmd argument parsing into options.

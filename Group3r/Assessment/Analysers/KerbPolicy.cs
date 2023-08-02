@@ -1,9 +1,9 @@
-﻿using Group3r.Options.AssessmentOptions;
+using BigFish.Options.AssessmentOptions;
 using LibSnaffle.ActiveDirectory;
 using LibSnaffle.Classifiers.Rules;
 using System.Collections.Generic;
 
-namespace Group3r.Assessment.Analysers
+namespace BigFish.Assessment.Analysers
 {
     public class KerbPolicyAnalyser : Analyser
     {

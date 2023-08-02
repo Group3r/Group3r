@@ -1,4 +1,4 @@
-﻿using LibSnaffle.ActiveDirectory.LDAP;
+using LibSnaffle.ActiveDirectory.LDAP;
 using LibSnaffle.Concurrency;
 using LibSnaffle.Errors;
 using System;

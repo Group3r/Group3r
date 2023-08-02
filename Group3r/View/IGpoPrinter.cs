@@ -1,7 +1,7 @@
-﻿using Group3r.Assessment;
+using BigFish.Assessment;
 using LibSnaffle.ActiveDirectory;
 
-namespace Group3r.View
+namespace BigFish.View
 {
     /**
      * Summary: Defines interface for GPO output behaviour.

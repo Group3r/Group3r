@@ -1,7 +1,7 @@
-﻿using Group3r.Assessment.Analysers;
+using BigFish.Assessment.Analysers;
 using LibSnaffle.ActiveDirectory;
 
-namespace Group3r.Assessment
+namespace BigFish.Assessment
 {
     public class AnalyserFactory
     {
@@ -137,7 +137,7 @@ namespace Group3r.Assessment
             else
             {
                 return null;
-                //throw new NotImplementedException("Group3r doesn't have an analyser for the type of setting found in " + setting.Source);
+                //throw new NotImplementedException("BigFish doesn't have an analyser for the type of setting found in " + setting.Source);
             }
         }
     }

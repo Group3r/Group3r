@@ -6,14 +6,16 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{868A6C76-C903-4A94-96FD-A2C6BA75691C}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Group3r</RootNamespace>
-    <AssemblyName>Group3r</AssemblyName>
+    <RootNamespace>BigFish</RootNamespace>
+    <AssemblyName>BigFish</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
+    <Product>Microsoft SQL Server</Product>
+    <PackageDescription>BoringPackageDesc3</PackageDescription>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>

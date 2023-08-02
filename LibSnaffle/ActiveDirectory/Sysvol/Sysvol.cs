@@ -1,4 +1,4 @@
-﻿using LibSnaffle.Concurrency;
+using LibSnaffle.Concurrency;
 using LibSnaffle.Errors;
 using LibSnaffle.FileDiscovery;
 using System;
@@ -181,7 +181,7 @@ namespace LibSnaffle.ActiveDirectory
                     {
                         if (Logger != null)
                         {
-                            Logger.Degub($"Issue Parsing '{gpoDir}': {e.Message}");
+                            Logger.Error($"Issue Parsing '{gpoDir}': {e.Message}");
                         }
                         // Log this and proceed, it's not a dealbreaker.
                     }
@@ -196,6 +196,7 @@ namespace LibSnaffle.ActiveDirectory
                     {
                         if (Logger != null)
                         {
+                            Logger.Error("Failure parsing file " + file);
                             Logger.Error(e.Message);
                         }
                     }

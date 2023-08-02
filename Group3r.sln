@@ -1,11 +1,11 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Group3r", "Group3r\Group3r.csproj", "{868A6C76-C903-4A94-96FD-A2C6BA75691C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BigFish", "Group3r\Group3r.csproj", "{868A6C76-C903-4A94-96FD-A2C6BA75691C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibSnaffle", "LibSnaffle\LibSnaffle.csproj", "{CAA7AB97-F83B-432C-8F9C-C5F1530F59F7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoringAssemblyName3", "LibSnaffle\LibSnaffle.csproj", "{CAA7AB97-F83B-432C-8F9C-C5F1530F59F7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,6 +1,6 @@
-﻿using Group3r.Concurrency;
-using Group3r.Options;
-using Group3r.View;
+using BigFish.Concurrency;
+using BigFish.Options;
+using BigFish.View;
 using LibSnaffle.Concurrency;
 using LibSnaffle.Logging;
 using NLog.Targets;
@@ -8,12 +8,12 @@ using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace Group3r
+namespace BigFish
 {
     /**
      * Summary: Responsible for setting up and running GroupCore.
      */
-    public class Group3rRunner
+    public class BigFishRunner
     {
         /**
          * Summary: This method is the main controller of the program.
@@ -46,7 +46,7 @@ namespace Group3r
             }
             catch (Exception e)
             {
-                Console.WriteLine("Unhandled exception in Group3rRunner. Please report the following error directly to l0ss or file an issue in GitHub:");
+                Console.WriteLine("Unhandled exception in BigFishRunner. Please report the following error directly to l0ss or file an issue in GitHub:");
                 Console.WriteLine(e.ToString());
                 DumpQueue(mq);
                 Console.ReadLine();

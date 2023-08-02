@@ -1,10 +1,10 @@
-﻿using Group3r.Options.AssessmentOptions;
+using BigFish.Options.AssessmentOptions;
 using LibSnaffle.ActiveDirectory;
 using Sddl.Parser;
 using System;
 using System.Collections.Generic;
 
-namespace Group3r.Assessment
+namespace BigFish.Assessment
 {
     public class SddlAnalyser
     {

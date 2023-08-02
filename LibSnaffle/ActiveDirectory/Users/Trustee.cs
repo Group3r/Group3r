@@ -1,4 +1,4 @@
-﻿using LibSnaffle.Errors;
+using LibSnaffle.Errors;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
