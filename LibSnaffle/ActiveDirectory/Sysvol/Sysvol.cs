@@ -4,6 +4,7 @@ using LibSnaffle.FileDiscovery;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace LibSnaffle.ActiveDirectory
 {
@@ -70,7 +71,21 @@ namespace LibSnaffle.ActiveDirectory
         private List<string> EnumerateGPODirectories(string sysvolPath)
         {
             List<string> gpoDirs = new List<string>();
-            foreach (string dir in Directory.GetDirectories(sysvolPath))
+            List<string> dirs = new List<string>();
+            try
+            {
+                dirs = Directory.GetDirectories(sysvolPath).ToList<string>();
+            }
+            catch (Exception e)
+            {
+                if (Logger != null)
+                {
+                    Logger.Error(e.Message);
+                    Logger.Error("Failed to list the contents of SYSVOL - make sure you can access SYSVOL as the current user.");
+                    Logger.Terminate();
+                }
+            }
+            foreach (string dir in dirs)
             {
                 Logger.Trace("Looking for policies dirs in " + dir);
 
@@ -81,18 +96,29 @@ namespace LibSnaffle.ActiveDirectory
                         Logger.Trace("Found a morphed policies directory: " + dir);
                     }
                     Logger.Trace("Found policies dir in " + dir);
-                    foreach (string subdir in Directory.GetDirectories(dir))
+                    try
                     {
-                        try
+                        foreach (string subdir in Directory.GetDirectories(dir))
                         {
-                            Guid.Parse(Path.GetFileName(subdir));
-                            gpoDirs.Add(subdir);
-                            Logger.Trace("Found GPO dir " + subdir);
+                            try
+                            {
+                                Guid.Parse(Path.GetFileName(subdir));
+                                gpoDirs.Add(subdir);
+                                Logger.Trace("Found GPO dir " + subdir);
+                            }
+                            catch (FormatException)
+                            {
+                                Logger.Trace("Found a dir that isn't a GPO dir " + subdir);
+                                //Not a guid, not a GPO.
+                            }
                         }
-                        catch (FormatException)
+                    }
+                    catch (Exception e)
+                    {
+                        if (Logger != null)
                         {
-                            Logger.Trace("Found a dir that isn't a GPO dir " + subdir);
-                            //Not a guid, not a GPO.
+                            Logger.Error("Failed to list the contents of " + dir);
+                            Logger.Error(e.Message);
                         }
                     }
                 }
@@ -164,6 +190,13 @@ namespace LibSnaffle.ActiveDirectory
                         if (Logger != null)
                         {
                             Logger.Degub(e.Message);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        if (Logger != null)
+                        {
+                            Logger.Error(e.Message);
                         }
                     }
                 }

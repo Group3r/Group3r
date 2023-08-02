@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Group3r</RootNamespace>
     <AssemblyName>Group3r</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <NuGetPackageImportStamp>
