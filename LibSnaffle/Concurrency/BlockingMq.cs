@@ -83,7 +83,16 @@ namespace LibSnaffle.Concurrency
         /// </param>
         public void Degub(string message)
         {
-            Q.Add(new TraceMessage
+            Q.Add(new DebugMessage
+            {
+                MsgDateTime = DateTime.Now,
+                MessageString = message
+            });
+        }
+
+        public void Debug(string message)
+        {
+            Q.Add(new DebugMessage
             {
                 MsgDateTime = DateTime.Now,
                 MessageString = message
