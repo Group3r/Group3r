@@ -58,7 +58,7 @@ namespace Group3r.Assessment.Analysers
 
             else if (setting.Key == "MaxClockSkew")
             {
-                if (setting.Value != "600")
+                if (setting.Value != "5")
                 {
                     findings.Add(new GpoFinding()
                     {
