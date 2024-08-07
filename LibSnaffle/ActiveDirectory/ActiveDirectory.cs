@@ -162,7 +162,7 @@ namespace LibSnaffle.ActiveDirectory
                 Mq.Degub("Loading SYSVOL by DC " + TargetDC);
                 Sysvol = helper.LoadSysvolOnlineByDc(TargetDomain, TargetDC);
                 Mq.Degub("Finished loading SYSVOL");
-            }
+            //}
         }
 
         /// <summary>

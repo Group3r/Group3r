@@ -82,7 +82,7 @@ namespace LibSnaffle.ActiveDirectory
                 {
                     Logger.Error(e.Message);
                     Logger.Error("Failed to list the contents of SYSVOL - make sure you can access SYSVOL as the current user.");
-                    Logger.Terminate();
+                    throw new SysvolException("Failed to list the contents of SYSVOL from " + sysvolPath, e);
                 }
             }
             foreach (string dir in dirs)
