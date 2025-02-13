@@ -307,7 +307,8 @@ namespace LibSnaffle.ActiveDirectory
                                     catch (Exception e)
                                     {
                                         Mq.Error("Error looking up GPO " + distinguishedName + " to insert links in it.");
-                                        Mq.Degub(e.Message);
+                                        Mq.Error("This seems to happen a LOT in some environments and I'm still not sure why. Here's some extra debugging info and maybe we can figure it out! Come tell me about what you see on the BloodHound Slack in #grouper!");
+                                        Mq.Error(e.Message);
                                     }
                                 }
                                 else
