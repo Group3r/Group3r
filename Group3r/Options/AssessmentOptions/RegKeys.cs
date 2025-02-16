@@ -709,7 +709,7 @@ namespace Group3r.Options.AssessmentOptions
                     //
                     MsDesc = "Network security: LAN Manager authentication level",
                     FriendlyDescription =
-                        "Determines which challenge response authentication protocol is used for network logons. If set lower than 3, NTLMv1 auth will be supported. Coerce auth from this machine with PetitPotam or PrinterBug, catch the auth with Responder (with the --disable-ess parameter), and crack it down to an NT hash here: https://crack.sh/get-cracking/. After that, consider silver ticket to compromise the host.",
+                        "Determines which challenge response authentication protocol is used for network logons. If set lower than 3, NTLMv1 auth will be supported. Coerce auth from this machine with PetitPotam or PrinterBug, catch the auth with Responder (with the --disable-ess parameter), and crack it down to an NT hash here: https://ntlmv1.com/. After that, consider silver ticket to compromise the host.",
                     Key = "System\\CurrentControlSet\\Control\\Lsa",
                     RegHive = RegHive.HKEY_LOCAL_MACHINE,
                     ValueName = "LmCompatibilityLevel",
